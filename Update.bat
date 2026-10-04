@@ -1,6 +1,7 @@
 @echo off
 color 0A
 title Auto Deploy ke Netlify
+cd /d "%~dp0"
 
 echo ========================================================
 echo      SCRIPT UPDATE OTOMATIS (GITHUB -^> NETLIFY)
