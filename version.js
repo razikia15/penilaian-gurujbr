@@ -4,9 +4,16 @@
    ============================================================ */
 window.APP_INFO = {
   name: 'Instrumen Penilaian Jabal Rahmah',
-  version: '1.1.1',
+  version: '1.1.2',
   buildDate: '2026-10-04',
   changelog: [
+    {
+      version: 'v1.1.2',
+      date: '2026-10-04',
+      highlights: [
+        'perbaikan grafis dan versi'
+      ]
+    },
     {
       version: 'v1.1.1',
       date: '2026-10-04',
