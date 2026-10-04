@@ -1,7 +1,7 @@
 # ============================================================
 # version-tool.ps1
-# Tool untuk baca & bump versi di version.js
-# Dipanggil oleh update.bat — jangan jalankan manual
+# Helper untuk baca & bump versi di version.js
+# Dipanggil otomatis oleh update.bat — jangan jalankan manual
 # ============================================================
 param(
     [Parameter(Mandatory=$true)]
@@ -20,7 +20,7 @@ if (-not (Test-Path $filePath)) {
     exit 1
 }
 
-$content = Get-Content $filePath -Raw
+$content = Get-Content $filePath -Raw -Encoding UTF8
 
 # Cari versi (format: version: '1.1.0')
 if (-not ($content -match "version:\s*'([0-9]+\.[0-9]+(?:\.[0-9]+)?)'")) {
