@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel — Instrumen Penilaian Jabal Rahmah</title>
+<script src="version.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -221,6 +222,11 @@
     <p>MAS Jabal Rahmah — Pantau data dari semua guru</p>
   </div>
   <div class="header-actions">
+  <button class="btn btn-light" onclick="showChangelog()" 
+          title="Klik untuk riwayat update"
+          style="font-size:10.5px;padding:5px 9px;opacity:.8">
+    <span id="appVersion">v1.1.0</span>
+  </button>
     <button class="btn btn-light" onclick="openConfigModal()">⚙️ Konfigurasi</button>
     <button class="btn btn-light" onclick="reloadAll()">🔄 Refresh</button>
     <button class="btn btn-light" onclick="exportAllExcel()">📊 Ekspor Semua</button>

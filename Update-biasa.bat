@@ -1,11 +1,23 @@
 @echo off
 color 0A
 title Auto Deploy ke Netlify
+cd /d "%~dp0"
 
 echo ========================================================
 echo      SCRIPT UPDATE OTOMATIS (GITHUB -^> NETLIFY)
 echo ========================================================
 echo.
+
+:: Cek apakah folder ini adalah git repository
+if not exist .git (
+    echo [PERINGATAN] Folder ini belum di-setup sebagai Git repository.
+    echo Menginisialisasi Git...
+    git init
+    git remote add origin https://github.com/razikia15/penilaian-gurujbr.git
+    echo Git berhasil diinisialisasi.
+    echo.
+)
+
 echo Pilih file yang baru saja Anda edit:
 echo [1] index.html
 echo [2] guru.html
@@ -14,7 +26,6 @@ echo [4] Update keseluruhan / Lainnya
 echo.
 set /p pilihan="Masukkan angka pilihan (1/2/3/4): "
 
-:: Mengatur pesan commit TANPA tanda kutip di dalam variabel
 if "%pilihan%"=="1" set pesan=Update index.html
 if "%pilihan%"=="2" set pesan=Update guru.html
 if "%pilihan%"=="3" set pesan=Update admin.html

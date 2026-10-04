@@ -270,10 +270,14 @@
     </form>
 
     <div class="footer-info">
-      🔒 <span class="status">✅ Terhubung ke Firebase</span>
-      &nbsp;|&nbsp; MAS Jabal Rahmah
-    </div>
-  </div>
+  🔒 <span class="status">✅ Terhubung ke Firebase</span>
+  &nbsp;|&nbsp; MAS Jabal Rahmah
+  <br>
+  <a href="#" onclick="showChangelog();return false;" 
+     style="display:inline-block;margin-top:6px;font-size:11px;color:#64748b;text-decoration:none;"
+     title="Klik untuk lihat riwayat update">
+    <span id="appVersion">v1.1.0</span> · <span id="appBuildDate">2026-10-04</span>
+  </a>
 </div>
 
 <script>
@@ -481,6 +485,56 @@ $('#loginForm').addEventListener('submit', async (e) => {
     console.warn('Gagal cek akun default:', e);
   }
 })();
+</script>
+<style>
+  .changelog-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
+  .changelog-modal.show{display:flex}
+  .changelog-box{background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .changelog-header{background:linear-gradient(135deg,#1e3a8a,#0d5c2e);color:#fff;padding:16px 20px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center}
+  .changelog-header h3{font-size:15px;font-weight:700}
+  .changelog-close{background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;padding:0 5px}
+  .changelog-body{padding:20px}
+  .changelog-item{border-left:3px solid #3b82f6;padding-left:12px;margin-bottom:18px}
+  .changelog-item:last-child{margin-bottom:0}
+  .changelog-item h4{font-size:13.5px;font-weight:700;color:#1e3a8a;margin-bottom:2px}
+  .changelog-item .date{font-size:11px;color:#9ca3af;margin-bottom:8px}
+  .changelog-item ul{margin:0 0 0 18px;font-size:12.5px;color:#4b5563;line-height:1.6}
+  .changelog-item ul li{margin-bottom:3px}
+</style>
+
+<div class="changelog-modal" id="changelogModal">
+  <div class="changelog-box">
+    <div class="changelog-header">
+      <h3>📋 Riwayat Update Aplikasi</h3>
+      <button class="changelog-close" onclick="closeChangelog()">✕</button>
+    </div>
+    <div class="changelog-body" id="changelogBody"></div>
+  </div>
+</div>
+
+<script>
+function showChangelog(){
+  const body = document.getElementById('changelogBody');
+  const info = window.APP_INFO || { changelog: [] };
+  body.innerHTML = (info.changelog || []).map(v => `
+    <div class="changelog-item">
+      <h4>${v.version}${v.version === 'v' + info.version ? ' <span style="font-size:10px;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:10px">Saat ini</span>' : ''}</h4>
+      <div class="date">${v.date}</div>
+      <ul>${v.highlights.map(h => '<li>' + h + '</li>').join('')}</ul>
+    </div>
+  `).join('');
+  document.getElementById('changelogModal').classList.add('show');
+}
+function closeChangelog(){
+  document.getElementById('changelogModal').classList.remove('show');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const info = window.APP_INFO || {};
+  const elV = document.getElementById('appVersion');
+  const elD = document.getElementById('appBuildDate');
+  if (elV) elV.textContent = 'v' + (info.version || '?.?.?');
+  if (elD) elD.textContent = info.buildDate || '';
+});
 </script>
 </body>
 </html>
