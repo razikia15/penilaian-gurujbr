@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Instrumen Penilaian Jabal Rahmah</title>
+<style>
+  :root{
+    --green-900:#0d5c2e;--green-700:#12803f;--green-500:#1aa04f;
+    --green-100:#d8f3e0;--green-50:#eefaf1;
+    --blue-900:#0a1f44;--blue-700:#1e3a8a;--blue-500:#3b82f6;
+    --blue-100:#dbeafe;--blue-50:#eff6ff;
+    --amber:#f59e0b;--red:#dc2626;
+    --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+    --gray-400:#9ca3af;--gray-600:#4b5563;--gray-800:#1f2937;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    min-height:100vh;
+    background:linear-gradient(135deg,#0a1f44 0%,#12803f 50%,#1aa04f 100%);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;color:var(--gray-800);
+  }
+  .login-wrapper{
+    width:100%;max-width:920px;
+    background:#fff;border-radius:20px;overflow:hidden;
+    box-shadow:0 30px 90px rgba(0,0,0,.35);
+    display:grid;grid-template-columns:1fr 1fr;
+  }
+  .login-left{
+    background:linear-gradient(160deg,var(--blue-900) 0%,var(--green-900) 100%);
+    color:#fff;padding:48px 40px;display:flex;flex-direction:column;justify-content:center;
+    position:relative;overflow:hidden;
+  }
+  .login-left::before{
+    content:'';position:absolute;top:-60px;right:-60px;
+    width:220px;height:220px;border-radius:50%;
+    background:rgba(255,255,255,.06);
+  }
+  .login-left::after{
+    content:'';position:absolute;bottom:-80px;left:-40px;
+    width:260px;height:260px;border-radius:50%;
+    background:rgba(255,255,255,.04);
+  }
+  .login-logo{
+    width:72px;height:72px;border-radius:16px;background:rgba(255,255,255,.15);
+    display:flex;align-items:center;justify-content:center;font-size:38px;
+    margin-bottom:22px;border:2px solid rgba(255,255,255,.25);
+    position:relative;z-index:1;
+  }
+  .login-left h1{
+    font-size:24px;font-weight:800;letter-spacing:.3px;
+    margin-bottom:8px;line-height:1.25;position:relative;z-index:1;
+  }
+  .login-left p{
+    font-size:13.5px;opacity:.85;line-height:1.7;
+    margin-bottom:32px;position:relative;z-index:1;
+  }
+  .feature-list{position:relative;z-index:1}
+  .feature-item{
+    display:flex;align-items:center;gap:12px;
+    padding:11px 0;font-size:13px;
+  }
+  .feature-item .icon{
+    width:34px;height:34px;border-radius:9px;
+    background:rgba(255,255,255,.15);
+    display:flex;align-items:center;justify-content:center;font-size:16px;
+    flex-shrink:0;border:1px solid rgba(255,255,255,.2);
+  }
+  .feature-item .txt b{display:block;font-weight:700;margin-bottom:1px}
+  .feature-item .txt span{font-size:11.5px;opacity:.75}
+
+  .login-right{
+    padding:48px 44px;display:flex;flex-direction:column;justify-content:center;
+  }
+  .login-right h2{
+    font-size:22px;font-weight:800;color:var(--blue-900);
+    margin-bottom:6px;
+  }
+  .login-right .sub{
+    font-size:13px;color:var(--gray-600);margin-bottom:26px;
+  }
+  .role-selector{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    margin-bottom:22px;
+  }
+  .role-btn{
+    padding:14px 12px;border-radius:12px;
+    border:2px solid var(--gray-200);background:#fff;
+    cursor:pointer;transition:.2s;font-family:inherit;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    text-align:center;
+  }
+  .role-btn:hover{border-color:var(--blue-500);background:var(--blue-50)}
+  .role-btn.active{
+    border-color:var(--blue-700);background:var(--blue-50);
+    box-shadow:0 0 0 4px var(--blue-100);
+  }
+  .role-btn .role-icon{font-size:24px;line-height:1}
+  .role-btn .role-label{font-size:12.5px;font-weight:700;color:var(--gray-800)}
+  .role-btn.active .role-label{color:var(--blue-900)}
+
+  .input-group{margin-bottom:14px;position:relative}
+  .input-group label{
+    display:block;font-size:11.5px;font-weight:700;
+    color:var(--gray-600);text-transform:uppercase;
+    letter-spacing:.4px;margin-bottom:6px;
+  }
+  .input-group input{
+    width:100%;padding:12px 14px;border-radius:10px;
+    border:1.5px solid var(--gray-200);font-size:14px;
+    font-family:inherit;background:#fff;
+    transition:.15s;color:var(--gray-800);
+  }
+  .input-group input:focus{
+    outline:none;border-color:var(--blue-700);
+    box-shadow:0 0 0 4px var(--blue-100);
+  }
+  .input-group .toggle-pw{
+    position:absolute;right:12px;top:32px;
+    background:none;border:none;cursor:pointer;
+    font-size:14px;color:var(--gray-400);padding:5px;
+  }
+  .input-group .toggle-pw:hover{color:var(--blue-700)}
+
+  .remember-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:20px;font-size:12.5px;
+  }
+  .remember-row label{
+    display:flex;align-items:center;gap:7px;
+    color:var(--gray-600);cursor:pointer;font-weight:600;
+  }
+  .remember-row input[type="checkbox"]{
+    width:16px;height:16px;accent-color:var(--blue-700);cursor:pointer;
+  }
+  .remember-row a{
+    color:var(--blue-700);font-weight:600;text-decoration:none;
+  }
+  .remember-row a:hover{text-decoration:underline}
+
+  .login-btn{
+    width:100%;padding:13px;border-radius:10px;
+    background:linear-gradient(135deg,var(--blue-700),var(--blue-900));
+    color:#fff;border:none;font-size:14px;font-weight:700;
+    cursor:pointer;font-family:inherit;letter-spacing:.3px;
+    transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .login-btn:hover:not(:disabled){
+    transform:translateY(-1px);
+    box-shadow:0 8px 24px rgba(30,58,138,.35);
+  }
+  .login-btn:disabled{opacity:.6;cursor:not-allowed}
+
+  .msg{
+    padding:11px 14px;border-radius:9px;font-size:12.5px;
+    font-weight:600;margin-bottom:14px;display:none;
+    align-items:center;gap:8px;
+  }
+  .msg.show{display:flex}
+  .msg.err{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+  .msg.ok{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+  .msg.info{background:var(--blue-100);color:var(--blue-900);border:1px solid #bfdbfe}
+
+  .footer-info{
+    margin-top:26px;padding-top:18px;border-top:1px dashed var(--gray-200);
+    text-align:center;font-size:11.5px;color:var(--gray-400);
+  }
+  .footer-info .status{
+    color:var(--green-700);font-weight:600;
+  }
+
+  .default-notice{
+    background:#fef3c7;border:1px solid #fde68a;color:#78350f;
+    padding:11px 14px;border-radius:9px;font-size:12px;
+    margin-bottom:18px;line-height:1.6;
+  }
+  .default-notice b{color:#92400e}
+  .default-notice code{
+    background:rgba(0,0,0,.08);padding:1px 5px;border-radius:4px;
+    font-family:Consolas,monospace;font-weight:700;
+  }
+
+  .spinner{
+    width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+    border-top-color:#fff;border-radius:50%;
+    animation:spin .7s linear infinite;display:inline-block;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media(max-width:780px){
+    .login-wrapper{grid-template-columns:1fr;max-width:460px}
+    .login-left{padding:32px 28px}
+    .login-left h1{font-size:20px}
+    .login-left p{margin-bottom:20px}
+    .feature-list{display:none}
+    .login-right{padding:32px 28px}
+  }
+</style>
+</head>
+<body>
+
+<div class="login-wrapper">
+  <div class="login-left">
+    <div class="login-logo">🕌</div>
+    <h1>Instrumen Penilaian<br>MAS Jabal Rahmah</h1>
+    <p>Sistem penilaian terintegrasi untuk guru dan admin madrasah. Data tersimpan aman di cloud.</p>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="icon">👨‍🏫</div>
+        <div class="txt"><b>Halaman Guru</b><span>Input nilai, analisis, remedial</span></div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">👨‍💼</div>
+        <div class="txt"><b>Halaman Admin</b><span>Pantau data semua guru</span></div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">☁️</div>
+        <div class="txt"><b>Sync Cloud</b><span>Backup otomatis ke Firebase</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <h2>Selamat Datang 👋</h2>
+    <div class="sub">Silakan pilih role dan masuk ke akun Anda.</div>
+
+    <div class="role-selector" id="roleSelector">
+      <button class="role-btn active" data-role="guru" type="button">
+        <span class="role-icon">👨‍🏫</span>
+        <span class="role-label">Guru</span>
+      </button>
+      <button class="role-btn" data-role="admin" type="button">
+        <span class="role-icon">👨‍💼</span>
+        <span class="role-label">Admin</span>
+      </button>
+    </div>
+
+    <div id="defaultNotice" class="default-notice" style="display:none">
+      <b>⚠️ Belum ada akun terdaftar.</b><br>
+      Hubungi admin untuk membuat akun terlebih dahulu, atau gunakan akun default:<br>
+      Admin: <code>admin</code> / <code>admin123</code><br>
+      Guru: <code>guru</code> / <code>guru123</code><br>
+      <span style="font-size:11px;opacity:.8">Ganti password setelah login pertama.</span>
+    </div>
+
+    <div class="msg" id="msgBox"></div>
+
+    <form id="loginForm" autocomplete="on">
+      <div class="input-group">
+        <label for="inpUsername">Username</label>
+        <input type="text" id="inpUsername" placeholder="Masukkan username" required autocomplete="username">
+      </div>
+
+      <div class="input-group">
+        <label for="inpPassword">Password</label>
+        <input type="password" id="inpPassword" placeholder="Masukkan password" required autocomplete="current-password">
+        <button type="button" class="toggle-pw" onclick="togglePw()">👁️</button>
+      </div>
+
+      <div class="remember-row">
+        <label><input type="checkbox" id="chkRemember" checked> Ingat saya</label>
+        <a href="#" onclick="showForgot();return false">Lupa password?</a>
+      </div>
+
+      <button type="submit" class="login-btn" id="btnLogin">
+        <span id="btnLabel">Masuk</span>
+      </button>
+    </form>
+
+    <div class="footer-info">
+      🔒 <span class="status">✅ Terhubung ke Firebase</span>
+      &nbsp;|&nbsp; MAS Jabal Rahmah
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   KONFIGURASI FIREBASE
+   ============================================================ */
+const FB_URL = 'https://instrumen-jabal-default-rtdb.asia-southeast1.firebasedatabase.app';
+const LS_SESSION = 'jabalSession_v1';
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $  = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+
+function showMsg(text, type){
+  const el = $('#msgBox');
+  el.className = 'msg show ' + (type || 'info');
+  el.textContent = text;
+  clearTimeout(el._tm);
+  if(type === 'ok') el._tm = setTimeout(()=>el.classList.remove('show'), 2500);
+}
+function hideMsg(){ $('#msgBox').classList.remove('show'); }
+
+function togglePw(){
+  const inp = $('#inpPassword');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+/* ============================================================
+   LUPA PASSWORD
+   ============================================================ */
+function showForgot(){
+  alert(
+    'Lupa password? Hubungi admin madrasah untuk reset password.\n\n' +
+    '📱 WhatsApp: 085212431707\n' +
+    '📧 Email: muhammadarrazi46@gmail.com\n\n' +
+    'Admin dapat mengubah password Anda langsung dari Firebase Console:\n' +
+    'Realtime Database → instrumen/users/{username} → password'
+  );
+}
+
+/* ============================================================
+   ROLE SELECTOR
+   ============================================================ */
+$$('.role-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    $$('.role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+function getSelectedRole(){
+  return $('.role-btn.active')?.dataset.role || 'guru';
+}
+
+/* ============================================================
+   RESOLVE NIP GURU — dengan fallback berlapis
+   Prioritas:
+   1) user.nip          (field eksplisit di Firebase)
+   2) parse teacherId   (format: guru_<nip>)
+   3) user.username     (fallback terakhir)
+   ============================================================ */
+function resolveNipGuru(user, username){
+  if (user && user.nip && String(user.nip).trim() !== ''){
+    return String(user.nip).trim();
+  }
+  if (user && user.teacherId){
+    const m = String(user.teacherId).match(/^guru_(.+)$/);
+    if (m && m[1]) return m[1];
+  }
+  return username || '';
+}
+
+/* ============================================================
+   RESOLVE TEACHER ID — konsisten dengan NIP
+   ============================================================ */
+function resolveTeacherId(user, nipGuru, username){
+  if (user && user.teacherId && String(user.teacherId).trim() !== ''){
+    return String(user.teacherId).trim();
+  }
+  if (nipGuru) return 'guru_' + nipGuru;
+  return 'guru_' + (username || Date.now());
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideMsg();
+
+  const username = $('#inpUsername').value.trim().toLowerCase();
+  const password = $('#inpPassword').value;
+  const role = getSelectedRole();
+  const remember = $('#chkRemember').checked;
+
+  if(!username || !password){
+    showMsg('⚠️ Username dan password wajib diisi', 'err');
+    return;
+  }
+
+  const btn = $('#btnLogin');
+  btn.disabled = true;
+  $('#btnLabel').innerHTML = '<span class="spinner"></span> Memverifikasi...';
+
+  try {
+    const url = FB_URL + '/instrumen/users/' + encodeURIComponent(username) + '.json';
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Gagal terhubung ke server');
+    const user = await res.json();
+
+    if(!user){
+      showMsg('✗ Username tidak ditemukan', 'err');
+      btn.disabled = false;
+      $('#btnLabel').textContent = 'Masuk';
+      return;
+    }
+
+    if(user.password !== password){
+      showMsg('✗ Password salah', 'err');
+      btn.disabled = false;
+      $('#btnLabel').textContent = 'Masuk';
+      return;
+    }
+
+    if(user.role !== role){
+      showMsg('✗ Akun ini bukan untuk role "' + role + '". Pilih role yang benar.', 'err');
+      btn.disabled = false;
+      $('#btnLabel').textContent = 'Masuk';
+      return;
+    }
+
+    // ============================================================
+    // SUKSES — bangun session lengkap dengan NIP
+    // ============================================================
+    const nipGuru = resolveNipGuru(user, username);
+    const teacherId = resolveTeacherId(user, nipGuru, username);
+
+    const session = {
+      username,
+      role: user.role,
+      nama: user.nama || username,
+      nipGuru: nipGuru,          // ← NIP untuk field readonly di guru.html
+      teacherId: teacherId,
+      loginAt: Date.now(),
+      remember
+    };
+
+    if(remember){
+      localStorage.setItem(LS_SESSION, JSON.stringify(session));
+    } else {
+      sessionStorage.setItem(LS_SESSION, JSON.stringify(session));
+    }
+
+    // Info jika NIP kosong (hanya untuk role guru)
+    if (user.role === 'guru' && !user.nip){
+      console.warn('[Login] User "' + username + '" tidak punya field "nip" di Firebase. ' +
+                   'NIP di session diambil dari fallback: ' + (nipGuru || '(kosong)'));
+    }
+
+    showMsg('✓ Login berhasil. Mengalihkan...', 'ok');
+
+    setTimeout(() => {
+      if(user.role === 'admin'){
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'guru.html';
+      }
+    }, 700);
+
+  } catch(err){
+    console.error(err);
+    showMsg('✗ ' + err.message, 'err');
+    btn.disabled = false;
+    $('#btnLabel').textContent = 'Masuk';
+  }
+});
+
+/* ============================================================
+   AUTO REDIRECT — jika sudah login
+   ============================================================ */
+(function checkExistingSession(){
+  try {
+    const sess = JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null');
+    if(sess && sess.role){
+      showMsg('✓ Anda sudah login sebagai ' + sess.nama + '. Mengalihkan...', 'ok');
+      setTimeout(() => {
+        window.location.href = sess.role === 'admin' ? 'admin.html' : 'guru.html';
+      }, 800);
+    }
+  } catch(e){}
+})();
+
+/* ============================================================
+   CEK APAKAH ADA AKUN DI FIREBASE
+   ============================================================ */
+(async function checkDefaultAccounts(){
+  try {
+    const res = await fetch(FB_URL + '/instrumen/users.json');
+    const users = await res.json();
+    if(!users || Object.keys(users).length === 0){
+      $('#defaultNotice').style.display = 'block';
+    }
+  } catch(e){
+    console.warn('Gagal cek akun default:', e);
+  }
+})();
+</script>
+</body>
+</html>

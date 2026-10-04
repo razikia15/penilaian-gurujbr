@@ -1,0 +1,39 @@
+@echo off
+color 0A
+title Auto Deploy ke Netlify
+
+echo ========================================================
+echo      SCRIPT UPDATE OTOMATIS (GITHUB -^> NETLIFY)
+echo ========================================================
+echo.
+echo Pilih file yang baru saja Anda edit:
+echo [1] index.html
+echo [2] guru.html
+echo [3] admin.html
+echo [4] Update keseluruhan / Lainnya
+echo.
+set /p pilihan="Masukkan angka pilihan (1/2/3/4): "
+
+if "%pilihan%"=="1" set pesan="Update index.html"
+if "%pilihan%"=="2" set pesan="Update guru.html"
+if "%pilihan%"=="3" set pesan="Update admin.html"
+if "%pilihan%"=="4" set pesan="Update project files"
+if not defined pesan set pesan="Update website"
+
+echo.
+echo [1/3] Menyiapkan file...
+git add .
+
+echo.
+echo [2/3] Menyimpan perubahan ke Git...
+git commit -m "%pesan%"
+
+echo.
+echo [3/3] Mengirim ke GitHub...
+git push origin main
+
+echo.
+echo ========================================================
+echo   PROSES SELESAI! Netlify sedang mengupdate website Anda.
+echo ========================================================
+pause
