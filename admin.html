@@ -43,7 +43,11 @@
   .tab-panel{display:none;animation:fade .2s}
   .tab-panel.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
   .card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:22px;border:1px solid var(--gray-200)}
+
+  .card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:18px;border:1px solid var(--gray-200)}
+ 742ca2b00f9789c5f1164deb2577be122d7feb5a
   .card-title{font-size:14.5px;font-weight:700;color:#1e3a8a;margin-bottom:16px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:2px solid #dbeafe}
   .card-title .badge{font-size:10.5px;font-weight:600;background:#dbeafe;color:#1e3a8a;padding:3px 9px;border-radius:20px;margin-left:auto}
   .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
@@ -66,11 +70,17 @@
   .cell-rank{background:#fef3c7;font-weight:800;color:#92400e;font-size:13px}
   .row-avg td{background:#dbeafe!important;font-weight:700;color:#1e3a8a}
   tfoot td{background:#dbeafe;font-weight:700;color:#1e3a8a;position:sticky;bottom:0;border-top:2px solid #1e3a8a}
+<<<<<<< HEAD
   .badge-tuntas{background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
   .badge-belum{background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
   .badge-info{background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
   .badge-cap{background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
   .badge-mapel{background:#ede9fe;color:#5b21b6;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+=======
+  .badge-tuntas{background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+  .badge-belum{background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+  .badge-info{background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   .stat{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid var(--gray-200);display:flex;flex-direction:column;gap:3px}
   .stat .lbl{font-size:11px;color:var(--gray-600);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
   .stat .val{font-size:22px;font-weight:800;color:#1e3a8a}
@@ -125,6 +135,7 @@
   .subpanel{display:none}
   .subpanel.active{display:block}
 
+<<<<<<< HEAD
   /* ====== Chart Detail Box ====== */
   .chart-detail-box{background:#fafbfc;border:1px solid var(--gray-200);border-radius:10px;padding:14px;margin-top:16px}
   .chart-detail-box .chart-detail-title{font-size:12.5px;font-weight:700;color:#1e3a8a;margin-bottom:10px;display:flex;align-items:center;gap:6px}
@@ -210,6 +221,74 @@
     .rapor-card-body{padding:16px}.rapor-card-header{padding:16px}
   }
   @media print{header,nav.tabs,.toolbar,.header-actions,.no-print{display:none!important}.tab-panel{display:block!important;page-break-after:always}.card{box-shadow:none;border:1px solid #ccc}body{background:#fff}}
+=======
+  .chart-detail-box{
+    background:#fafbfc;
+    border:1px solid var(--gray-200);
+    border-radius:10px;
+    padding:14px;
+    margin-top:16px;
+  }
+  .chart-detail-box .chart-detail-title{
+    font-size:12.5px;
+    font-weight:700;
+    color:#1e3a8a;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .side-layout {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    margin-bottom: 26px;
+  }
+  .side-layout .tbl-wrap {
+    flex: 1;
+    max-height: 420px;
+    margin-bottom: 0;
+  }
+  .side-layout .chart-detail-box {
+    flex: 0 0 350px;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 420px;
+    padding: 14px;
+  }
+  .side-layout .chart-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+  }
+
+  @media (max-width: 1024px) {
+    .side-layout {
+      flex-direction: column;
+    }
+    .side-layout .chart-detail-box {
+      flex: 1;
+      width: 100%;
+      height: 280px;
+    }
+  }
+
+  @media(max-width:768px){
+    header{padding:12px 14px}
+    header h1{font-size:14px}
+    .header-actions{width:100%;margin-left:0}
+    nav.tabs{top:auto;position:relative}
+    main{padding:14px}.card{padding:14px}
+  }
+  @media print{
+    header,nav.tabs,.toolbar,.header-actions,.no-print{display:none!important}
+    .tab-panel{display:block!important;page-break-after:always}
+    .card{box-shadow:none;border:1px solid #ccc}
+    body{background:#fff}
+  }
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 </style>
 </head>
 <body>
@@ -237,13 +316,19 @@
   <button data-tab="guru">👥 Data Guru</button>
   <button data-tab="detail">🔍 Detail Guru</button>
   <button data-tab="rekap">📈 Rekap &amp; Analisis</button>
+<<<<<<< HEAD
   <button data-tab="rapor">📋 Nilai Rapor</button>
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   <button data-tab="akun">🔑 Kelola Akun</button>
 </nav>
 
 <main>
 
+<<<<<<< HEAD
 <!-- ============ TAB: DASHBOARD ============ -->
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 <section class="tab-panel active" id="tab-dashboard">
   <div id="dashNotConfigured" style="display:none">
     <div class="empty-state">
@@ -255,6 +340,7 @@
   </div>
 
   <div id="dashContent" style="display:none">
+<<<<<<< HEAD
     <div class="grid-4" id="dashStats" style="margin-bottom:22px"></div>
 
     <div class="dash-chart-grid">
@@ -271,10 +357,30 @@
     </div>
 
     <div class="card" style="margin-top:4px">
+=======
+    <div class="grid-4" id="dashStats"></div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="card-title">📊 Statistik Global</div>
+      <div class="chart-grid">
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:#1e3a8a;margin-bottom:8px;text-align:center">Jumlah Siswa per Kelas</div>
+          <div class="chart-box" style="height:240px"><canvas id="chartSiswaKelas"></canvas></div>
+        </div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:#1e3a8a;margin-bottom:8px;text-align:center">Kontribusi Guru</div>
+          <div class="chart-box" style="height:240px"><canvas id="chartKontribusi"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
       <div class="card-title">🕒 Aktivitas Terbaru</div>
       <div class="tbl-wrap">
         <table id="tblAktivitas">
           <thead>
+<<<<<<< HEAD
             <tr>
               <th>No</th>
               <th>Guru</th>
@@ -284,6 +390,9 @@
               <th>Jumlah Siswa</th>
               <th>Aksi</th>
             </tr>
+=======
+            <tr><th>No</th><th>Guru</th><th>Terakhir Update</th><th>Kelas</th><th>Jumlah Siswa</th><th>Aksi</th></tr>
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
           </thead>
           <tbody></tbody>
         </table>
@@ -292,7 +401,10 @@
   </div>
 </section>
 
+<<<<<<< HEAD
 <!-- ============ TAB: GURU ============ -->
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 <section class="tab-panel" id="tab-guru">
   <div class="toolbar no-print">
     <label>🔍 Cari:</label>
@@ -310,7 +422,10 @@
   <div class="grid-3" id="guruList"></div>
 </section>
 
+<<<<<<< HEAD
 <!-- ============ TAB: DETAIL ============ -->
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 <section class="tab-panel" id="tab-detail">
   <div id="detailEmpty" class="empty-state">
     <div class="icon">👆</div>
@@ -329,23 +444,48 @@
 
     <div class="subtabs no-print" id="detailSubtabs">
       <button class="active" data-sub="sumatif">📝 Sumatif</button>
+<<<<<<< HEAD
       <button data-sub="uh">📊 Analisis UH &amp; Remedial</button>
+=======
+      <button data-sub="uh">📊 Analisis UH</button>
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
       <button data-sub="uts">📘 UTS</button>
       <button data-sub="uas">📗 UAS</button>
       <button data-sub="akhir">🏆 Nilai Akhir</button>
     </div>
 
     <div class="card">
+<<<<<<< HEAD
       <div class="subpanel active" id="sub-sumatif"><div id="detailSumatif"></div></div>
       <div class="subpanel" id="sub-uh"><div id="detailUH"></div></div>
       <div class="subpanel" id="sub-uts"><div id="detailUTS"></div></div>
       <div class="subpanel" id="sub-uas"><div id="detailUAS"></div></div>
       <div class="subpanel" id="sub-akhir"><div id="detailAkhir"></div></div>
+=======
+      <div class="subpanel active" id="sub-sumatif">
+        <div id="detailSumatif"></div>
+      </div>
+      <div class="subpanel" id="sub-uh">
+        <div id="detailUH"></div>
+      </div>
+      <div class="subpanel" id="sub-uts">
+        <div id="detailUTS"></div>
+      </div>
+      <div class="subpanel" id="sub-uas">
+        <div id="detailUAS"></div>
+      </div>
+      <div class="subpanel" id="sub-akhir">
+        <div id="detailAkhir"></div>
+      </div>
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     </div>
   </div>
 </section>
 
+<<<<<<< HEAD
 <!-- ============ TAB: REKAP ============ -->
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 <section class="tab-panel" id="tab-rekap">
   <div id="rekapNotConfigured" class="empty-state">
     <div class="icon">📈</div>
@@ -355,8 +495,13 @@
 
   <div id="rekapContent" style="display:none">
     <div class="card">
+<<<<<<< HEAD
       <div class="card-title">📊 Perbandingan Nilai Akhir antar Guru <span class="badge">Top 12</span></div>
       <div class="chart-box" style="height:460px"><canvas id="chartCompare"></canvas></div>
+=======
+      <div class="card-title">📊 Perbandingan Nilai Akhir antar Guru</div>
+      <div class="chart-box" style="height:340px"><canvas id="chartCompare"></canvas></div>
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     </div>
 
     <div class="card">
@@ -369,6 +514,7 @@
       <div class="tbl-wrap">
         <table id="tblRekap">
           <thead>
+<<<<<<< HEAD
             <tr>
               <th>No</th>
               <th>Guru</th>
@@ -380,6 +526,10 @@
               <th>Terendah</th>
               <th>% Tuntas</th>
               <th>Aksi</th>
+=======
+            <tr><th>No</th><th>Guru</th><th>Kelas</th><th>Jumlah Siswa</th>
+              <th>Rata² Nilai Akhir</th><th>Tertinggi</th><th>Terendah</th><th>% Tuntas</th><th>Aksi</th>
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
             </tr>
           </thead>
           <tbody></tbody>
@@ -389,6 +539,7 @@
   </div>
 </section>
 
+<<<<<<< HEAD
 <!-- ============ TAB: RAPOR ============ -->
 <section class="tab-panel" id="tab-rapor">
   <div id="raporNotConfigured" class="empty-state">
@@ -457,6 +608,8 @@
 </section>
 
 <!-- ============ TAB: KELOLA AKUN ============ -->
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 <section class="tab-panel" id="tab-akun">
   <div class="info" style="background:#eff6ff;border-left-color:#3b82f6;color:#1e3a8a">
     <b>🔑 Kelola Akun Guru</b> — Tambah, edit, atau hapus akun guru yang bisa login ke sistem.
@@ -571,7 +724,13 @@
 
 <div class="modal-overlay" id="pinModal">
   <div class="modal" style="max-width:400px">
+<<<<<<< HEAD
     <div class="modal-header"><h3>🔐 Masukkan PIN Admin</h3></div>
+=======
+    <div class="modal-header">
+      <h3>🔐 Masukkan PIN Admin</h3>
+    </div>
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     <div class="modal-body">
       <input type="password" id="pinInput" placeholder="PIN Admin" autofocus>
       <div class="hint">Masukkan PIN untuk melanjutkan.</div>
@@ -595,7 +754,15 @@ const DEFAULT_FB_URL = 'https://instrumen-jabal-default-rtdb.asia-southeast1.fir
 
 (function checkAdminSession(){
   try {
+<<<<<<< HEAD
     const sess = JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null');
+=======
+    const sess = JSON.parse(
+      localStorage.getItem(LS_SESSION) ||
+      sessionStorage.getItem(LS_SESSION) ||
+      'null'
+    );
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     if(!sess || sess.role !== 'admin'){
       document.body.style.display = 'none';
       setTimeout(() => {
@@ -625,7 +792,10 @@ const N_TUGAS = 6;
 let cfg = loadCfg();
 let ALL_TEACHERS = {};
 let ALL_RAW = {};
+<<<<<<< HEAD
 let RAPOR_CLASS = 'VII';
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 
 function dedupeTeachers(raw){
   const groups = new Map();
@@ -670,6 +840,7 @@ let CURRENT_TEACHER_ID = null;
 let CURRENT_CLASS = 'XII';
 const charts = {};
 
+<<<<<<< HEAD
 const zeroLabelPlugin = {
   id: 'zeroLabel',
   afterDatasetsDraw(chart) {
@@ -692,6 +863,8 @@ const zeroLabelPlugin = {
   }
 };
 
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 function drawDistChartAdmin(canvasId, values, KKM, label){
   const ctx = document.getElementById(canvasId);
   if(!ctx) return;
@@ -712,6 +885,7 @@ function drawDistChartAdmin(canvasId, values, KKM, label){
   charts[canvasId] = new Chart(ctx, {
     type:'bar',
     data:{ labels: intervals, datasets:[{
+<<<<<<< HEAD
       label: label || 'Frekuensi', data: freq, backgroundColor: colors, borderRadius: 6, borderWidth: 0
     }]},
     options:{ responsive: true, maintainAspectRatio: false,
@@ -719,6 +893,26 @@ function drawDistChartAdmin(canvasId, values, KKM, label){
       scales:{ y:{ beginAtZero:true, ticks:{ stepSize:1, precision:0 }, grid:{ color:'#f3f4f6' } },
         x:{ grid:{ display:false }, ticks:{ font:{ size:10 } } } } },
     plugins: [zeroLabelPlugin]
+=======
+      label: label || 'Frekuensi',
+      data: freq,
+      backgroundColor: colors,
+      borderRadius: 6,
+      borderWidth: 0
+    }]},
+    options:{
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins:{
+        legend:{ display:false },
+        tooltip:{ callbacks:{ label: c => ` ${c.parsed.y} siswa` } }
+      },
+      scales:{
+        y:{ beginAtZero:true, ticks:{ stepSize:1, precision:0 }, grid:{ color:'#f3f4f6' } },
+        x:{ grid:{ display:false }, ticks:{ font:{ size:10 } } }
+      }
+    }
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   });
 }
 
@@ -728,10 +922,30 @@ function drawTuntasChartAdmin(canvasId, tuntas, belum){
   if(charts[canvasId]) charts[canvasId].destroy();
   charts[canvasId] = new Chart(ctx, {
     type:'doughnut',
+<<<<<<< HEAD
     data:{ labels:['Tuntas','Belum Tuntas'],
       datasets:[{ data:[tuntas, belum], backgroundColor:['#1aa04f','#ef4444'], borderWidth:3, borderColor:'#fff' }] },
     options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
       plugins:{ legend:{ position:'bottom', labels:{ padding:16, font:{ size:12, weight:'600' } } } } }
+=======
+    data:{
+      labels:['Tuntas','Belum Tuntas'],
+      datasets:[{
+        data:[tuntas, belum],
+        backgroundColor:['#1aa04f','#ef4444'],
+        borderWidth:3,
+        borderColor:'#fff'
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      cutout:'62%',
+      plugins:{
+        legend:{ position:'bottom', labels:{ padding:16, font:{ size:12, weight:'600' } } }
+      }
+    }
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   });
 }
 
@@ -746,7 +960,13 @@ function loadCfg(){
   }catch(e){}
   return { fbUrl: DEFAULT_FB_URL, path: 'instrumen/teachers', pin: '', unlocked: true };
 }
+<<<<<<< HEAD
 function saveCfg(){ localStorage.setItem(LS_CFG, JSON.stringify(cfg)); }
+=======
+function saveCfg(){
+  localStorage.setItem(LS_CFG, JSON.stringify(cfg));
+}
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 
 const $  = (s,el=document)=>el.querySelector(s);
 const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
@@ -776,6 +996,10 @@ function timeAgo(ts){
   return d.toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) + ' (' + ago + ')';
 }
 
+<<<<<<< HEAD
+=======
+/* Helper: hitung siswa UNIK per guru (dedupe by nama) */
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 function uniqueStudentNames(classes){
   const names = new Set();
   Object.values(classes || {}).forEach(c => {
@@ -787,6 +1011,7 @@ function uniqueStudentNames(classes){
   return names;
 }
 
+<<<<<<< HEAD
 function getMapelListFromTeacher(teacher){
   const mapelSet = new Set();
   const classes = teacher?.master?.classes || {};
@@ -807,6 +1032,8 @@ function applyRemedialRule(nilaiAwal, R, KKM){
   return Math.max(num(nilaiAwal), r1, r2);
 }
 
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 $$('nav.tabs button').forEach(btn=>{
   btn.addEventListener('click',()=>{
     $$('nav.tabs button').forEach(b=>b.classList.remove('active'));
@@ -817,7 +1044,10 @@ $$('nav.tabs button').forEach(btn=>{
     if(t === 'dashboard') renderDashboard();
     if(t === 'guru') renderGuruList();
     if(t === 'rekap') renderRekap();
+<<<<<<< HEAD
     if(t === 'rapor') renderRapor();
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     if(t === 'akun') reloadAccounts();
   });
 });
@@ -864,8 +1094,11 @@ async function reloadAll(){
     $('#dashContent').style.display = 'none';
     $('#rekapNotConfigured').style.display = 'block';
     $('#rekapContent').style.display = 'none';
+<<<<<<< HEAD
     $('#raporNotConfigured').style.display = 'block';
     $('#raporContent').style.display = 'none';
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     return;
   }
   toast('⏳ Memuat data dari Firebase...');
@@ -878,12 +1111,21 @@ async function reloadAll(){
     ALL_TEACHERS = dedupeTeachers(ALL_RAW);
     const rawCount = Object.keys(ALL_RAW).length;
     const cleanCount = Object.keys(ALL_TEACHERS).length;
+<<<<<<< HEAD
     const dupeInfo = (rawCount > cleanCount) ? ' (' + (rawCount - cleanCount) + ' duplikat digabung)' : '';
+=======
+    const dupeInfo = (rawCount > cleanCount)
+      ? ' (' + (rawCount - cleanCount) + ' duplikat digabung)'
+      : '';
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     toast('✓ ' + cleanCount + ' guru dimuat' + dupeInfo, 'ok');
     renderDashboard();
     renderGuruList();
     renderRekap();
+<<<<<<< HEAD
     renderRapor();
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     if($('#tab-akun').classList.contains('active')) renderAccounts();
   } catch(err){
     console.error(err);
@@ -900,7 +1142,11 @@ async function reloadAll(){
 }
 
 /* ============================================================
+<<<<<<< HEAD
    DASHBOARD
+=======
+   DASHBOARD — dengan DEDUPE siswa unik
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
    ============================================================ */
 function renderDashboard(){
   if(!cfg.fbUrl){
@@ -912,9 +1158,18 @@ function renderDashboard(){
   $('#dashContent').style.display = 'block';
 
   const teacherIds = Object.keys(ALL_TEACHERS);
+<<<<<<< HEAD
   const siswaPerKelasSet = {};
   CLASSES.forEach(c => siswaPerKelasSet[c] = new Set());
   const uniqueSiswaGlobal = new Map();
+=======
+
+  // === DEDUPE: Siswa SAMA di tiap kelas — hitung UNIK per nama ===
+  // 2 guru ajar kelas VII dengan siswa yang sama → tetap 11, bukan 22.
+  const siswaPerKelasSet = {};
+  CLASSES.forEach(c => siswaPerKelasSet[c] = new Set());
+  const uniqueSiswaGlobal = new Map(); // key: nama_lc, value: nama_asli
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 
   teacherIds.forEach(tid => {
     const t = ALL_TEACHERS[tid];
@@ -939,8 +1194,14 @@ function renderDashboard(){
     if(perKelas[c] > 0) kelasAktifSet.add(c);
   });
 
+<<<<<<< HEAD
   const totalSiswa = uniqueSiswaGlobal.size;
   const totalKelas = kelasAktifSet.size;
+=======
+  const totalSiswa = uniqueSiswaGlobal.size;   // unik global (dedupe by name)
+  const totalKelas = kelasAktifSet.size;        // kelas unik yang aktif
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   const rawCount = Object.keys(ALL_RAW).length;
   const cleanCount = teacherIds.length;
   const dupeCount = Math.max(0, rawCount - cleanCount);
@@ -959,6 +1220,7 @@ function renderDashboard(){
   charts.chartSiswaKelas = new Chart($('#chartSiswaKelas'), {
     type:'bar',
     data:{ labels: CLASSES, datasets:[{
+<<<<<<< HEAD
       label:'Jumlah Siswa', 
       data: CLASSES.map(c => perKelas[c]),
       backgroundColor: CLASSES.map(c => perKelas[c] > 0 ? '#3b82f6' : '#e2e8f0'),
@@ -973,6 +1235,13 @@ function renderDashboard(){
       } 
     },
     plugins: [zeroLabelPlugin]
+=======
+      label:'Jumlah Siswa', data: CLASSES.map(c => perKelas[c]),
+      backgroundColor:'#3b82f6', borderRadius:6
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ y:{ beginAtZero:true, ticks:{stepSize:1,precision:0}, grid:{color:'#f3f4f6'} }, x:{ grid:{display:false} } } }
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   });
 
   if(charts.chartKontribusi) charts.chartKontribusi.destroy();
@@ -985,6 +1254,7 @@ function renderDashboard(){
         data: topTeachers.map(tid => {
           const t = ALL_TEACHERS[tid];
           if(!t || !t.master || !t.master.classes) return 0;
+<<<<<<< HEAD
           return uniqueStudentNames(t.master.classes).size;
         }),
         backgroundColor:['#1e3a8a','#3b82f6','#60a5fa','#93c5fd','#bfdbfe','#7c3aed','#a78bfa','#c4b5fd'],
@@ -995,12 +1265,26 @@ function renderDashboard(){
     options:{ responsive:true, maintainAspectRatio:false, cutout:'58%',
       layout: { padding: 12 },
       plugins:{ legend:{ position:'bottom', labels:{ padding:12, boxWidth:12, font:{size:11, weight:'600'}, color:'#475569' } } } }
+=======
+          // Hitung siswa UNIK yang guru ini handle (dedupe by name)
+          return uniqueStudentNames(t.master.classes).size;
+        }),
+        backgroundColor:['#1e3a8a','#3b82f6','#60a5fa','#93c5fd','#bfdbfe','#7c3aed','#a78bfa','#c4b5fd']
+      }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'60%',
+      plugins:{ legend:{ position:'bottom', labels:{ padding:10, font:{size:10} } } } }
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   });
 
   const tb = $('#tblAktivitas tbody'); tb.innerHTML='';
   const sorted = teacherIds.sort((a,b) => (ALL_TEACHERS[b]?.lastUpdate || 0) - (ALL_TEACHERS[a]?.lastUpdate || 0));
   if(!sorted.length){
+<<<<<<< HEAD
     tb.innerHTML = `<tr><td colspan="7" style="padding:24px;color:var(--gray-400)">Belum ada guru yang sync.</td></tr>`;
+=======
+    tb.innerHTML = `<tr><td colspan="6" style="padding:24px;color:var(--gray-400)">Belum ada guru yang sync.</td></tr>`;
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   } else {
     sorted.forEach((tid, i) => {
       const t = ALL_TEACHERS[tid];
@@ -1008,16 +1292,29 @@ function renderDashboard(){
       if(t.master && t.master.classes){
         Object.keys(t.master.classes).forEach(k => {
           const c = t.master.classes[k];
+<<<<<<< HEAD
           if(c && Array.isArray(c.siswa) && c.siswa.length) kelasAktif.push(k);
         });
       }
       const jmlSiswa = uniqueStudentNames(t.master?.classes).size;
       const mapelList = getMapelListFromTeacher(t);
+=======
+          if(c && Array.isArray(c.siswa) && c.siswa.length){
+            kelasAktif.push(k);
+          }
+        });
+      }
+      // Siswa UNIK per guru (dedupe nama)
+      const jmlSiswa = uniqueStudentNames(t.master?.classes).size;
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${i+1}</td>
         <td style="text-align:left"><b>${esc(t.nama || tid)}</b></td>
+<<<<<<< HEAD
         <td>${mapelList.length ? mapelList.map(m => `<span class="badge-mapel">${esc(m)}</span>`).join(' ') : '<span style="color:#9ca3af">—</span>'}</td>
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
         <td>${timeAgo(t.lastUpdate)}</td>
         <td>${kelasAktif.length ? kelasAktif.map(k => `<span class="badge-info">${k}</span>`).join(' ') : '—'}</td>
         <td>${jmlSiswa}</td>
@@ -1028,7 +1325,11 @@ function renderDashboard(){
 }
 
 /* ============================================================
+<<<<<<< HEAD
    LIST GURU
+=======
+   LIST GURU — dengan DEDUPE siswa per guru
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
    ============================================================ */
 function renderGuruList(){
   const q = ($('#searchGuru').value || '').toLowerCase().trim();
@@ -1066,12 +1367,23 @@ function renderGuruList(){
     if(t.master && t.master.classes){
       Object.keys(t.master.classes).forEach(k => {
         const c = t.master.classes[k];
+<<<<<<< HEAD
         if(c && Array.isArray(c.siswa) && c.siswa.length) kelasAktif.push(k);
       });
     }
     const jmlSiswa = uniqueStudentNames(t.master?.classes).size;
     const initial = (t.nama || 'G').trim().charAt(0).toUpperCase();
     const mapelList = getMapelListFromTeacher(t);
+=======
+        if(c && Array.isArray(c.siswa) && c.siswa.length){
+          kelasAktif.push(k);
+        }
+      });
+    }
+    // Siswa UNIK per guru (dedupe by nama)
+    const jmlSiswa = uniqueStudentNames(t.master?.classes).size;
+    const initial = (t.nama || 'G').trim().charAt(0).toUpperCase();
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     const card = document.createElement('div');
     card.className = 'teacher-card';
     card.innerHTML = `
@@ -1081,7 +1393,10 @@ function renderGuruList(){
         <p>NIP: ${esc(t.nip || '—')}</p>
         <div class="teacher-meta">🕒 ${timeAgo(t.lastUpdate)}</div>
         <div class="teacher-classes">
+<<<<<<< HEAD
           ${mapelList.length ? mapelList.map(m => `<span style="background:#ede9fe;color:#5b21b6">${esc(m)}</span>`).join('') : ''}
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
           ${kelasAktif.length ? kelasAktif.map(k => `<span>Kelas ${k}</span>`).join('') : '<span style="background:#fee2e2;color:#991b1b">Belum ada siswa</span>'}
           <span>${jmlSiswa} siswa</span>
         </div>
@@ -1100,20 +1415,52 @@ $('#filterKelasGuru')?.addEventListener('change', renderGuruList);
    DETAIL GURU
    ============================================================ */
 function openTeacherFromRekap(tid, kelas){
+<<<<<<< HEAD
   if(!ALL_TEACHERS[tid]){
     toast('⚠️ Guru "' + tid + '" tidak ditemukan', 'err');
     return;
   }
   try { openTeacher(tid); }
   catch(err){ toast('✗ Gagal membuka detail: ' + err.message, 'err'); return; }
+=======
+  console.log('[openTeacherFromRekap]', tid, kelas);
+  if(!ALL_TEACHERS[tid]){
+    toast('⚠️ Guru "' + tid + '" tidak ditemukan di data Firebase', 'err');
+    console.error('Available keys:', Object.keys(ALL_TEACHERS));
+    return;
+  }
+  try {
+    openTeacher(tid);
+  } catch(err){
+    console.error('[openTeacher error]', err);
+    toast('✗ Gagal membuka detail: ' + err.message, 'err');
+    return;
+  }
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   if(kelas){
     setTimeout(() => {
       try {
         const pills = document.querySelectorAll('#detailClassPills button');
+<<<<<<< HEAD
         pills.forEach(b => {
           if(b.textContent.trim().startsWith('Kelas ' + kelas)) b.click();
         });
       } catch(err){ console.error(err); }
+=======
+        let found = false;
+        pills.forEach(b => {
+          if(b.textContent.trim().startsWith('Kelas ' + kelas)){
+            b.click();
+            found = true;
+          }
+        });
+        if(!found){
+          console.warn('[openTeacherFromRekap] Pills untuk kelas', kelas, 'tidak ditemukan');
+        }
+      } catch(err){
+        console.error('[switch kelas error]', err);
+      }
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     }, 150);
   }
 }
@@ -1248,9 +1595,12 @@ function hitungNilaiAkhir(siswa, cls){
   return { sikap, sumArr, rataSum, uts, uas, nilaiAkhir, tuntas: nilaiAkhir >= KKM };
 }
 
+<<<<<<< HEAD
 /* ============================================================
    ⭐ SUMATIF: side-layout 60% | 40%
    ============================================================ */
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 function renderSumatifReadOnly(cls){
   const el = $('#detailSumatif');
   const activeIdx = getActiveSumatifIdx(cls.config);
@@ -1262,6 +1612,7 @@ function renderSumatifReadOnly(cls){
   let html = '';
   activeIdx.forEach(si => {
     const S = cls.sumatif?.[si] || { materi:'', data:{} };
+<<<<<<< HEAD
     html += `<div style="margin-bottom:32px">
       <h4 style="font-size:14px;color:#1e3a8a;margin-bottom:12px;border-bottom:2px solid #dbeafe;padding-bottom:6px;display:flex;align-items:center;gap:8px">
         📝 Sumatif ${si} ${S.materi ? '— ' + esc(S.materi) : ''}
@@ -1273,6 +1624,20 @@ function renderSumatifReadOnly(cls){
             <th style="width:45px">No</th><th style="min-width:180px">Nama Siswa</th>
             <th>Sikap</th><th>UH</th><th>Total Tugas</th><th>Rata-Rata</th><th>Status</th>
           </tr></thead><tbody>`;
+=======
+    html += `<div style="margin-bottom:26px">
+      <h4 style="font-size:13.5px;color:#1e3a8a;margin-bottom:10px;border-bottom:2px solid #dbeafe;padding-bottom:5px">
+        📝 Sumatif ${si} ${S.materi ? '— ' + esc(S.materi) : ''}
+      </h4>
+      <div class="side-layout">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th style="width:45px">No</th><th style="min-width:180px">Nama Siswa</th>
+              <th>Sikap</th><th>UH</th><th>Total Tugas</th><th>Rata-Rata</th><th>Status</th>
+            </tr></thead>
+            <tbody>`;
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     let sumRata=0, sumSikap=0, sumUH=0, sumTugas=0, cnt=0, tuntas=0;
     const nilaiArr = [];
     (cls.siswa||[]).forEach((s,i) => {
@@ -1282,6 +1647,7 @@ function renderSumatifReadOnly(cls){
       if(h.rata > 0) nilaiArr.push(h.rata);
       const isT = h.rata >= KKM && h.rata > 0;
       if(isT) tuntas++;
+<<<<<<< HEAD
       const statusBadge = h.rata > 0
         ? (isT ? '<span class="badge-tuntas">Tuntas</span>' : '<span class="badge-belum">Belum Tuntas</span>')
         : '<span style="color:#cbd5e1">—</span>';
@@ -1301,6 +1667,37 @@ function renderSumatifReadOnly(cls){
       </div></div>`;
   });
   el.innerHTML = html;
+=======
+      html += `<tr>
+        <td>${i+1}</td><td>${esc(s.nama)}</td>
+        <td class="cell-calc">${fmt(h.sikap)}</td>
+        <td class="cell-calc">${fmt(h.uh)}</td>
+        <td class="cell-calc">${fmt(h.totalTugas)}</td>
+        <td class="cell-green">${fmt(h.rata)}</td>
+        <td><span class="${isT?'badge-tuntas':'badge-belum'}">${h.rata>0?(isT?'Tuntas':'Belum'):'-'}</span></td>
+      </tr>`;
+    });
+    html += `</tbody><tfoot><tr class="row-avg">
+          <td colspan="2">RATA-RATA</td>
+          <td>${fmt(sumSikap/cnt||0)}</td>
+          <td>${fmt(sumUH/cnt||0)}</td>
+          <td>${fmt(sumTugas/cnt||0)}</td>
+          <td>${fmt(sumRata/cnt||0)}</td>
+          <td>${cnt?fmt(tuntas/cnt*100,1)+'%':'-'}</td>
+        </tr></tfoot></table>
+        </div>
+        <div class="chart-detail-box">
+          <div class="chart-detail-title">📊 Distribusi Rata-Rata Sumatif ${si} (KKM ${KKM})</div>
+          <div class="chart-container">
+            <canvas id="chartSumatif-${si}"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   activeIdx.forEach(si => {
     const S = cls.sumatif?.[si] || { materi:'', data:{} };
     const values = [];
@@ -1313,10 +1710,13 @@ function renderSumatifReadOnly(cls){
   });
 }
 
+<<<<<<< HEAD
 /* ============================================================
    ANALISIS UH & REMEDIAL: side-layout 60% | 40%
    ⭐ Priority: Nilai UH MANUAL > Analisis UH (per soal)
    ============================================================ */
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 function renderUHReadOnly(cls){
   const el = $('#detailUH');
   const activeIdx = getActiveUHIdx(cls.config);
@@ -1330,6 +1730,7 @@ function renderUHReadOnly(cls){
     const U = cls.uh?.[ui] || { materi:'', data:{} };
     const cfg = getUHConfig(cls, ui);
     const max = getUHTotalMaks(cls, ui);
+<<<<<<< HEAD
     const remedialStore = cls.remedialUH?.[ui] || {};
     const manualStore = cls.uhManual?.[ui] || {};   // ⭐ ambil nilai UH Manual
 
@@ -1403,11 +1804,39 @@ function renderUHReadOnly(cls){
         <td style="color:#92400e;font-weight:600">${r2>0?fmt(r2):'—'}</td>
         <td class="cell-green">${nilaiAwal>0?fmt(nilaiAkhir):'—'}${rBadge}</td>
         <td>${statusBadge}</td>
+=======
+    html += `<div style="margin-bottom:26px">
+      <h4 style="font-size:13.5px;color:#1e3a8a;margin-bottom:10px;border-bottom:2px solid #dbeafe;padding-bottom:5px">
+        📊 UH ${ui} ${U.materi ? '— ' + esc(U.materi) : ''} <span style="font-size:11px;color:#64748b">(total maks ${max})</span>
+      </h4>
+      <div class="side-layout">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th style="width:45px">No</th><th style="min-width:180px">Nama Siswa</th>
+              <th>Jml Skor</th><th>Nilai</th><th>Ketuntasan</th>
+            </tr></thead>
+            <tbody>`;
+    let nilaiAll=[], tuntas=0, ikut=0, jmlAll=0;
+    (cls.siswa||[]).forEach((s,i) => {
+      const d = U.data?.[s.id] || [];
+      const jml = d.reduce((a,b)=>a+num(b),0);
+      const nilai = max > 0 ? jml/max*100 : 0;
+      const isT = nilai >= KKM && jml > 0;
+      if(d.some(x => x !== '' && x !== null && x !== undefined) || jml > 0){ ikut++; nilaiAll.push(nilai); jmlAll += jml; }
+      if(isT) tuntas++;
+      html += `<tr>
+        <td>${i+1}</td><td>${esc(s.nama)}</td>
+        <td class="cell-calc">${fmtInt(jml)}</td>
+        <td class="cell-green">${fmt(nilai)}</td>
+        <td><span class="${isT?'badge-tuntas':'badge-belum'}">${jml>0?(isT?'Tuntas':'Belum'):'-'}</span></td>
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
       </tr>`;
     });
     const rata = nilaiAll.length ? nilaiAll.reduce((a,b)=>a+b,0)/nilaiAll.length : 0;
     const tuntasPct = ikut ? (tuntas/ikut*100) : 0;
     html += `</tbody><tfoot><tr class="row-avg">
+<<<<<<< HEAD
         <td colspan="2">RATA-RATA</td><td>${fmt(jmlAll/cnt||0)}</td><td>${fmt(sumAwal/cnt||0)}</td>
         <td>${fmt(sumR1/cnt||0)}</td><td>${fmt(sumR2/cnt||0)}</td><td>${fmt(sumAkhir/cnt||0)}</td>
         <td>${fmt(tuntasPct,1)}%</td></tr></tfoot></table></div>
@@ -1423,10 +1852,33 @@ function renderUHReadOnly(cls){
     const max = getUHTotalMaks(cls, ui);
     const remedialStore = cls.remedialUH?.[ui] || {};
     const manualStore = cls.uhManual?.[ui] || {};
+=======
+          <td colspan="2">RATA-RATA</td>
+          <td>${fmt(jmlAll/ikut||0)}</td>
+          <td>${fmt(rata)}</td>
+          <td>${fmt(tuntasPct,1)}%</td>
+        </tr></tfoot></table>
+        </div>
+        <div class="chart-detail-box">
+          <div class="chart-detail-title">📊 Distribusi Nilai UH ${ui} (KKM ${KKM})</div>
+          <div class="chart-container">
+            <canvas id="chartUH-${ui}"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+
+  activeIdx.forEach(ui => {
+    const U = cls.uh?.[ui] || { materi:'', data:{} };
+    const max = getUHTotalMaks(cls, ui);
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     const values = [];
     (cls.siswa||[]).forEach(s => {
       const d = U.data?.[s.id] || [];
       const jml = d.reduce((a,b)=>a+num(b),0);
+<<<<<<< HEAD
       const analisisNilai = max > 0 ? jml/max*100 : 0;
       const manualVal = num(manualStore[s.id]);
 
@@ -1441,6 +1893,11 @@ function renderUHReadOnly(cls){
       }
     });
     drawDistChartAdmin('chartUH-' + ui, values, KKM, 'Nilai UH & Remedial');
+=======
+      if(jml > 0) values.push(max > 0 ? jml/max*100 : jml);
+    });
+    drawDistChartAdmin('chartUH-' + ui, values, KKM, 'Nilai UH');
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   });
 }
 
@@ -1454,6 +1911,10 @@ function renderUTSReadOnly(cls){
   const sorted = [...hasil].filter(x=>x.akhir>0).sort((a,b)=>b.akhir-a.akhir);
   const rankMap = new Map(); let lv=null, lr=0;
   sorted.forEach((x,i) => { const v=+x.akhir.toFixed(2); if(v!==lv){lr=i+1;lv=v;} rankMap.set(x.s.id,lr); });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   let html = `<div class="tbl-wrap"><table>
     <thead><tr>
       <th style="width:45px">No</th><th style="min-width:180px">Nama</th>
@@ -1464,6 +1925,7 @@ function renderUTSReadOnly(cls){
   hasil.forEach((h,i) => {
     const isT = h.akhir >= KKM && h.akhir>0;
     if(h.akhir>0){ cnt++; sum += h.akhir; nilaiArr.push(h.akhir); if(isT) tuntas++; }
+<<<<<<< HEAD
     const statusBadge = h.akhir > 0
       ? (isT ? '<span class="badge-tuntas">Tuntas</span>' : '<span class="badge-belum">Belum Tuntas</span>')
       : '<span style="color:#cbd5e1">—</span>';
@@ -1477,6 +1939,25 @@ function renderUTSReadOnly(cls){
     <td colspan="4">RATA-RATA</td><td>${fmt(sum/cnt||0)}</td>
     <td>${cnt?fmt(tuntas/cnt*100,1)+'%':'-'}</td><td></td></tr></tfoot></table></div>
   <div class="grid-2" style="margin-top:20px">
+=======
+    html += `<tr>
+      <td>${i+1}</td><td>${esc(h.s.nama)}</td>
+      <td>${fmt(num(h.d.awal))}</td>
+      <td>${fmt(num(h.d.perbaikan))}</td>
+      <td class="cell-green">${fmt(h.akhir)}</td>
+      <td><span class="${isT?'badge-tuntas':'badge-belum'}">${h.akhir>0?(isT?'Tuntas':'Belum'):'-'}</span></td>
+      <td class="cell-rank">${rankMap.get(h.s.id) ?? '-'}</td>
+    </tr>`;
+  });
+  html += `</tbody><tfoot><tr class="row-avg">
+    <td colspan="4">RATA-RATA</td>
+    <td>${fmt(sum/cnt||0)}</td>
+    <td>${cnt?fmt(tuntas/cnt*100,1)+'%':'-'}</td>
+    <td></td>
+  </tr></tfoot></table></div>
+
+  <div class="grid-2" style="margin-top:16px">
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     <div class="chart-detail-box">
       <div class="chart-detail-title">📊 Distribusi Nilai UTS (KKM ${KKM})</div>
       <div style="position:relative;height:260px"><canvas id="chartDetailUTS"></canvas></div>
@@ -1487,6 +1968,10 @@ function renderUTSReadOnly(cls){
     </div>
   </div>`;
   el.innerHTML = html;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   drawDistChartAdmin('chartDetailUTS', nilaiArr, KKM, 'Nilai UTS');
   drawTuntasChartAdmin('chartDetailUTSTuntas', tuntas, cnt - tuntas);
 }
@@ -1501,6 +1986,10 @@ function renderUASReadOnly(cls){
   const sorted = [...hasil].filter(x=>x.akhir>0).sort((a,b)=>b.akhir-a.akhir);
   const rankMap = new Map(); let lv=null, lr=0;
   sorted.forEach((x,i) => { const v=+x.akhir.toFixed(2); if(v!==lv){lr=i+1;lv=v;} rankMap.set(x.s.id,lr); });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   let html = `<div class="tbl-wrap"><table>
     <thead><tr>
       <th style="width:45px">No</th><th style="min-width:180px">Nama</th>
@@ -1511,6 +2000,7 @@ function renderUASReadOnly(cls){
   hasil.forEach((h,i) => {
     const isT = h.akhir >= KKM && h.akhir>0;
     if(h.akhir>0){ cnt++; sum += h.akhir; nilaiArr.push(h.akhir); if(isT) tuntas++; }
+<<<<<<< HEAD
     const statusBadge = h.akhir > 0
       ? (isT ? '<span class="badge-tuntas">Tuntas</span>' : '<span class="badge-belum">Belum Tuntas</span>')
       : '<span style="color:#cbd5e1">—</span>';
@@ -1524,6 +2014,25 @@ function renderUASReadOnly(cls){
     <td colspan="4">RATA-RATA</td><td>${fmt(sum/cnt||0)}</td>
     <td>${cnt?fmt(tuntas/cnt*100,1)+'%':'-'}</td><td></td></tr></tfoot></table></div>
   <div class="grid-2" style="margin-top:20px">
+=======
+    html += `<tr>
+      <td>${i+1}</td><td>${esc(h.s.nama)}</td>
+      <td>${fmt(num(h.d.awal))}</td>
+      <td>${fmt(num(h.d.perbaikan))}</td>
+      <td class="cell-green">${fmt(h.akhir)}</td>
+      <td><span class="${isT?'badge-tuntas':'badge-belum'}">${h.akhir>0?(isT?'Tuntas':'Belum'):'-'}</span></td>
+      <td class="cell-rank">${rankMap.get(h.s.id) ?? '-'}</td>
+    </tr>`;
+  });
+  html += `</tbody><tfoot><tr class="row-avg">
+    <td colspan="4">RATA-RATA</td>
+    <td>${fmt(sum/cnt||0)}</td>
+    <td>${cnt?fmt(tuntas/cnt*100,1)+'%':'-'}</td>
+    <td></td>
+  </tr></tfoot></table></div>
+
+  <div class="grid-2" style="margin-top:16px">
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     <div class="chart-detail-box">
       <div class="chart-detail-title">📊 Distribusi Nilai UAS (KKM ${KKM})</div>
       <div style="position:relative;height:260px"><canvas id="chartDetailUAS"></canvas></div>
@@ -1534,6 +2043,10 @@ function renderUASReadOnly(cls){
     </div>
   </div>`;
   el.innerHTML = html;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   drawDistChartAdmin('chartDetailUAS', nilaiArr, KKM, 'Nilai UAS');
   drawTuntasChartAdmin('chartDetailUASTuntas', tuntas, cnt - tuntas);
 }
@@ -1546,10 +2059,19 @@ function renderAkhirReadOnly(cls){
   const sorted = [...hasil].sort((a,b)=>b.nilaiAkhir-a.nilaiAkhir);
   const rankMap = new Map(); let lv=null, lr=0;
   sorted.forEach((h,i) => { const v=+h.nilaiAkhir.toFixed(2); if(v!==lv){lr=i+1;lv=v;} rankMap.set(h.s.id,lr); });
+<<<<<<< HEAD
   let html = `<div class="tbl-wrap"><table>
     <thead><tr>
       <th style="width:45px">No</th><th style="min-width:180px">Nama Siswa</th>
       <th>Sikap</th>${activeSum.map(i=>`<th>S${i}</th>`).join('')}
+=======
+
+  let html = `<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th style="width:45px">No</th><th style="min-width:180px">Nama Siswa</th>
+      <th>Sikap</th>
+      ${activeSum.map(i=>`<th>S${i}</th>`).join('')}
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
       <th>Rata² Sum</th><th>UTS</th><th>UAS</th><th>Nilai Akhir</th><th>Peringkat</th>
     </tr></thead><tbody>`;
   let sumAkhir=0, cnt=0, tuntas=0;
@@ -1558,6 +2080,7 @@ function renderAkhirReadOnly(cls){
     sumAkhir += h.nilaiAkhir; cnt++;
     if(h.nilaiAkhir > 0) nilaiArr.push(h.nilaiAkhir);
     if(h.tuntas) tuntas++;
+<<<<<<< HEAD
     html += `<tr><td>${i+1}</td><td>${esc(h.s.nama)}</td>
       <td class="cell-calc">${fmt(h.sikap)}</td>
       ${activeSum.map((si,j)=>`<td>${h.sumArr[j]!==undefined?fmt(h.sumArr[j]):'-'}</td>`).join('')}
@@ -1570,6 +2093,27 @@ function renderAkhirReadOnly(cls){
     <td></td><td></td><td></td><td>${fmt(sumAkhir/cnt||0)}</td>
     <td>${cnt?fmt(tuntas/cnt*100,1)+'%':'-'}</td></tr></tfoot></table></div>
   <div class="grid-2" style="margin-top:20px">
+=======
+    html += `<tr>
+      <td>${i+1}</td><td>${esc(h.s.nama)}</td>
+      <td class="cell-calc">${fmt(h.sikap)}</td>
+      ${activeSum.map((si,j)=>`<td>${h.sumArr[j]!==undefined?fmt(h.sumArr[j]):'-'}</td>`).join('')}
+      <td class="cell-green">${fmt(h.rataSum)}</td>
+      <td>${fmt(h.uts)}</td>
+      <td>${fmt(h.uas)}</td>
+      <td class="cell-green" style="font-size:14px">${fmt(h.nilaiAkhir)}</td>
+      <td class="cell-rank"><b>${rankMap.get(h.s.id)}</b></td>
+    </tr>`;
+  });
+  html += `</tbody><tfoot><tr class="row-avg">
+    <td colspan="${3+activeSum.length}">RATA-RATA</td>
+    <td></td><td></td><td></td>
+    <td>${fmt(sumAkhir/cnt||0)}</td>
+    <td>${cnt?fmt(tuntas/cnt*100,1)+'%':'-'}</td>
+  </tr></tfoot></table></div>
+
+  <div class="grid-2" style="margin-top:16px">
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     <div class="chart-detail-box">
       <div class="chart-detail-title">📊 Distribusi Nilai Akhir (KKM ${KKM})</div>
       <div style="position:relative;height:280px"><canvas id="chartDetailAkhir"></canvas></div>
@@ -1580,12 +2124,20 @@ function renderAkhirReadOnly(cls){
     </div>
   </div>`;
   el.innerHTML = html;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   drawDistChartAdmin('chartDetailAkhir', nilaiArr, KKM, 'Nilai Akhir');
   drawTuntasChartAdmin('chartDetailTuntas', tuntas, cnt - tuntas);
 }
 
 /* ============================================================
+<<<<<<< HEAD
    REKAP
+=======
+   REKAP — TIDAK didedupe (per guru × kelas, biar tahu siapa ajar apa)
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
    ============================================================ */
 function renderRekap(){
   if(!cfg.fbUrl){
@@ -1621,14 +2173,21 @@ function renderRekap(){
 
   const tb = $('#tblRekap tbody'); tb.innerHTML='';
   if(!rows.length){
+<<<<<<< HEAD
     tb.innerHTML = `<tr><td colspan="10" style="padding:24px;color:var(--gray-400)">Belum ada data.</td></tr>`;
+=======
+    tb.innerHTML = `<tr><td colspan="9" style="padding:24px;color:var(--gray-400)">Belum ada data.</td></tr>`;
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   } else {
     rows.sort((a,b) => b.avg - a.avg).forEach((r,i) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${i+1}</td>
         <td style="text-align:left">${esc(r.teacherName)}</td>
+<<<<<<< HEAD
         <td><span class="badge-mapel">${esc(r.mapel)}</span></td>
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
         <td><span class="badge-info">${r.kelas}</span></td>
         <td>${r.jmlSiswa}</td>
         <td class="cell-green">${fmt(r.avg)}</td>
@@ -1641,6 +2200,7 @@ function renderRekap(){
   }
 
   if(charts.chartCompare) charts.chartCompare.destroy();
+<<<<<<< HEAD
   const top = rows.sort((a,b)=>b.avg-a.avg).slice(0,12);
   charts.chartCompare = new Chart($('#chartCompare'), {
     type:'bar',
@@ -1686,6 +2246,22 @@ function renderRekap(){
           } 
         } 
       } }
+=======
+  const top = rows.sort((a,b)=>b.avg-a.avg).slice(0,15);
+  charts.chartCompare = new Chart($('#chartCompare'), {
+    type:'bar',
+    data:{ labels: top.map(r => (r.teacherName.slice(0,18) + ' - ' + r.kelas)),
+      datasets:[{
+        label:'Rata-rata Nilai Akhir',
+        data: top.map(r => +r.avg.toFixed(2)),
+        backgroundColor: top.map(r => r.avg >= 75 ? '#86efac' : r.avg >= 60 ? '#fde68a' : '#fecaca'),
+        borderRadius:6
+      }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:c=>` ${fmt(c.parsed.x)}` } } },
+      scales:{ x:{ beginAtZero:true, max:100, grid:{color:'#f3f4f6'} }, y:{ grid:{display:false}, ticks:{font:{size:10}} } } }
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   });
 
   if(charts.chartPerKelas) charts.chartPerKelas.destroy();
@@ -1699,10 +2275,17 @@ function renderRekap(){
   charts.chartPerKelas = new Chart($('#chartPerKelas'), {
     type:'bar',
     data:{ labels: CLASSES,
+<<<<<<< HEAD
       datasets:[{ label:'Rata-rata', 
         data: CLASSES.map(c => perKelas[c].cnt ? perKelas[c].sum/perKelas[c].cnt : 0),
         backgroundColor:'#3b82f6', borderRadius:6,
         maxBarThickness: 56
+=======
+      datasets:[{
+        label:'Rata-rata', 
+        data: CLASSES.map(c => perKelas[c].cnt ? perKelas[c].sum/perKelas[c].cnt : 0),
+        backgroundColor:'#3b82f6', borderRadius:6
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
       }]
     },
     options:{ responsive:true, maintainAspectRatio:false,
@@ -1711,6 +2294,7 @@ function renderRekap(){
   });
 }
 
+<<<<<<< HEAD
 /* ============================================================
    TAB RAPOR
    ============================================================ */
@@ -1972,12 +2556,18 @@ function renderRaporTable(){
   });
 }
 
+=======
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 function exportAllExcel(){
   if(!Object.keys(ALL_TEACHERS).length){
     toast('Belum ada data untuk diekspor', 'err'); return;
   }
   const wb = XLSX.utils.book_new();
+<<<<<<< HEAD
   const ringkasan = [['No','Guru','NIP','Mapel','Kelas','Jumlah Siswa','Rata² Nilai Akhir','Tertinggi','Terendah','% Tuntas','Terakhir Update']];
+=======
+  const ringkasan = [['No','Guru','NIP','Kelas','Mapel','Jumlah Siswa','Rata² Nilai Akhir','Tertinggi','Terendah','% Tuntas','Terakhir Update']];
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   let no = 1;
 
   Object.keys(ALL_TEACHERS).forEach(tid => {
@@ -1994,13 +2584,23 @@ function exportAllExcel(){
       const min = nilaiArr.length ? Math.min(...nilaiArr) : 0;
       const tuntas = hasil.filter(h => h.tuntas).length;
       ringkasan.push([
+<<<<<<< HEAD
         no++, t.nama || tid, t.nip || '-', cls.identitas?.mapel || '-', k,
+=======
+        no++, t.nama || tid, t.nip || '-', k, cls.identitas?.mapel || '-',
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
         cls.siswa.length, +avg.toFixed(2), +max.toFixed(2), +min.toFixed(2),
         cls.siswa.length ? +(tuntas/cls.siswa.length*100).toFixed(2) : 0,
         new Date(t.lastUpdate || 0).toLocaleString('id-ID')
       ]);
+<<<<<<< HEAD
       const sheetName = ((t.nama || tid).slice(0,12) + '_' + (cls.identitas?.mapel||'').slice(0,8) + '_' + k).replace(/[\\\/\?\*\[\]:]/g,'');
       const detail = [['DETAIL NILAI AKHIR — ' + (t.nama||tid) + ' — ' + (cls.identitas?.mapel||'-') + ' — Kelas ' + k]];
+=======
+
+      const sheetName = ((t.nama || tid).slice(0,15) + '_' + k).replace(/[\\\/\?\*\[\]:]/g,'');
+      const detail = [['DETAIL NILAI AKHIR — ' + (t.nama||tid) + ' — Kelas ' + k]];
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
       detail.push(['Mapel', cls.identitas?.mapel || '-']);
       detail.push(['KKM', KKM]);
       detail.push([]);
@@ -2035,6 +2635,12 @@ function init(){
   }
 }
 
+<<<<<<< HEAD
+=======
+/* ============================================================
+   KELOLA AKUN GURU
+   ============================================================ */
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
 let ALL_USERS = {};
 
 async function reloadAccounts(){
@@ -2055,7 +2661,13 @@ function renderAccounts(){
   let entries = Object.entries(ALL_USERS);
   if(q){
     entries = entries.filter(([u, d]) =>
+<<<<<<< HEAD
       u.toLowerCase().includes(q) || (d.nama || '').toLowerCase().includes(q) || (d.nip || '').includes(q)
+=======
+      u.toLowerCase().includes(q) ||
+      (d.nama || '').toLowerCase().includes(q) ||
+      (d.nip || '').includes(q)
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     );
   }
   $('#countAkun').textContent = entries.length + ' akun';
@@ -2072,10 +2684,18 @@ function renderAccounts(){
     const roleBadge = isAdmin
       ? '<span class="badge-info" style="background:#dbeafe;color:#1e40af">ADMIN</span>'
       : '<span class="badge-tuntas">GURU</span>';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     const teacherData = ALL_TEACHERS[data.teacherId];
     const statusData = teacherData
       ? `<span class="badge-tuntas" title="${timeAgo(teacherData.lastUpdate)}">✓ Ada</span>`
       : '<span class="badge-belum">Belum sync</span>';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${i+1}</td>
@@ -2150,13 +2770,26 @@ async function saveAccount(){
   }
 
   const payload = {
+<<<<<<< HEAD
     password, role: 'guru', teacherId, nama, nip: nip || '-', updatedAt: Date.now()
+=======
+    password,
+    role: 'guru',
+    teacherId,
+    nama,
+    nip: nip || '-',
+    updatedAt: Date.now()
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   };
   if(!_editingUsername) payload.createdAt = Date.now();
 
   try {
     $('#accSaveBtn').textContent = '⏳ Menyimpan...';
     $('#accSaveBtn').disabled = true;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     const url = cfg.fbUrl + '/instrumen/users/' + encodeURIComponent(username) + '.json';
     const res = await fetch(url, {
       method: 'PUT',
@@ -2164,6 +2797,10 @@ async function saveAccount(){
       body: JSON.stringify(payload)
     });
     if(!res.ok) throw new Error('HTTP ' + res.status);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
     toast('✓ Akun "' + username + '" tersimpan. Guru bisa login sekarang.', 'ok');
     closeAccountModal();
     await reloadAccounts();
@@ -2182,6 +2819,10 @@ async function deleteAccount(username){
     toast('⚠️ Akun admin tidak bisa dihapus', 'err');
     return;
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   const confirmMsg = 
     'Hapus akun guru ini?\n\n' +
     '👤 Username: ' + username + '\n' +
@@ -2191,7 +2832,13 @@ async function deleteAccount(username){
     'Data nilai (di /teachers/) tetap tersimpan.\n' +
     'Guru tidak akan bisa login lagi.\n\n' +
     'Lanjutkan?';
+<<<<<<< HEAD
   if(!confirm(confirmMsg)) return;
+=======
+
+  if(!confirm(confirmMsg)) return;
+
+>>>>>>> 742ca2b00f9789c5f1164deb2577be122d7feb5a
   try {
     const url = cfg.fbUrl + '/instrumen/users/' + encodeURIComponent(username) + '.json';
     const res = await fetch(url, {method: 'DELETE'});
