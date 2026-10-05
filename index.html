@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login — Instrumen Penilaian Jabal Rahmah</title>
+
+<!-- ⭐ VERSION.JS — WAJIB DI-LOAD PALING AWAL -->
+<script src="version.js"></script>
+
 <style>
   :root{
     --green-900:#0d5c2e;--green-700:#12803f;--green-500:#1aa04f;
@@ -121,8 +125,9 @@
     position:absolute;right:12px;top:32px;
     background:none;border:none;cursor:pointer;
     font-size:14px;color:var(--gray-400);padding:5px;
+    border-radius:6px;
   }
-  .input-group .toggle-pw:hover{color:var(--blue-700)}
+  .input-group .toggle-pw:hover{color:var(--blue-700);background:var(--blue-50)}
 
   .remember-row{
     display:flex;justify-content:space-between;align-items:center;
@@ -170,6 +175,16 @@
   .footer-info .status{
     color:var(--green-700);font-weight:600;
   }
+  .footer-info .status.offline{
+    color:var(--amber);
+  }
+  .footer-info .ver-link{
+    display:inline-flex;align-items:center;gap:4px;
+    margin-top:6px;font-size:11px;color:#64748b;text-decoration:none;
+    padding:3px 10px;border-radius:20px;background:#f1f5f9;
+    transition:.15s;font-weight:600;
+  }
+  .footer-info .ver-link:hover{background:#e2e8f0;color:#1e3a8a}
 
   .default-notice{
     background:#fef3c7;border:1px solid #fde68a;color:#78350f;
@@ -189,6 +204,25 @@
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  /* ===== Changelog Modal ===== */
+  .changelog-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
+  .changelog-modal.show{display:flex}
+  .changelog-box{background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:changelogFade .25s ease}
+  @keyframes changelogFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .changelog-header{background:linear-gradient(135deg,#1e3a8a,#0d5c2e);color:#fff;padding:16px 20px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center}
+  .changelog-header h3{font-size:15px;font-weight:700}
+  .changelog-close{background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;padding:0 5px}
+  .changelog-close:hover{opacity:.75}
+  .changelog-body{padding:20px}
+  .changelog-item{border-left:3px solid #3b82f6;padding-left:12px;margin-bottom:18px}
+  .changelog-item:last-child{margin-bottom:0}
+  .changelog-item h4{font-size:13.5px;font-weight:700;color:#1e3a8a;margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .changelog-item .date{font-size:11px;color:#9ca3af;margin-bottom:8px}
+  .changelog-item ul{margin:0 0 0 18px;font-size:12.5px;color:#4b5563;line-height:1.6}
+  .changelog-item ul li{margin-bottom:3px}
+  .changelog-badge{font-size:9.5px;background:#dbeafe;color:#1e40af;padding:2px 7px;border-radius:10px;font-weight:700}
+  .changelog-empty{text-align:center;padding:24px;color:#9ca3af;font-size:12.5px}
+
   @media(max-width:780px){
     .login-wrapper{grid-template-columns:1fr;max-width:460px}
     .login-left{padding:32px 28px}
@@ -203,20 +237,20 @@
 
 <div class="login-wrapper">
   <div class="login-left">
-    <div class="login-logo">🕌</div>
+    <div class="login-logo" aria-hidden="true">🕌</div>
     <h1>Instrumen Penilaian<br>MAS Jabal Rahmah</h1>
     <p>Sistem penilaian terintegrasi untuk guru dan admin madrasah. Data tersimpan aman di cloud.</p>
     <div class="feature-list">
       <div class="feature-item">
-        <div class="icon">👨‍🏫</div>
+        <div class="icon" aria-hidden="true">👨‍🏫</div>
         <div class="txt"><b>Halaman Guru</b><span>Input nilai, analisis, remedial</span></div>
       </div>
       <div class="feature-item">
-        <div class="icon">👨‍💼</div>
+        <div class="icon" aria-hidden="true">👨‍💼</div>
         <div class="txt"><b>Halaman Admin</b><span>Pantau data semua guru</span></div>
       </div>
       <div class="feature-item">
-        <div class="icon">☁️</div>
+        <div class="icon" aria-hidden="true">☁️</div>
         <div class="txt"><b>Sync Cloud</b><span>Backup otomatis ke Firebase</span></div>
       </div>
     </div>
@@ -226,13 +260,13 @@
     <h2>Selamat Datang 👋</h2>
     <div class="sub">Silakan pilih role dan masuk ke akun Anda.</div>
 
-    <div class="role-selector" id="roleSelector">
-      <button class="role-btn active" data-role="guru" type="button">
-        <span class="role-icon">👨‍🏫</span>
+    <div class="role-selector" id="roleSelector" role="tablist">
+      <button class="role-btn active" data-role="guru" type="button" role="tab" aria-selected="true">
+        <span class="role-icon" aria-hidden="true">👨‍🏫</span>
         <span class="role-label">Guru</span>
       </button>
-      <button class="role-btn" data-role="admin" type="button">
-        <span class="role-icon">👨‍💼</span>
+      <button class="role-btn" data-role="admin" type="button" role="tab" aria-selected="false">
+        <span class="role-icon" aria-hidden="true">👨‍💼</span>
         <span class="role-label">Admin</span>
       </button>
     </div>
@@ -245,7 +279,7 @@
       <span style="font-size:11px;opacity:.8">Ganti password setelah login pertama.</span>
     </div>
 
-    <div class="msg" id="msgBox"></div>
+    <div class="msg" id="msgBox" role="alert" aria-live="polite"></div>
 
     <form id="loginForm" autocomplete="on">
       <div class="input-group">
@@ -256,7 +290,8 @@
       <div class="input-group">
         <label for="inpPassword">Password</label>
         <input type="password" id="inpPassword" placeholder="Masukkan password" required autocomplete="current-password">
-        <button type="button" class="toggle-pw" onclick="togglePw()">👁️</button>
+        <button type="button" class="toggle-pw" onclick="togglePw()" 
+                aria-label="Tampilkan/sembunyikan password" title="Tampilkan password">👁️</button>
       </div>
 
       <div class="remember-row">
@@ -270,14 +305,30 @@
     </form>
 
     <div class="footer-info">
-  🔒 <span class="status">✅ Terhubung ke Firebase</span>
-  &nbsp;|&nbsp; MAS Jabal Rahmah
-  <br>
-  <a href="#" onclick="showChangelog();return false;" 
-     style="display:inline-block;margin-top:6px;font-size:11px;color:#64748b;text-decoration:none;"
-     title="Klik untuk lihat riwayat update">
-    <span id="appVersion">v1.1.0</span> · <span id="appBuildDate">2026-10-04</span>
-  </a>
+      <span id="netStatus" class="status">🔒 ✅ Terhubung ke Firebase</span>
+      &nbsp;|&nbsp; MAS Jabal Rahmah
+      <br>
+      <a href="#" class="ver-link" id="verLink"
+         onclick="showChangelog();return false;"
+         title="Klik untuk lihat riwayat update"
+         aria-label="Riwayat update versi aplikasi">
+        📌 <span id="appVersion">memuat...</span>
+        <span style="opacity:.5">·</span>
+        <span id="appBuildDate">—</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ⭐ MODAL CHANGELOG -->
+<div class="changelog-modal" id="changelogModal" onclick="if(event.target===this)closeChangelog()">
+  <div class="changelog-box">
+    <div class="changelog-header">
+      <h3>📋 Riwayat Update Aplikasi</h3>
+      <button class="changelog-close" onclick="closeChangelog()" title="Tutup" aria-label="Tutup dialog">✕</button>
+    </div>
+    <div class="changelog-body" id="changelogBody"></div>
+  </div>
 </div>
 
 <script>
@@ -325,8 +376,12 @@ function showForgot(){
    ============================================================ */
 $$('.role-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    $$('.role-btn').forEach(b => b.classList.remove('active'));
+    $$('.role-btn').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected','false');
+    });
     btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
   });
 });
 function getSelectedRole(){
@@ -334,11 +389,7 @@ function getSelectedRole(){
 }
 
 /* ============================================================
-   RESOLVE NIP GURU — dengan fallback berlapis
-   Prioritas:
-   1) user.nip          (field eksplisit di Firebase)
-   2) parse teacherId   (format: guru_<nip>)
-   3) user.username     (fallback terakhir)
+   RESOLVE NIP GURU — fallback berlapis
    ============================================================ */
 function resolveNipGuru(user, username){
   if (user && user.nip && String(user.nip).trim() !== ''){
@@ -351,9 +402,6 @@ function resolveNipGuru(user, username){
   return username || '';
 }
 
-/* ============================================================
-   RESOLVE TEACHER ID — konsisten dengan NIP
-   ============================================================ */
 function resolveTeacherId(user, nipGuru, username){
   if (user && user.teacherId && String(user.teacherId).trim() !== ''){
     return String(user.teacherId).trim();
@@ -410,9 +458,6 @@ $('#loginForm').addEventListener('submit', async (e) => {
       return;
     }
 
-    // ============================================================
-    // SUKSES — bangun session lengkap dengan NIP
-    // ============================================================
     const nipGuru = resolveNipGuru(user, username);
     const teacherId = resolveTeacherId(user, nipGuru, username);
 
@@ -420,7 +465,7 @@ $('#loginForm').addEventListener('submit', async (e) => {
       username,
       role: user.role,
       nama: user.nama || username,
-      nipGuru: nipGuru,          // ← NIP untuk field readonly di guru.html
+      nipGuru: nipGuru,
       teacherId: teacherId,
       loginAt: Date.now(),
       remember
@@ -432,7 +477,6 @@ $('#loginForm').addEventListener('submit', async (e) => {
       sessionStorage.setItem(LS_SESSION, JSON.stringify(session));
     }
 
-    // Info jika NIP kosong (hanya untuk role guru)
     if (user.role === 'guru' && !user.nip){
       console.warn('[Login] User "' + username + '" tidak punya field "nip" di Firebase. ' +
                    'NIP di session diambil dari fallback: ' + (nipGuru || '(kosong)'));
@@ -485,55 +529,96 @@ $('#loginForm').addEventListener('submit', async (e) => {
     console.warn('Gagal cek akun default:', e);
   }
 })();
-</script>
-<style>
-  .changelog-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
-  .changelog-modal.show{display:flex}
-  .changelog-box{background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-  .changelog-header{background:linear-gradient(135deg,#1e3a8a,#0d5c2e);color:#fff;padding:16px 20px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center}
-  .changelog-header h3{font-size:15px;font-weight:700}
-  .changelog-close{background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;padding:0 5px}
-  .changelog-body{padding:20px}
-  .changelog-item{border-left:3px solid #3b82f6;padding-left:12px;margin-bottom:18px}
-  .changelog-item:last-child{margin-bottom:0}
-  .changelog-item h4{font-size:13.5px;font-weight:700;color:#1e3a8a;margin-bottom:2px}
-  .changelog-item .date{font-size:11px;color:#9ca3af;margin-bottom:8px}
-  .changelog-item ul{margin:0 0 0 18px;font-size:12.5px;color:#4b5563;line-height:1.6}
-  .changelog-item ul li{margin-bottom:3px}
-</style>
 
-<div class="changelog-modal" id="changelogModal">
-  <div class="changelog-box">
-    <div class="changelog-header">
-      <h3>📋 Riwayat Update Aplikasi</h3>
-      <button class="changelog-close" onclick="closeChangelog()">✕</button>
-    </div>
-    <div class="changelog-body" id="changelogBody"></div>
-  </div>
-</div>
+/* ============================================================
+   ⭐ VERSION DISPLAY + CHANGELOG
+   ============================================================ */
+(function initVersionDisplay(){
+  function applyVersion(){
+    const info = window.APP_INFO || {
+      version: '1.1.0',
+      buildDate: '2026-10-04',
+      changelog: []
+    };
+    const elV = document.getElementById('appVersion');
+    const elD = document.getElementById('appBuildDate');
 
-<script>
+    if (elV) elV.textContent = 'v' + (info.version || '1.0.0');
+    if (elD) elD.textContent = info.buildDate || '—';
+
+    console.log(
+      '%c[Version]%c ' + (info.version || '?') + ' | ' + (info.buildDate || '?'),
+      'background:#1e3a8a;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700',
+      'color:#64748b'
+    );
+
+    if (!window.APP_INFO) {
+      console.warn('[Version] version.js tidak ditemukan — pakai default fallback.');
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyVersion);
+  } else {
+    applyVersion();
+  }
+})();
+
 function showChangelog(){
   const body = document.getElementById('changelogBody');
-  const info = window.APP_INFO || { changelog: [] };
-  body.innerHTML = (info.changelog || []).map(v => `
-    <div class="changelog-item">
-      <h4>${v.version}${v.version === 'v' + info.version ? ' <span style="font-size:10px;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:10px">Saat ini</span>' : ''}</h4>
-      <div class="date">${v.date}</div>
-      <ul>${v.highlights.map(h => '<li>' + h + '</li>').join('')}</ul>
-    </div>
-  `).join('');
+  const info = window.APP_INFO || { version: '1.1.0', changelog: [] };
+  const curVer = 'v' + (info.version || '');
+
+  if (!info.changelog || !info.changelog.length){
+    body.innerHTML = '<div class="changelog-empty">Belum ada riwayat update.</div>';
+  } else {
+    body.innerHTML = info.changelog.map(v => {
+      const isCurrent = (v.version === curVer);
+      return `
+        <div class="changelog-item">
+          <h4>
+            ${v.version || '—'}
+            ${isCurrent ? '<span class="changelog-badge">Saat ini</span>' : ''}
+          </h4>
+          <div class="date">${v.date || ''}</div>
+          <ul>${(v.highlights || []).map(h => '<li>' + h + '</li>').join('')}</ul>
+        </div>`;
+    }).join('');
+  }
   document.getElementById('changelogModal').classList.add('show');
 }
+
 function closeChangelog(){
   document.getElementById('changelogModal').classList.remove('show');
 }
-document.addEventListener('DOMContentLoaded', () => {
-  const info = window.APP_INFO || {};
-  const elV = document.getElementById('appVersion');
-  const elD = document.getElementById('appBuildDate');
-  if (elV) elV.textContent = 'v' + (info.version || '?.?.?');
-  if (elD) elD.textContent = info.buildDate || '';
+
+/* ============================================================
+   ⭐ ONLINE / OFFLINE INDICATOR
+   ============================================================ */
+(function initNetworkIndicator(){
+  function updateStatus(){
+    const el = document.getElementById('netStatus');
+    if (!el) return;
+    if (navigator.onLine) {
+      el.innerHTML = '🔒 ✅ Terhubung ke Firebase';
+      el.classList.remove('offline');
+    } else {
+      el.innerHTML = '📡 ⚠️ Mode Offline — cek koneksi';
+      el.classList.add('offline');
+    }
+  }
+  window.addEventListener('online', updateStatus);
+  window.addEventListener('offline', updateStatus);
+  document.addEventListener('DOMContentLoaded', updateStatus);
+  updateStatus();
+})();
+
+/* ============================================================
+   ⭐ BOOT TIME LOG (debug only, aman dihapus)
+   ============================================================ */
+console.time('[Boot] Login siap dalam');
+window.addEventListener('load', () => {
+  console.timeEnd('[Boot] Login siap dalam');
 });
 </script>
 </body>

@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Instrumen Penilaian Guru — MAS Jabal Rahmah</title>
+
+<!-- ⭐ VERSION.JS — WAJIB DI-LOAD PALING AWAL -->
+<script src="version.js"></script>
+
 <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -167,12 +171,49 @@
     nav.tabs{top:auto;position:relative}
     main{padding:14px}.card{padding:14px}
   }
-  @media print{
+    @media print{
     header,nav.tabs,.toolbar,.header-actions,.no-print,.config-panel{display:none!important}
     .tab-panel{display:block!important;page-break-after:always}
     .card{box-shadow:none;border:1px solid #ccc}
     body{background:#fff}
   }
+
+  /* ===== Changelog Modal ===== */
+  .changelog-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
+  .changelog-modal.show{display:flex}
+  .changelog-box{background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:changelogFade .25s ease}
+  @keyframes changelogFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .changelog-header{background:linear-gradient(135deg,#1e3a8a,#0d5c2e);color:#fff;padding:16px 20px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center}
+  .changelog-header h3{font-size:15px;font-weight:700}
+  .changelog-close{background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;line-height:1;padding:0 5px}
+  .changelog-close:hover{opacity:.75}
+  .changelog-body{padding:20px}
+  .changelog-item{border-left:3px solid #3b82f6;padding-left:12px;margin-bottom:18px}
+  .changelog-item:last-child{margin-bottom:0}
+  .changelog-item h4{font-size:13.5px;font-weight:700;color:#1e3a8a;margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .changelog-item .date{font-size:11px;color:#9ca3af;margin-bottom:8px}
+  .changelog-item ul{margin:0 0 0 18px;font-size:12.5px;color:#4b5563;line-height:1.6}
+  .changelog-item ul li{margin-bottom:3px}
+  .changelog-badge{font-size:9.5px;background:#dbeafe;color:#1e40af;padding:2px 7px;border-radius:10px;font-weight:700}
+  .changelog-empty{text-align:center;padding:24px;color:#9ca3af;font-size:12.5px}
+
+  /* ===== Network Status Badge ===== */
+  #netBadge{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;
+    margin-right:4px;
+  }
+  #netBadge.online{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)}
+  #netBadge.offline{background:#fef3c7;color:#78350f;border:1px solid #fde68a}
+
+  /* ===== Unsaved Badge ===== */
+  #unsavedBadge{
+    display:none;align-items:center;gap:4px;
+    padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;
+    background:#fef3c7;color:#78350f;border:1px solid #fde68a;
+    margin-right:4px;
+  }
+  #unsavedBadge.show{display:inline-flex}
 </style>
 </head>
 <body>
@@ -187,12 +228,15 @@
     <h1>Instrumen Penilaian Guru — Jabal Rahmah</h1>
     <p>Program Sederhana untuk Membantu Guru Melaksanakan Penilaian</p>
   </div>
-    <div class="header-actions">
-	<button class="btn btn-light" onclick="showChangelog()" 
-          title="Klik untuk riwayat update"
-          style="font-size:10.5px;padding:5px 9px;opacity:.8">
-    <span id="appVersion">v1.1.0</span>
-  </button>
+        <div class="header-actions">
+    <span id="netBadge" class="online" title="Status koneksi">🌐 Online</span>
+    <span id="unsavedBadge" title="Belum disinkronkan ke Firebase">⚠️ Belum sync</span>
+    <button class="btn btn-light" onclick="showChangelog()" 
+            title="Klik untuk riwayat update"
+            aria-label="Riwayat update versi"
+            style="font-size:10.5px;padding:5px 9px;opacity:.8">
+      📌 <span id="appVersion">memuat...</span>
+    </button>
     <button class="btn btn-sync" onclick="openSyncModal()" title="Sinkron ke Firebase">☁️ Sync</button>
     <button class="btn btn-light" onclick="exportExcel()">📤 Ekspor</button>
     <button class="btn btn-light" onclick="document.getElementById('fileImport').click()">📥 Impor</button>
@@ -644,6 +688,17 @@
       <button class="btn btn-primary btn-sm" onclick="saveFirebaseUrl()">💾 Simpan URL</button>
       <button class="btn btn-sync btn-sm" onclick="firebaseSave()">☁️ Kirim ke Firebase</button>
     </div>
+  </div>
+</div>
+
+<!-- ⭐ MODAL CHANGELOG -->
+<div class="changelog-modal" id="changelogModal" onclick="if(event.target===this)closeChangelog()">
+  <div class="changelog-box">
+    <div class="changelog-header">
+      <h3>📋 Riwayat Update Aplikasi</h3>
+      <button class="changelog-close" onclick="closeChangelog()" title="Tutup" aria-label="Tutup dialog">✕</button>
+    </div>
+    <div class="changelog-body" id="changelogBody"></div>
   </div>
 </div>
 
@@ -3266,6 +3321,146 @@ function init(){
 }
 
 init();
+
+/* ============================================================
+   ⭐ VERSION DISPLAY + CHANGELOG
+   ============================================================ */
+(function initVersionDisplay(){
+  function applyVersion(){
+    const info = window.APP_INFO || {
+      version: '1.1.0',
+      buildDate: '2026-10-04',
+      changelog: []
+    };
+    const elV = document.getElementById('appVersion');
+    if (elV) elV.textContent = 'v' + (info.version || '1.0.0');
+
+    console.log(
+      '%c[Version]%c ' + (info.version || '?') + ' | ' + (info.buildDate || '?'),
+      'background:#1e3a8a;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700',
+      'color:#64748b'
+    );
+
+    if (!window.APP_INFO) {
+      console.warn('[Version] version.js tidak ditemukan — pakai default fallback.');
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyVersion);
+  } else {
+    applyVersion();
+  }
+})();
+
+function showChangelog(){
+  const body = document.getElementById('changelogBody');
+  const info = window.APP_INFO || { version: '1.1.0', changelog: [] };
+  const curVer = 'v' + (info.version || '');
+
+  if (!info.changelog || !info.changelog.length){
+    body.innerHTML = '<div class="changelog-empty">Belum ada riwayat update.</div>';
+  } else {
+    body.innerHTML = info.changelog.map(v => {
+      const isCurrent = (v.version === curVer);
+      return `
+        <div class="changelog-item">
+          <h4>
+            ${v.version || '—'}
+            ${isCurrent ? '<span class="changelog-badge">Saat ini</span>' : ''}
+          </h4>
+          <div class="date">${v.date || ''}</div>
+          <ul>${(v.highlights || []).map(h => '<li>' + h + '</li>').join('')}</ul>
+        </div>`;
+    }).join('');
+  }
+  document.getElementById('changelogModal').classList.add('show');
+}
+
+function closeChangelog(){
+  document.getElementById('changelogModal').classList.remove('show');
+}
+
+/* ============================================================
+   ⭐ ONLINE / OFFLINE INDICATOR
+   ============================================================ */
+(function initNetworkIndicator(){
+  function updateStatus(){
+    const el = document.getElementById('netBadge');
+    if (!el) return;
+    if (navigator.onLine) {
+      el.className = 'online';
+      el.innerHTML = '🌐 Online';
+      el.title = 'Terhubung ke internet';
+    } else {
+      el.className = 'offline';
+      el.innerHTML = '📡 Offline';
+      el.title = 'Tidak ada koneksi — data hanya tersimpan lokal';
+      toast('⚠️ Koneksi terputus — data hanya tersimpan lokal', true);
+    }
+  }
+  window.addEventListener('online', () => {
+    updateStatus();
+    toast('✓ Kembali online');
+  });
+  window.addEventListener('offline', updateStatus);
+  document.addEventListener('DOMContentLoaded', updateStatus);
+  updateStatus();
+})();
+
+/* ============================================================
+   ⭐ UNSAVED CHANGES WARNING
+   Peringatan jika ada perubahan yang belum disinkronkan
+   ============================================================ */
+window.__UNSAVED__ = false;
+
+function markUnsaved(){
+  if (window.__UNSAVED__) return;
+  window.__UNSAVED__ = true;
+  const b = document.getElementById('unsavedBadge');
+  if (b) b.classList.add('show');
+}
+
+function clearUnsaved(){
+  window.__UNSAVED__ = false;
+  const b = document.getElementById('unsavedBadge');
+  if (b) b.classList.remove('show');
+}
+
+// Track perubahan input di seluruh halaman
+document.addEventListener('input', markUnsaved, true);
+document.addEventListener('change', markUnsaved, true);
+
+// Clear flag setelah sync berhasil
+const _origFirebaseSave = window.firebaseSave;
+if (typeof _origFirebaseSave === 'function'){
+  window.firebaseSave = async function(){
+    try {
+      await _origFirebaseSave.apply(this, arguments);
+      clearUnsaved();
+    } catch(e){
+      // biarkan flag tetap true jika gagal
+      throw e;
+    }
+  };
+}
+
+// Warning saat tutup halaman
+window.addEventListener('beforeunload', (e) => {
+  if (window.__UNSAVED__){
+    e.preventDefault();
+    e.returnValue = '⚠️ Ada perubahan yang belum disinkronkan ke Firebase. Yakin keluar?';
+    return e.returnValue;
+  }
+});
+
+/* ============================================================
+   ⭐ BOOT TIME LOG
+   ============================================================ */
+console.time('[Boot] Guru siap dalam');
+window.addEventListener('load', () => {
+  console.timeEnd('[Boot] Guru siap dalam');
+});
 </script>
 </body>
 </html>

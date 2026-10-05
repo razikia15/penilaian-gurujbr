@@ -1,22 +1,26 @@
 @echo off
 setlocal EnableDelayedExpansion
 color 0A
-title Auto Deploy + Version Bump ke Netlify
+title Auto Deploy — Detect Changes + Bump Version
 cd /d "%~dp0"
 
 :: ============================================================
-:: KONFIGURASI (ubah jika perlu)
+:: KONFIGURASI
 :: ============================================================
 set GITHUB_URL=https://github.com/razikia15/penilaian-gurujbr.git
 set BRANCH=main
 
-:: ============================================================
-:: HEADER
-:: ============================================================
+:: Default bump type (dapat di-override via argumen)
+set BUMP_TYPE=patch
+if /i "%~1"=="minor" set BUMP_TYPE=minor
+if /i "%~1"=="major" set BUMP_TYPE=major
+if /i "%~1"=="skip"  set BUMP_TYPE=none
+
 cls
 echo ==========================================================
-echo    SCRIPT UPDATE OTOMATIS
-echo    GitHub -^> Netlify  +  Auto Version Bump
+echo    AUTO UPDATE — Detect Changes + Bump Version
+echo ==========================================================
+echo    Bump type: %BUMP_TYPE%
 echo ==========================================================
 echo.
 
@@ -24,11 +28,10 @@ echo.
 :: CEK GIT REPO
 :: ============================================================
 if not exist .git (
-    echo [INFO] Folder belum jadi Git repository.
-    echo        Menginisialisasi...
+    echo [INFO] Menginisialisasi Git...
     git init >nul 2>&1
     git remote add origin %GITHUB_URL% >nul 2>&1
-    echo [OK]  Git siap digunakan.
+    echo [OK]  Git siap.
     echo.
 )
 
@@ -37,17 +40,47 @@ if not exist .git (
 :: ============================================================
 if not exist version.js (
     echo [ERROR] File "version.js" tidak ditemukan!
-    echo         Buat file version.js terlebih dahulu.
-    echo.
-    pause
-    exit /b 1
+    pause & exit /b 1
 )
 if not exist version-tool.ps1 (
     echo [ERROR] File "version-tool.ps1" tidak ditemukan!
-    echo         Buat file version-tool.ps1 terlebih dahulu.
+    pause & exit /b 1
+)
+
+:: ============================================================
+:: DETEKSI FILE YANG BERUBAH
+:: ============================================================
+set "CHANGED_FILES="
+set /a FILE_COUNT=0
+
+for /f "tokens=2* delims=	 " %%a in ('git status --porcelain 2^>nul') do (
+    set "file=%%a"
+    set "file=!file: =!"
+    set /a FILE_COUNT+=1
+    if !FILE_COUNT! LEQ 3 (
+        if defined CHANGED_FILES (
+            set "CHANGED_FILES=!CHANGED_FILES!, !file!"
+        ) else (
+            set "CHANGED_FILES=!file!"
+        )
+    )
+)
+
+if %FILE_COUNT%==0 (
     echo.
-    pause
-    exit /b 1
+    echo [INFO] Tidak ada perubahan file.
+    echo        Edit dulu file-nya ^(index.html / guru.html / admin.html^).
+    echo.
+    pause & exit /b 0
+)
+
+:: ============================================================
+:: GENERATE CHANGELOG MESSAGE OTOMATIS
+:: ============================================================
+if %FILE_COUNT% GTR 3 (
+    set "CHANGELOG_MSG=Update project files ^(%FILE_COUNT% files^)"
+) else (
+    set "CHANGELOG_MSG=Update: !CHANGED_FILES!"
 )
 
 :: ============================================================
@@ -56,82 +89,34 @@ if not exist version-tool.ps1 (
 for /f "delims=" %%v in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action read 2^>nul') do set CUR_VER=%%v
 if "!CUR_VER!"=="" set CUR_VER=1.0.0
 
-echo Versi saat ini: v!CUR_VER!
+:: ============================================================
+:: PREVIEW
+:: ============================================================
+echo File yang berubah ^(%FILE_COUNT% file^):
+git status --short
 echo.
-
-:: ============================================================
-:: PILIH JENIS UPDATE
-:: ============================================================
-echo ==========================================================
-echo    PILIH JENIS UPDATE
-echo ==========================================================
-echo    [1] Bug fix kecil      (patch)   v!CUR_VER! -^> vX.Y.Z+1
-echo    [2] Fitur baru         (minor)   v!CUR_VER! -^> vX.Y+1.0
-echo    [3] Update besar       (major)   v!CUR_VER! -^> vX+1.0.0
-echo    [4] Skip bump versi    (commit ^& push saja)
-echo.
-set /p jenis="Pilihan [1-4] (Enter = patch): "
-
-if "!jenis!"=="" set jenis=1
-set BUMP_TYPE=patch
-if "!jenis!"=="2" set BUMP_TYPE=minor
-if "!jenis!"=="3" set BUMP_TYPE=major
-if "!jenis!"=="4" set BUMP_TYPE=none
-
-:: ============================================================
-:: PILIH FILE YANG DIEDIT
-:: ============================================================
-echo.
-echo ==========================================================
-echo    FILE YANG BARU DIEDIT
-echo ==========================================================
-echo    [1] index.html
-echo    [2] guru.html
-echo    [3] admin.html
-echo    [4] Semua / lainnya
-echo.
-set /p pilihan="Pilihan [1-4] (Enter = semua): "
-
-set pesan=Update project files
-if "!pilihan!"=="1" set pesan=Update index.html
-if "!pilihan!"=="2" set pesan=Update guru.html
-if "!pilihan!"=="3" set pesan=Update admin.html
-
-:: ============================================================
-:: INPUT CHANGELOG
-:: ============================================================
-set CHANGELOG_MSG=!pesan!
+echo ----------------------------------------------------------
+echo   RINGKASAN UPDATE
+echo ----------------------------------------------------------
+echo   Versi saat ini : v!CUR_VER!
 if not "!BUMP_TYPE!"=="none" (
-    echo.
-    echo ==========================================================
-    echo    RINGKASAN UPDATE (untuk changelog)
-    echo ==========================================================
-    echo    Tekan Enter untuk pakai default: "!pesan!"
-    set /p CHANGELOG_MSG="   Pesan: "
-    if "!CHANGELOG_MSG!"=="" set CHANGELOG_MSG=!pesan!
+    echo   Bump type      : !BUMP_TYPE!
+) else (
+    echo   Bump type      : (skip)
 )
+echo   Changelog      : !CHANGELOG_MSG!
+echo   Branch         : !BRANCH!
+echo ----------------------------------------------------------
+echo.
 
 :: ============================================================
-:: KONFIRMASI
+:: KONFIRMASI (Enter = lanjut)
 :: ============================================================
-echo.
-echo ==========================================================
-echo    KONFIRMASI
-echo ==========================================================
-echo    Versi saat ini  : v!CUR_VER!
-if not "!BUMP_TYPE!"=="none" (
-    echo    Bump type       : !BUMP_TYPE!
-)
-echo    File            : !pesan!
-echo    Changelog       : !CHANGELOG_MSG!
-echo    Branch          : !BRANCH!
-echo.
 set /p konfirm="Lanjutkan? [Y/n] (Enter = Y): "
 if /i "!konfirm!"=="n" (
     echo.
-    echo [DIBATALKAN] Update tidak dijalankan.
-    pause
-    exit /b 0
+    echo [DIBATALKAN]
+    pause & exit /b 0
 )
 
 :: ============================================================
@@ -139,7 +124,7 @@ if /i "!konfirm!"=="n" (
 :: ============================================================
 echo.
 echo ----------------------------------------------------------
-echo   MULAI PROSES
+echo   MEMPROSES...
 echo ----------------------------------------------------------
 echo.
 
@@ -155,30 +140,16 @@ if not "!BUMP_TYPE!"=="none" (
 :: [2/5] Staging
 echo.
 echo [2/5] Staging file...
-git add .
-
-:: Cek ada perubahan?
-git diff --cached --quiet >nul 2>&1
-if !errorlevel!==0 (
-    echo.
-    echo [INFO] Tidak ada perubahan untuk di-commit.
-    echo        Mungkin file belum disimpan, atau sudah ter-push sebelumnya.
-    echo.
-    pause
-    exit /b 0
-)
+git add . >nul 2>&1
 
 :: [3/5] Commit
 echo.
 echo [3/5] Commit...
-git commit -m "!pesan!" >nul 2>&1
-if !errorlevel! neq 0 (
-    echo [WARNING] Commit gagal atau tidak ada perubahan signifikan.
-)
+git commit -m "!CHANGELOG_MSG!" >nul 2>&1
 
-:: [4/5] Pastikan branch
+:: [4/5] Branch
 echo.
-echo [4/5] Set branch ke '!BRANCH!'...
+echo [4/5] Branch: !BRANCH!
 git branch -M !BRANCH! >nul 2>&1
 
 :: [5/5] Push
@@ -187,11 +158,8 @@ echo [5/5] Push ke GitHub...
 git push -u origin !BRANCH!
 if !errorlevel! neq 0 (
     echo.
-    echo [ERROR] Push gagal!
-    echo         Cek koneksi internet, atau login GitHub Anda.
-    echo.
-    pause
-    exit /b 1
+    echo [ERROR] Push gagal! Cek koneksi atau login GitHub.
+    pause & exit /b 1
 )
 
 :: ============================================================
@@ -202,19 +170,14 @@ echo ==========================================================
 echo    ✅ SELESAI!
 echo ==========================================================
 if not "!BUMP_TYPE!"=="none" (
-    echo    Versi baru      : v!BUMP_RESULT:BUMPED:=!
+    echo    Versi baru  : v!BUMP_RESULT:BUMPED:=!
 )
-echo    Netlify sedang meng-update website Anda.
-echo    Monitor deploy  : https://app.netlify.com
-echo    Website         : https://penilaian-gurujbr.netlify.app
+echo    Changelog   : !CHANGELOG_MSG!
+echo    Netlify     : https://app.netlify.com
+echo    Website     : https://penilaian-gurujbr.netlify.app
 echo ==========================================================
 echo.
-
-:: ============================================================
-:: INFO UNTUK USER
-:: ============================================================
 echo 💡 Tunggu 1-2 menit, lalu refresh browser Anda.
-echo    Badge versi di pojok akan otomatis berubah.
 echo.
 
 pause
