@@ -221,9 +221,7 @@
 <header>
   <div class="logo-wrap" title="Logo Madrasah">
     <div id="logoContainer"></div>
-    <button class="logo-edit no-print" onclick="document.getElementById('logoUpload').click()" title="Ganti logo">✎</button>
-    <input type="file" id="logoUpload" accept="image/*" style="display:none" onchange="uploadLogo(event)">
-  </div>
+   </div>
   <div>
     <h1>Instrumen Penilaian Guru — Jabal Rahmah</h1>
     <p>Program Sederhana untuk Membantu Guru Melaksanakan Penilaian</p>
@@ -360,7 +358,8 @@
     <div class="sep"></div>
     <div class="field" style="margin:0;flex-direction:row;align-items:center;gap:8px">
       <label style="text-transform:none">Materi:</label>
-      <input id="inpMateriSumatif" style="padding:6px 10px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:12.5px;width:180px">
+      <input id="inpMateriSumatif" style="padding:6px 10px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:12.5px;width:200px" placeholder="Tulis materi di sini">
+      <span class="link-hint" title="Materi ini otomatis dipakai di tab Analisis UH, Input UH Manual, dan Remedial">🔗 master</span>
     </div>
     <div class="sep"></div>
     <label class="chk"><input type="checkbox" id="autoUH" checked><span>🔗 Auto UH</span></label>
@@ -418,7 +417,8 @@
     </div>
     <div class="field" style="margin:0;flex-direction:row;align-items:center;gap:8px">
       <label style="text-transform:none">Materi:</label>
-      <input id="inpMateriUH" style="padding:6px 10px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:12.5px;width:150px">
+      <input id="inpMateriUH" readonly title="Otomatis dari materi Sumatif — edit di tab Sumatif" style="padding:6px 10px;border:1.5px dashed #d1d5db;border-radius:6px;font-size:12.5px;width:200px;background:linear-gradient(180deg,#f9fafb,#f3f4f6);color:var(--gray-600);cursor:not-allowed">
+      <span class="lock-hint">🔒 auto</span>
     </div>
     <button class="btn btn-warn btn-sm" id="btnToggleUHCfg">⚙️ Kelola</button>
   </div>
@@ -441,6 +441,7 @@
   </div>
   <div class="info">
     <b>Analisis UH</b> — input skor per soal. Nilai UH = (total diperoleh ÷ total skor maks) × 100.
+    <span style="color:#92400e">Materi otomatis diambil dari tab <b>Sumatif</b>.</span>
   </div>
   <div class="card">
     <div class="card-title">✏️ Input Skor Per Soal <span class="badge" id="badgeUH">UH 1</span></div>
@@ -472,6 +473,7 @@
 <section class="tab-panel" id="tab-uhmanual">
   <div class="info">
     <b>Input UH Manual</b> — masukkan nilai UH (0–100) langsung per siswa. Nilai ini akan <b>menggantikan</b> nilai dari Analisis UH.
+    <span style="color:#92400e">Materi otomatis diambil dari tab <b>Sumatif</b>.</span>
   </div>
   <div class="card">
     <div class="card-title">✍️ Nilai UH Manual <span class="badge" id="badgeUHManual">Semua UH</span></div>
@@ -784,25 +786,7 @@ const CLASSES = ['VII','VIII','IX','X','XI','XII'];
 const N_TUGAS = 6;
 const MAX_SUMATIF = 10, MAX_UH = 10, MAX_SOAL = 50;
 
-const DEFAULT_LOGO = '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">'+
-  '<polygon points="60,6 114,32 114,88 60,114 6,88 6,32" fill="#00cc00" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>'+
-  '<g stroke="#f5c518" stroke-width="2.6" fill="none" stroke-linecap="round">'+
-  '<path d="M22 76 Q17 58 22 40"/><path d="M19 46 L13 44 M19 54 L13 52 M19 62 L13 60 M20 70 L14 68"/>'+
-  '<path d="M25 44 L19 42 M25 52 L19 50 M25 60 L19 58 M25 68 L19 66"/></g>'+
-  '<g stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round">'+
-  '<path d="M98 76 Q103 58 98 40"/><path d="M101 46 L107 44 M101 54 L107 52 M101 62 L107 60 M100 70 L106 68"/>'+
-  '<path d="M95 44 L101 42 M95 52 L101 50 M95 60 L101 58 M95 68 L101 66"/></g>'+
-  '<rect x="42" y="62" width="36" height="7" fill="#fff" stroke="#000" stroke-width="2"/>'+
-  '<path d="M42 62 Q60 28 78 62 Z" fill="#fff" stroke="#000" stroke-width="2"/>'+
-  '<rect x="45" y="69" width="4" height="4" fill="#000"/><rect x="52" y="69" width="4" height="4" fill="#000"/>'+
-  '<rect x="64" y="69" width="4" height="4" fill="#000"/><rect x="71" y="69" width="4" height="4" fill="#000"/>'+
-  '<circle cx="60" cy="25" r="5" fill="#000"/><circle cx="62" cy="25" r="4.2" fill="#00cc00"/>'+
-  '<polygon points="60,18 61,21.5 64.5,21.5 61.7,23.4 62.7,26.8 60,24.9 57.3,26.8 58.3,23.4 55.5,21.5 59,21.5" fill="#fff"/>'+
-  '<rect x="44" y="78" width="32" height="16" fill="#f5c518" stroke="#000" stroke-width="2"/>'+
-  '<line x1="60" y1="78" x2="60" y2="94" stroke="#000" stroke-width="2"/>'+
-  '<path d="M10 96 L60 108 L110 96 L108 100 L60 111 L12 100 Z" fill="#fff" stroke="#000" stroke-width="1.5"/>'+
-  '<text x="60" y="105" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="7.5" font-weight="900" fill="#000">JABAL RAHMAH</text>'+
-  '</svg>';
+const DEFAULT_LOGO = 'logo1.png';
 
 function defaultClassState(kelas){
   return {
@@ -875,14 +859,10 @@ function loadMaster(){
 
 /* ============================================================
    🛡️ NORMALIZE — SANITASI NULL (fix error skorMaxPerSoal)
-   Firebase Realtime DB otomatis strip empty object {} menjadi null.
-   Fungsi ini memastikan semua struktur ada & valid.
    ============================================================ */
 function normalizeClass(c, kelasKey){
-  // Guard utama: pastikan c object
   if(!c || typeof c !== 'object') c = defaultClassState(kelasKey || 'XII');
 
-  // Struktur utama — guard ketat untuk setiap field
   if(!c.sumatif || typeof c.sumatif !== 'object') c.sumatif = {};
   if(!c.uh || typeof c.uh !== 'object') c.uh = {};
   if(!c.uhManual || typeof c.uhManual !== 'object') c.uhManual = {};
@@ -915,22 +895,17 @@ function normalizeClass(c, kelasKey){
     c.config.uhConfig = {};
   }
 
-  // Auto-fill wali kelas
   const kls = c.identitas.kelas || kelasKey;
   if(!c.identitas.wali && kls && WALI_KELAS_MAP[kls]) {
     c.identitas.wali = WALI_KELAS_MAP[kls];
   }
 
-  // 🎯 FIX UTAMA: sanitasi tiap entry uhConfig — HANDLE NULL/UNDEFINED
   Object.keys(c.config.uhConfig).forEach(k => {
     let cc = c.config.uhConfig[k];
-
-    // Kalau cc null/undefined (Firebase strip empty object) → buat baru
     if(!cc || typeof cc !== 'object'){
       cc = { soal: 5, skorMaxPerSoal: [20,20,20,20,20] };
       c.config.uhConfig[k] = cc;
     }
-
     if(Array.isArray(cc.skorMaxPerSoal)){
       const n = cc.soal || cc.skorMaxPerSoal.length || 5;
       while(cc.skorMaxPerSoal.length < n) cc.skorMaxPerSoal.push(cc.skorMax || 20);
@@ -944,7 +919,6 @@ function normalizeClass(c, kelasKey){
     }
   });
 
-  // 🎯 Sanitasi entry di sumatif (materi/data bisa null dari Firebase)
   Object.keys(c.sumatif).forEach(k => {
     const s = c.sumatif[k];
     if(!s || typeof s !== 'object'){
@@ -955,7 +929,6 @@ function normalizeClass(c, kelasKey){
     }
   });
 
-  // 🎯 Sanitasi entry di uh
   Object.keys(c.uh).forEach(k => {
     const u = c.uh[k];
     if(!u || typeof u !== 'object'){
@@ -965,6 +938,13 @@ function normalizeClass(c, kelasKey){
       if(typeof u.materi !== 'string') u.materi = '';
       if(typeof u.tanggal !== 'string') u.tanggal = '';
     }
+  });
+
+  // ⭐ Sinkronisasi materi Sumatif → UH (untuk data lama)
+  Object.keys(c.sumatif).forEach(k => {
+    const materiSum = c.sumatif[k]?.materi || '';
+    if(!c.uh[k]) c.uh[k] = { materi: materiSum, tanggal:'', data:{} };
+    else if(!c.uh[k].materi && materiSum) c.uh[k].materi = materiSum;
   });
 }
 function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(master)); }
@@ -1491,18 +1471,14 @@ function getActiveUHIdx(){
   return (state.config.uhEnabled || []).map((v,i)=>v?i+1:0).filter(x=>x>0);
 }
 
-/* 🛡️ getUHConfig — SANITASI NULL juga */
 function getUHConfig(k){
-  // Pastikan uhConfig ada
   if(!state.config.uhConfig || typeof state.config.uhConfig !== 'object'){
     state.config.uhConfig = {};
   }
-  // Kalau entry null/undefined → buat baru
   if(!state.config.uhConfig[k] || typeof state.config.uhConfig[k] !== 'object'){
     state.config.uhConfig[k] = { soal:5, skorMaxPerSoal:[20,20,20,20,20] };
   }
   const c = state.config.uhConfig[k];
-  // Pastikan skorMaxPerSoal array valid
   if(!Array.isArray(c.skorMaxPerSoal)){
     c.skorMaxPerSoal = Array(c.soal || 5).fill(c.skorMax || 20);
   }
@@ -1608,16 +1584,7 @@ function autoFillFromSession(){
    ============================================================ */
 function renderLogo(){
   const c = $('#logoContainer');
-  if(master.logo) c.innerHTML = `<img src="${master.logo}" alt="Logo">`;
-  else c.innerHTML = DEFAULT_LOGO;
-}
-function uploadLogo(ev){
-  const f = ev.target.files[0]; if(!f) return;
-  if(f.size > 500*1024){ toast('⚠️ Ukuran gambar maks 500KB', true); return; }
-  const r = new FileReader();
-  r.onload = e=>{ master.logo = e.target.result; saveState(); renderLogo(); toast('✓ Logo diperbarui'); };
-  r.readAsDataURL(f);
-  ev.target.value = '';
+  c.innerHTML = `<img src="${DEFAULT_LOGO}" alt="Logo Madrasah" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">`;
 }
 
 /* ============================================================
@@ -1693,7 +1660,7 @@ async function firebaseSave(){
 
     toast('✓ Terkirim sebagai ' + teacherName + ' — ' + new Date().toLocaleString('id-ID'));
     closeSyncModal();
-  } catch(err){
+  } catch(err) {
     console.error('Firebase save error:', err);
     toast('✗ Gagal: ' + err.message, true);
   }
@@ -1710,7 +1677,6 @@ async function firebaseLoad(){
   toast('⏳ Memuat dari Firebase...');
   closeSyncModal();
 
-  // Mode A: coba 2 path milik guru yang login
   const paths = [
     '/instrumen/personal/' + teacherId + '.json',
     '/instrumen/teachers/' + teacherId + '/master.json'
@@ -1786,8 +1752,6 @@ async function firebaseLoad(){
     toast('✓ Data dimuat dari Firebase (' + (usedPath.includes('personal') ? 'backup pribadi' : 'data admin') + ')');
   } catch(err){
     console.error('❌ Firebase load processing error:', err);
-    console.error('Stack:', err.stack);
-    console.error('Loaded data (partial):', loaded);
     toast('✗ Gagal memproses data: ' + err.message + ' — cek Console (F12)', true);
   }
 }
@@ -1898,6 +1862,9 @@ function bindIdentitasValues(){
   if (kSel) kSel.value = master.currentClass;
 }
 
+/* ============================================================
+   RENDER SISWA — ✅ FIXED: variabel `sel` yang tidak terdefinisi
+   ============================================================ */
 function renderSiswa(){
   const tb = $('#tblSiswa tbody'); tb.innerHTML='';
   if(!state.siswa.length){
@@ -1917,15 +1884,23 @@ function renderSiswa(){
     });
   }
   $('#badgeJumlahSiswa').textContent = state.siswa.length + ' siswa';
+
+  // ✅ FIX: handler yang benar — sebelumnya memakai variabel `sel` yang tidak ada di scope
   tb.querySelectorAll('input').forEach(inp=>{
     inp.addEventListener('input',()=>{
-      const s = state.siswa.find(x=>x.id===inp.dataset.id); if(!s) return;
+      const s = state.siswa.find(x => x.id === inp.dataset.id);
+      if(!s) return;
       const f = inp.dataset.f;
-      s[f] = (f==='nama') ? inp.value : num(inp.value);
-      const tds = inp.closest('tr').querySelectorAll('td');
-      tds[4].textContent = fmt((num(s.absen)+num(s.pengamatan))/2);
+      s[f] = (f === 'absen' || f === 'pengamatan') ? num(inp.value) : inp.value;
       saveState();
-      renderSumatif(); renderAkhir(); renderRemedial();
+
+      // Update kolom Total Sikap pada baris itu saja (tanpa re-render tabel)
+      const tr = inp.closest('tr');
+      const totalCell = tr.querySelector('.cell-calc');
+      if(totalCell) totalCell.textContent = fmt((num(s.absen)+num(s.pengamatan))/2);
+
+      if($('#autoUH').checked){ syncSumatifFromUH(); renderSumatif(); }
+      renderAkhir();
     });
   });
 }
@@ -1939,16 +1914,31 @@ function isiSiswaContoh(){
 }
 
 /* ============================================================
-   TAB 2 : SUMATIF
+   TAB 2 : SUMATIF — ⭐ Materi sebagai MASTER untuk UH & Remedial
    ============================================================ */
 function initSumatif(){
   refreshSumatifDropdown();
   $('#selSumatif').addEventListener('change',()=>{ renderSumatif(); });
   $('#inpMateriSumatif').addEventListener('input',e=>{
     const k = $('#selSumatif').value;
+    if(!k) return;
+    // Simpan ke Sumatif
     if(!state.sumatif[k]) state.sumatif[k] = { materi:'', data:{} };
     state.sumatif[k].materi = e.target.value;
+
+    // ⭐ Sinkron ke UH dengan indeks yang sama
+    if(!state.uh[k]) state.uh[k] = { materi:'', tanggal:'', data:{} };
+    state.uh[k].materi = e.target.value;
+
     saveState();
+    refreshRemedialDropdown();
+    refreshUHDropdown();
+
+    // Kalau UH yang sedang ditampilkan = k, update field readonly
+    if($('#selUH') && String($('#selUH').value) === String(k)){
+      const el = $('#inpMateriUH');
+      if(el) el.value = e.target.value;
+    }
   });
   $('#autoUH').addEventListener('change', ()=>{
     if($('#autoUH').checked) syncSumatifFromUH();
@@ -1984,7 +1974,9 @@ function refreshSumatifDropdown(){
     return;
   }
   active.forEach(i=>{
-    const o = document.createElement('option'); o.value=i; o.textContent='Sumatif '+i;
+    const materi = state.sumatif[i]?.materi || '';
+    const o = document.createElement('option'); o.value=i;
+    o.textContent = 'Sumatif ' + i + (materi ? ' — ' + materi : '');
     sel.appendChild(o);
   });
   if(cur && active.includes(+cur)) sel.value = cur;
@@ -2157,7 +2149,7 @@ function renderSumatif(){
 }
 
 /* ============================================================
-   TAB 3 : ANALISIS UH
+   TAB 3 : ANALISIS UH — materi READONLY (dari Sumatif)
    ============================================================ */
 function initUH(){
   refreshUHDropdown();
@@ -2167,12 +2159,7 @@ function initUH(){
     if(!state.uh[k]) state.uh[k]={materi:'',tanggal:'',data:{}};
     state.uh[k].tanggal = e.target.value; saveState();
   });
-  $('#inpMateriUH').addEventListener('input',e=>{
-    const k = $('#selUH').value;
-    if(!state.uh[k]) state.uh[k]={materi:'',tanggal:'',data:{}};
-    state.uh[k].materi = e.target.value; saveState();
-    refreshRemedialDropdown();
-  });
+  // ⭐ Materi UH sekarang readonly, tidak ada listener input
   $('#btnToggleUHCfg').addEventListener('click',()=>{
     const p = $('#cfgUH');
     p.style.display = p.style.display === 'none' ? '' : 'none';
@@ -2186,7 +2173,9 @@ function refreshUHDropdown(){
     sel.appendChild(o); return;
   }
   active.forEach(i=>{
-    const o = document.createElement('option'); o.value=i; o.textContent='UH '+i;
+    const materi = state.uh[i]?.materi || state.sumatif[i]?.materi || '';
+    const o = document.createElement('option'); o.value=i;
+    o.textContent = 'UH ' + i + (materi ? ' — ' + materi : '');
     sel.appendChild(o);
   });
   if(cur && active.includes(+cur)) sel.value = cur;
@@ -2286,10 +2275,13 @@ function applyJumlahSoal(){
 }
 function getUH(k){
   if(!state.uh[k] || typeof state.uh[k] !== 'object'){
-    state.uh[k] = { materi:'Suqil Marqazi', tanggal:'', data:{} };
+    state.uh[k] = { materi: state.sumatif[k]?.materi || '', tanggal:'', data:{} };
   }
   const u = state.uh[k];
   if(!u.data || typeof u.data !== 'object') u.data = {};
+  // ⭐ Pastikan materi selalu sinkron dengan Sumatif k
+  const materiSum = state.sumatif[k]?.materi || '';
+  if(materiSum && u.materi !== materiSum) u.materi = materiSum;
   return u;
 }
 let _syncTimer = null;
@@ -2313,7 +2305,8 @@ function renderUH(){
   const nSoal = cfg.soal || 5;
   const skorMaks = cfg.skorMaxPerSoal || Array(nSoal).fill(20);
   $('#inpTanggalUH').value = U.tanggal || '';
-  $('#inpMateriUH').value = U.materi || '';
+  // ⭐ Materi readonly — otomatis dari Sumatif
+  $('#inpMateriUH').value = state.sumatif[k]?.materi || U.materi || '';
   $('#badgeUH').textContent = 'UH ' + k;
   const thead = $('#tblUH thead');
   thead.innerHTML = `
@@ -2440,7 +2433,7 @@ function updateUHCalculations(){
 }
 
 /* ============================================================
-   TAB 4 : INPUT UH MANUAL
+   TAB 4 : INPUT UH MANUAL — materi tampil sebagai subtitle
    ============================================================ */
 function renderUHManual(){
   const tb = $('#tblUHManual tbody'); tb.innerHTML='';
@@ -2454,10 +2447,14 @@ function renderUHManual(){
     tb.innerHTML = `<tr><td colspan="${active.length+2}" style="padding:24px;color:var(--gray-400)">Belum ada data siswa.</td></tr>`;
     return;
   }
+  // ⭐ Header dengan subtitle materi (otomatis dari Sumatif)
   thead.innerHTML = `<tr>
     <th style="width:45px">No</th>
     <th style="min-width:180px">Nama Siswa</th>
-    ${active.map(i=>`<th style="width:100px">UH ${i}</th>`).join('')}
+    ${active.map(i=>{
+      const materi = state.sumatif[i]?.materi || state.uh[i]?.materi || '';
+      return `<th style="width:100px">UH ${i}${materi ? `<div style="font-size:9.5px;font-weight:500;opacity:.85;margin-top:2px;text-transform:none;letter-spacing:0">${esc(materi)}</div>` : ''}</th>`;
+    }).join('')}
   </tr>`;
   state.siswa.forEach((s,i)=>{
     const tr = document.createElement('tr');
@@ -2523,7 +2520,7 @@ function clearUHManual(){
 }
 
 /* ============================================================
-   TAB 5 : REMEDIAL
+   TAB 5 : REMEDIAL — ⭐ FIX: tanpa re-render tabel saat input
    ============================================================ */
 function initRemedial(){
   refreshRemedialDropdown();
@@ -2539,8 +2536,10 @@ function refreshRemedialDropdown(){
     sel.appendChild(o); return;
   }
   active.forEach(i=>{
+    // ⭐ Materi otomatis dari Sumatif
+    const materi = state.sumatif[i]?.materi || state.uh[i]?.materi || '';
     const o = document.createElement('option'); o.value='uh-'+i;
-    o.textContent = '📝 UH ' + i + ' — ' + (state.uh[i]?.materi||'');
+    o.textContent = '📝 UH ' + i + (materi ? ' — ' + materi : '');
     sel.appendChild(o);
   });
   if(cur && active.includes(+cur.replace('uh-',''))) sel.value = cur;
@@ -2558,6 +2557,7 @@ function getNilaiAwalForRemedial(siswa, jenis){
   if(jenis.startsWith('uh-')) return getUHNilaiRaw(siswa, jenis.slice(3));
   return 0;
 }
+
 function renderRemedial(){
   const KKM = num(state.identitas.kkm)||75;
   const sel = $('#selRemedial'); if(!sel) return;
@@ -2570,7 +2570,8 @@ function renderRemedial(){
   }
   const k = jenis.slice(3);
   const hasManual = state.uhManual[k] && Object.keys(state.uhManual[k]).length > 0;
-  const badgeText = 'UH ' + k;
+  const materi = state.sumatif[k]?.materi || state.uh[k]?.materi || '';
+  const badgeText = 'UH ' + k + (materi ? ' — ' + materi : '');
   $('#badgeRemedial').textContent = badgeText;
   $('#badgeRemChart').textContent = badgeText;
   $('#remedialInfo').textContent = `Nilai awal = nilai UH ${k} mentah (prioritas: ${hasManual?'Input UH Manual':'Analisis UH'}).`;
@@ -2581,8 +2582,6 @@ function renderRemedial(){
   }
   const store = getRemedialStore(jenis);
   let no = 1, count = 0;
-  const semuaNilaiAkhir = [];
-  const pairsAwalAkhir = [];
   state.siswa.forEach(s=>{
     const nilaiAwal = getNilaiAwalForRemedial(s, jenis);
     if(nilaiAwal <= 0) return;
@@ -2591,8 +2590,6 @@ function renderRemedial(){
     const tuntas = na >= KKM;
     const rmax = Math.max(num(R.r1), num(R.r2));
     const capped = rmax > KKM;
-    semuaNilaiAkhir.push(na);
-    pairsAwalAkhir.push({nama: s.nama, awal: nilaiAwal, akhir: na});
     if(nilaiAwal >= KKM) return;
     count++;
     const statusBadge = tuntas
@@ -2611,8 +2608,10 @@ function renderRemedial(){
   });
   if(!count){
     tb.innerHTML = `<tr><td colspan="7" style="padding:24px;color:var(--green-700);font-weight:600">
-      ✓ Tidak ada siswa yang perlu remedial untuk ${badgeText} (semua ≥ KKM ${KKM}).</td></tr>`;
+      ✓ Tidak ada siswa yang perlu remedial untuk UH ${k} (semua ≥ KKM ${KKM}).</td></tr>`;
   }
+
+  // ⭐ FIX: hanya update baris ini, JANGAN re-render seluruh tabel
   tb.querySelectorAll('input').forEach(inp=>{
     inp.addEventListener('input',()=>{
       const store = getRemedialStore(sel.value);
@@ -2620,8 +2619,57 @@ function renderRemedial(){
       store[inp.dataset.id][inp.dataset.f] = inp.value;
       saveState();
       if($('#autoUH').checked){ syncSumatifFromUH(); renderSumatif(); }
-      renderRemedial(); renderAkhir();
+
+      // Update baris ini saja — fokus tetap di input
+      const tr = inp.closest('tr');
+      const id = inp.dataset.id;
+      const s = state.siswa.find(x => x.id === id);
+      if(!s) return;
+      const nilaiAwal = getNilaiAwalForRemedial(s, sel.value);
+      const R = store[id];
+      const na = applyRemedialRule(nilaiAwal, R, KKM);
+      const tuntas = na >= KKM;
+      const rmax = Math.max(num(R.r1), num(R.r2));
+      const capped = rmax > KKM;
+
+      const naCell = tr.querySelector('[data-role="na"]');
+      if(naCell) naCell.textContent = fmt(na);
+      const stCell = tr.querySelector('[data-role="st"]');
+      if(stCell){
+        stCell.innerHTML = tuntas
+          ? `<span class="badge-tuntas">Tuntas</span>${capped?' <span class="badge-cap">cap</span>':''}`
+          : `<span class="badge-belum">Belum</span>`;
+      }
+
+      // Update statistik & grafik tanpa re-render tabel
+      updateRemedialSummary(sel.value, KKM);
+      renderAkhir();
     });
+  });
+
+  updateRemedialSummary(jenis, KKM);
+}
+
+// ⭐ Helper: hitung statistik & gambar chart tanpa re-render tabel
+function updateRemedialSummary(jenis, KKM){
+  KKM = num(KKM) || num(state.identitas.kkm) || 75;
+  if(!jenis){
+    $('#remedialStats').innerHTML = '';
+    drawRemedialCharts('', [], []);
+    return;
+  }
+  const store = getRemedialStore(jenis);
+  const semuaNilaiAkhir = [];
+  const pairsAwalAkhir = [];
+  let count = 0;
+  state.siswa.forEach(s=>{
+    const nilaiAwal = getNilaiAwalForRemedial(s, jenis);
+    if(nilaiAwal <= 0) return;
+    const R = store[s.id] || {r1:'', r2:''};
+    const na = applyRemedialRule(nilaiAwal, R, KKM);
+    semuaNilaiAkhir.push(na);
+    pairsAwalAkhir.push({nama: s.nama, awal: nilaiAwal, akhir: na});
+    if(nilaiAwal < KKM) count++;
   });
   const total = semuaNilaiAkhir.length;
   const tuntasCount = semuaNilaiAkhir.filter(n=>n>=KKM).length;
@@ -2635,6 +2683,7 @@ function renderRemedial(){
     <div class="stat"><div class="lbl">Rata-rata</div><div class="val">${fmt(avg)}</div><div class="sub">min ${fmt(min)}, max ${fmt(max)}</div></div>`;
   drawRemedialCharts(jenis, semuaNilaiAkhir, pairsAwalAkhir);
 }
+
 function drawRemedialCharts(jenis, nilaiArr, pairs){
   const KKM = num(state.identitas.kkm)||75;
   const ctx1 = document.getElementById('chartRemedial');
@@ -3203,6 +3252,9 @@ function importExcel(ev){
         const sh = wb.Sheets['Sumatif '+i]; if(!sh) continue;
         const aoa = XLSX.utils.sheet_to_json(sh, {header:1});
         state.sumatif[i] = { materi: aoa[0]?.[1] || '', data:{} };
+        // ⭐ Sinkron ke UH
+        if(!state.uh[i]) state.uh[i] = { materi:'', tanggal:'', data:{} };
+        state.uh[i].materi = aoa[0]?.[1] || '';
         for(let r=2;r<aoa.length;r++){
           const row = aoa[r]; if(!row || !row[1]) continue;
           const s = state.siswa.find(x=>x.nama.trim()===String(row[1]).trim());
@@ -3214,7 +3266,15 @@ function importExcel(ev){
         const sh = wb.Sheets['UH '+i]; if(!sh) continue;
         const aoa = XLSX.utils.sheet_to_json(sh, {header:1});
         const skorMaksArr = String(aoa[2]?.[1]||'').split(',').map(x=>num(x)).filter(x=>x>0);
-        state.uh[i] = { materi: aoa[0]?.[1]||'', tanggal: aoa[1]?.[1]||'', data:{} };
+        // ⭐ Materi dari UH Excel jika ada, kalau tidak pakai dari Sumatif
+        const materiFromUH = aoa[0]?.[1]||'';
+        if(!state.uh[i]) state.uh[i] = { materi:'', tanggal:'', data:{} };
+        state.uh[i] = { 
+          materi: materiFromUH || state.sumatif[i]?.materi || '', 
+          tanggal: aoa[1]?.[1]||'', 
+          data:{} 
+        };
+        if(materiFromUH && state.sumatif[i]) state.sumatif[i].materi = materiFromUH;
         const header = aoa[3] || [];
         let jmlCols = 0;
         for(let c=2;c<header.length;c++){ if(String(header[c]).startsWith('S')) jmlCols++; else break; }
@@ -3410,7 +3470,6 @@ function closeChangelog(){
 
 /* ============================================================
    ⭐ UNSAVED CHANGES WARNING
-   Peringatan jika ada perubahan yang belum disinkronkan
    ============================================================ */
 window.__UNSAVED__ = false;
 
@@ -3427,11 +3486,9 @@ function clearUnsaved(){
   if (b) b.classList.remove('show');
 }
 
-// Track perubahan input di seluruh halaman
 document.addEventListener('input', markUnsaved, true);
 document.addEventListener('change', markUnsaved, true);
 
-// Clear flag setelah sync berhasil
 const _origFirebaseSave = window.firebaseSave;
 if (typeof _origFirebaseSave === 'function'){
   window.firebaseSave = async function(){
@@ -3439,13 +3496,11 @@ if (typeof _origFirebaseSave === 'function'){
       await _origFirebaseSave.apply(this, arguments);
       clearUnsaved();
     } catch(e){
-      // biarkan flag tetap true jika gagal
       throw e;
     }
   };
 }
 
-// Warning saat tutup halaman
 window.addEventListener('beforeunload', (e) => {
   if (window.__UNSAVED__){
     e.preventDefault();
