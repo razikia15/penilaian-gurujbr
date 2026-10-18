@@ -5,10 +5,17 @@
    ============================================================ */
 
 window.APP_INFO = {
-  version: '1.1.3',
+  version: '1.1.4',
   buildDate: '2026-10-19',
 
   changelog: [
+    {
+      version: 'v1.1.4',
+      date: '2026-10-19',
+      highlights: [
+        'Update: guru.html'
+      ]
+    },
     {
       version: 'v1.1.3',
       date: '2026-10-19',
