@@ -38,7 +38,7 @@ git add . >nul 2>&1
 
 git diff --cached --quiet HEAD
 if !errorlevel!==0 (
-    echo [INFO] Tidak ada perubahan file.
+    echo [INFO] Tidak ada perubahan file yang perlu diupload.
     pause & goto :MENU
 )
 
@@ -100,31 +100,65 @@ goto :EXECUTE
 :EXECUTE
 echo.
 echo ----------------------------------------------------------
-echo   MENARIK DATA DARI GITHUB (git pull)...
+echo   [1/4] Update versi...
 echo ----------------------------------------------------------
-:: Menarik perubahan terbaru dari remote (jika ada)
-git pull origin %BRANCH% --no-rebase >nul 2>&1
-
-echo [1/4] Update versi...
+:: JANGAN gunakan 2^>nul agar jika error, kita bisa lihat
 set BUMP_RESULT=
 if "!BUMP_TYPE!"=="set" (
-    for /f "delims=" %%r in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action set -Version "!NEW_VER!" -Message "!CHANGELOG_MSG!" 2^>nul') do set BUMP_RESULT=%%r
+    for /f "delims=" %%r in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action set -Version "!NEW_VER!" -Message "!CHANGELOG_MSG!"') do set BUMP_RESULT=%%r
 ) else (
-    for /f "delims=" %%r in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action patch -Message "!CHANGELOG_MSG!" 2^>nul') do set BUMP_RESULT=%%r
+    for /f "delims=" %%r in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action patch -Message "!CHANGELOG_MSG!"') do set BUMP_RESULT=%%r
 )
 
-echo [2/4] Commit...
-git add . >nul 2>&1
-git commit -m "!CHANGELOG_MSG!" >nul 2>&1
-
-echo [3/4] Push ke GitHub...
-git branch -M !BRANCH! >nul 2>&1
-git push -u origin !BRANCH!
+:: Cek apakah versi berhasil diupdate
+if "!BUMP_RESULT!"=="" (
+    echo.
+    echo [ERROR] GAGAL UPDATE VERSI!
+    echo Pastikan file version.js TIDAK SEDANG DIBUKA di Notepad/VS Code.
+    pause & goto :MENU
+)
+echo       !BUMP_RESULT!
 
 echo.
-echo [4/4] Membersihkan...
+echo ----------------------------------------------------------
+echo   [2/4] Commit...
+echo ----------------------------------------------------------
+git add . >nul 2>&1
+git commit -m "!CHANGELOG_MSG!"
+if !errorlevel! neq 0 (
+    echo.
+    echo [ERROR] Gagal melakukan commit.
+    pause & goto :MENU
+)
+
+echo.
+echo ----------------------------------------------------------
+echo   [3/4] Menarik data terbaru dari GitHub...
+echo ----------------------------------------------------------
+:: Menggunakan --no-rebase agar aman
+git pull origin %BRANCH% --no-rebase --no-edit
+if !errorlevel! neq 0 (
+    echo.
+    echo [ERROR] Gagal Pull. Kemungkinan ada bentrok file di GitHub.
+    pause & goto :MENU
+)
+
+echo.
+echo ----------------------------------------------------------
+echo   [4/4] Push ke GitHub...
+echo ----------------------------------------------------------
+git push -u origin %BRANCH!
+if !errorlevel! neq 0 (
+    echo.
+    echo ==========================================================
+    echo    [ERROR] GAGAL UPLOAD KE GITHUB!
+    echo    Periksa koneksi internet atau login GitHub Anda.
+    echo ==========================================================
+    pause & goto :MENU
+)
+
 echo.
 echo ==========================================================
-echo    SELESAI! Versi baru: !BUMP_RESULT:BUMPED:=!
+echo    BERHASIL TERUPLOAD! Versi baru: !BUMP_RESULT:BUMPED:=!
 echo ==========================================================
 pause
