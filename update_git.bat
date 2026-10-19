@@ -43,13 +43,11 @@ if !errorlevel!==0 (
 )
 
 echo [INFO] Mendeteksi file yang berubah...
-:: Mengambil daftar file yang berubah (hanya nama filenya)
 set "CHANGED_FILES="
 for /f "tokens=*" %%f in ('git diff --cached --name-only HEAD') do (
     set "CHANGED_FILES=!CHANGED_FILES!, %%~nxf"
 )
 
-:: Membuat changelog otomatis berdasarkan file
 set "CHANGELOG_MSG=Update file: !CHANGED_FILES:~2!"
 set BUMP_TYPE=patch
 set NEW_VER=
@@ -101,7 +99,13 @@ goto :EXECUTE
 :: ============================================================
 :EXECUTE
 echo.
-echo [1/3] Update versi...
+echo ----------------------------------------------------------
+echo   MENARIK DATA DARI GITHUB (git pull)...
+echo ----------------------------------------------------------
+:: Menarik perubahan terbaru dari remote (jika ada)
+git pull origin %BRANCH% --no-rebase >nul 2>&1
+
+echo [1/4] Update versi...
 set BUMP_RESULT=
 if "!BUMP_TYPE!"=="set" (
     for /f "delims=" %%r in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action set -Version "!NEW_VER!" -Message "!CHANGELOG_MSG!" 2^>nul') do set BUMP_RESULT=%%r
@@ -109,14 +113,16 @@ if "!BUMP_TYPE!"=="set" (
     for /f "delims=" %%r in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action patch -Message "!CHANGELOG_MSG!" 2^>nul') do set BUMP_RESULT=%%r
 )
 
-echo [2/3] Commit...
+echo [2/4] Commit...
 git add . >nul 2>&1
 git commit -m "!CHANGELOG_MSG!" >nul 2>&1
 
-echo [3/3] Push ke GitHub...
+echo [3/4] Push ke GitHub...
 git branch -M !BRANCH! >nul 2>&1
 git push -u origin !BRANCH!
 
+echo.
+echo [4/4] Membersihkan...
 echo.
 echo ==========================================================
 echo    SELESAI! Versi baru: !BUMP_RESULT:BUMPED:=!
