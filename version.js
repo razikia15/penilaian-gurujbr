@@ -5,10 +5,17 @@
    ============================================================ */
 
 window.APP_INFO = {
-  version: '1.1.7',
+  version: '1.1.8',
   buildDate: '2026-10-19',
 
   changelog: [
+    {
+      version: 'v1.1.8',
+      date: '2026-10-19',
+      highlights: [
+        'Update file: update_git.bat'
+      ]
+    },
     {
       version: 'v1.1.7',
       date: '2026-10-19',

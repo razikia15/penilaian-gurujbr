@@ -102,7 +102,6 @@ echo.
 echo ----------------------------------------------------------
 echo   [1/4] Update versi...
 echo ----------------------------------------------------------
-:: JANGAN gunakan 2^>nul agar jika error, kita bisa lihat
 set BUMP_RESULT=
 if "!BUMP_TYPE!"=="set" (
     for /f "delims=" %%r in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action set -Version "!NEW_VER!" -Message "!CHANGELOG_MSG!"') do set BUMP_RESULT=%%r
@@ -110,7 +109,6 @@ if "!BUMP_TYPE!"=="set" (
     for /f "delims=" %%r in ('powershell -NoProfile -ExecutionPolicy Bypass -File "version-tool.ps1" -Action patch -Message "!CHANGELOG_MSG!"') do set BUMP_RESULT=%%r
 )
 
-:: Cek apakah versi berhasil diupdate
 if "!BUMP_RESULT!"=="" (
     echo.
     echo [ERROR] GAGAL UPDATE VERSI!
@@ -135,8 +133,7 @@ echo.
 echo ----------------------------------------------------------
 echo   [3/4] Menarik data terbaru dari GitHub...
 echo ----------------------------------------------------------
-:: Menggunakan --no-rebase agar aman
-git pull origin %BRANCH% --no-rebase --no-edit
+git pull origin !BRANCH! --no-rebase --no-edit
 if !errorlevel! neq 0 (
     echo.
     echo [ERROR] Gagal Pull. Kemungkinan ada bentrok file di GitHub.
@@ -147,7 +144,7 @@ echo.
 echo ----------------------------------------------------------
 echo   [4/4] Push ke GitHub...
 echo ----------------------------------------------------------
-git push -u origin %BRANCH!
+git push -u origin !BRANCH!
 if !errorlevel! neq 0 (
     echo.
     echo ==========================================================
