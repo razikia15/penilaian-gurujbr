@@ -139,20 +139,49 @@
 
   /* ===== TABS NAVIGATION ===== */
   nav.tabs{
-    background:#fff;border-bottom:1px solid var(--gray-200);
-    display:flex;gap:2px;padding:0 16px;overflow-x:auto;
-    position:sticky;top:0;z-index:99;
+    background:#fff; border-bottom:1px solid var(--gray-200);
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap: nowrap; /* ⭐ PENTING: Mencegah menu turun ke bawah */
+    padding:0; 
+    position:sticky; top:0; z-index:99;
     box-shadow:0 4px 12px rgba(0,0,0,.05);
+    /* overflow: hidden;  <--- HAPUS ATAU JADIKAN KOMENTAR */
   }
-  nav.tabs button{
+
+  .tabs-scroll {
+    display: flex;
+    gap: 2px;
+    padding-left: 16px;
+    overflow-x: auto; /* ⭐ Mengaktifkan scroll kiri-kanan */
+    flex: 1;
+    white-space: nowrap;
+  }
+
+  /* ⭐ Memunculkan dan mempercantik scrollbar agar terlihat */
+  .tabs-scroll::-webkit-scrollbar {
+    height: 5px; 
+  }
+  .tabs-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  .tabs-scroll::-webkit-scrollbar-thumb {
+    background: var(--gray-400);
+    border-radius: 10px;
+  }
+  .tabs-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--green-500);
+  }
+  
+  .tabs-scroll button{
     background:none;border:none;padding:14px 16px;
     font-size:12.5px;font-weight:600;color:var(--gray-600);
     cursor:pointer;border-bottom:3px solid transparent;
     transition:.15s;white-space:nowrap;font-family:inherit;
     display:flex;align-items:center;gap:5px;
+    flex-shrink: 0; /* ⭐ PENTING: Mencegah teks tombol terlipat/gepeng */
   }
-  nav.tabs button:hover{color:var(--green-700);background:var(--green-50)}
-  nav.tabs button.active{color:var(--green-700);border-bottom-color:var(--green-700)}
+  .tabs-scroll button:hover{color:var(--green-700);background:var(--green-50)}
+  .tabs-scroll button.active{color:var(--green-700);border-bottom-color:var(--green-700)}
 
   main{padding:24px;max-width:100%;margin:0}
   
@@ -389,6 +418,126 @@
   .changelog-item ul li{margin-bottom:3px}
   .changelog-badge{font-size:9.5px;background:#dbeafe;color:#1e40af;padding:2px 7px;border-radius:10px;font-weight:700}
   .changelog-empty{text-align:center;padding:24px;color:#9ca3af;font-size:12.5px}
+  
+  /* ===== CLASS SWITCHER STYLES (LEBIH RAMPING) ===== */
+  .class-switcher-wrap {
+    position: relative;
+    padding-right: 16px;
+    padding-left: 10px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; /* ⭐ Memastikan tombol kelas tetap di kanan */
+    z-index: 100;
+  }
+
+  .cs-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Dikurangi dari 10px */
+    background: var(--green-50);
+    border: 1.5px solid var(--green-300); /* Lebih tipis */
+    border-radius: 20px;
+    padding: 4px 10px 4px 4px; /* Padding dikurangi */
+    cursor: pointer;
+    transition: .2s;
+    font-family: inherit;
+  }
+  .cs-btn:hover { background: #fff; border-color: var(--green-500); }
+
+  .cs-badge {
+    background: var(--green-700);
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px; /* Dikecilkan */
+    padding: 4px 10px; /* Dikecilkan */
+    border-radius: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .cs-info { text-align: left; line-height: 1.2; }
+  .cs-mapel { font-size: 11.5px; font-weight: 800; color: var(--green-900); }
+  .cs-semester { font-size: 9.5px; font-weight: 600; color: var(--gray-600); }
+  
+  .cs-arrow { font-size: 8px; color: var(--green-700); margin-left: 2px; transition: transform 0.2s; }
+  .cs-btn.open .cs-arrow { transform: rotate(180deg); }
+
+  .cs-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 15px;
+    width: 200px; /* Lebar dikurangi dari 260px */
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    padding: 6px; /* Padding dikecilkan */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: .2s;
+    z-index: 999;
+  }
+  .cs-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .cs-dropdown-header {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: var(--gray-400);
+    padding: 6px 8px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--gray-100);
+    margin-bottom: 2px;
+  }
+
+  .cs-list { display: flex; flex-direction: column; gap: 2px; max-height: 250px; overflow-y: auto; }
+  
+  .cs-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 10px; /* Dikecilkan */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px; /* Dikecilkan */
+    font-weight: 600;
+    color: var(--gray-800);
+    transition: .15s;
+  }
+  .cs-item:hover { background: var(--gray-50); }
+  .cs-item.active { background: var(--green-100); color: var(--green-900); }
+  .cs-item .cs-count { font-size: 10.5px; color: var(--gray-400); font-weight: 500; }
+  .cs-item.active .cs-count { color: var(--green-700); font-weight: 700; }
+
+/* Responsif untuk layar kecil / split screen */
+
+@media (max-width: 1300px) { /* Dinaikkan ke 1300px agar aman untuk layar lebar yang di-split */
+  .cs-info { display: none; } 
+  .cs-arrow { display: none; } 
+  .cs-btn { 
+    padding: 0; 
+    border: none; 
+    background: transparent;
+    gap: 0;
+  }
+  .cs-btn:hover { background: transparent; }
+  .cs-badge {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Membuat badge menjadi bulat sempurna */
+    font-size: 13px;
+    padding: 0;
+    border: 2px solid var(--green-500); /* Tambahan border agar terlihat seperti tombol */
+  }
+}
+
 </style>
 </head>
 <body>
@@ -452,15 +601,35 @@
 
   <!-- Navigation Tabs -->
   <nav class="tabs">
-    <button class="active" data-tab="dashboard">🏠 Dashboard</button>
-    <button data-tab="identitas">📋 Identitas &amp; Siswa</button>
-    <button data-tab="sumatif">📝 Sumatif</button>
-    <button data-tab="uh">📊 Analisis UH</button>
-    <button data-tab="uhmanual">✍️ Input UH Manual</button>
-    <button data-tab="remedial">📈 Remedial</button>
-    <button data-tab="uts">📘 UTS</button>
-    <button data-tab="uas">📗 UAS</button>
-    <button data-tab="akhir">🏆 Nilai Akhir</button>
+    <!-- Bungkus tombol tab dengan div scroll -->
+    <div class="tabs-scroll">
+      <button class="active" data-tab="dashboard">🏠 Dashboard</button>
+      <button data-tab="identitas">📋 Identitas &amp; Siswa</button>
+      <button data-tab="sumatif">📝 Sumatif</button>
+      <button data-tab="uh">📊 Analisis UH</button>
+      <button data-tab="uhmanual">✍️ Input UH Manual</button>
+      <button data-tab="remedial">📈 Remedial</button>
+      <button data-tab="uts">📘 UTS</button>
+      <button data-tab="uas">📗 UAS</button>
+      <button data-tab="akhir">🏆 Nilai Akhir</button>
+    </div>
+
+    <!-- Class Switcher (Sekarang berada di luar area scroll) -->
+    <div class="class-switcher-wrap" id="classSwitcherWrap">
+      <button class="cs-btn" id="csBtn" onclick="toggleClassSwitcher(event)">
+        <div class="cs-badge" id="csBadge">X</div>
+        <div class="cs-info">
+          <div class="cs-mapel" id="csMapel">Bahasa Arab</div>
+          <div class="cs-semester" id="csSemester">Ganjil • 2026/2027</div>
+        </div>
+        <div class="cs-arrow">▼</div>
+      </button>
+      
+      <div class="cs-dropdown" id="csDropdown">
+        <div class="cs-dropdown-header">PILIH KELAS</div>
+        <div class="cs-list" id="csList"></div>
+      </div>
+    </div>
   </nav>
 </div>
 
@@ -500,10 +669,15 @@
       </div>
     </section>
 
-    <section class="card">
-      <div class="card-h" style="border:none;padding:0;margin-bottom:14px">
-        <h2 style="font-size:15px;font-weight:800;color:var(--green-900)">Rekap nilai siswa</h2>
-        <span class="tag" id="dashRekapTag" style="font-size:11.5px;font-weight:700;background:var(--green-100);color:var(--green-900);padding:2px 10px;border-radius:20px;margin-left:8px">Peringkat teratas</span>
+        <section class="card">
+      <div class="card-h" style="border:none;padding:0;margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <h2 style="font-size:15px;font-weight:800;color:var(--green-900)">Rekap nilai siswa</h2>
+          <span class="tag" id="dashRekapTag" style="font-size:11.5px;font-weight:700;background:var(--green-100);color:var(--green-900);padding:2px 10px;border-radius:20px;">Peringkat teratas</span>
+        </div>
+        <select id="dashFilterKelas" style="padding:6px 12px;border-radius:8px;border:1.5px solid var(--gray-200);font-size:12.5px;font-weight:600;color:var(--gray-800);background:#fff;cursor:pointer;outline:none;">
+          <option value="all">Semua Kelas</option>
+        </select>
       </div>
       <div class="tbl-wrap">
         <table>
@@ -1035,6 +1209,7 @@ function defaultClassState(kelas){
 
 let master = loadMaster();
 let state = master.classes[master.currentClass];
+let dashFilterKelas = 'all'; // <--- TAMBAHKAN BARIS INI
 let uidCounter = 0;
 
 let isInitialized = false;
@@ -1288,17 +1463,102 @@ function uid(){ return 's' + (++uidCounter) + '_' + Date.now().toString(36); }
 
 function switchClass(kelas){
   if(kelas === master.currentClass || !CLASSES.includes(kelas)) return;
-  master.currentClass = kelas;
-  state = master.classes[kelas];
-  state.identitas.kelas = kelas;
-  if(!state.identitas.wali && WALI_KELAS_MAP[kelas]) state.identitas.wali = WALI_KELAS_MAP[kelas];
-  saveState();
-  bindIdentitasValues();
-  refreshAll();
   
-  updateHeroInfo();
-  toast('✓ Beralih ke kelas ' + kelas);
+  try {
+    master.currentClass = kelas;
+    state = master.classes[kelas];
+    
+    // PENGAMAN 1: Jika data kelas kosong/belum terbentuk, buat baru
+    if (!state) {
+      state = defaultClassState(kelas);
+      master.classes[kelas] = state;
+    } else {
+      // PENGAMAN 2: Validasi struktur data kelas agar tidak error (reading '1')
+      normalizeClass(state, kelas); 
+    }
+    
+    state.identitas.kelas = kelas;
+    if(!state.identitas.wali && WALI_KELAS_MAP[kelas]) state.identitas.wali = WALI_KELAS_MAP[kelas];
+    
+    saveState();
+    bindIdentitasValues();
+    refreshAll();
+    
+    updateHeroInfo();
+    updateClassSwitcherUI();
+    toast('✓ Beralih ke kelas ' + kelas);
+  } catch (err) {
+    console.error("Error saat ganti kelas:", err);
+    toast('❌ Gagal ganti kelas: ' + err.message, true);
+  }
 }
+
+/* ============================================================
+   CLASS SWITCHER (POPUP GANTI KELAS)
+   ============================================================ */
+function updateClassSwitcherUI() {
+  // PENGAMAN: Hentikan fungsi jika data state belum siap
+  if (!state || !state.identitas) return;
+
+  document.getElementById('csBadge').textContent = master.currentClass;
+  document.getElementById('csMapel').textContent = state.identitas.mapel || 'Mata Pelajaran';
+  
+  const sem = state.identitas.semester || 'Ganjil';
+  const thn = state.identitas.tahun || '2026/2027';
+  document.getElementById('csSemester').textContent = `${sem} • ${thn}`;
+
+  const listEl = document.getElementById('csList');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+  
+  CLASSES.forEach(k => {
+    const cls = master.classes[k];
+    const count = cls && cls.siswa ? cls.siswa.length : 0;
+    
+    const item = document.createElement('div');
+    item.className = 'cs-item' + (k === master.currentClass ? ' active' : '');
+    item.innerHTML = `
+      <span>Kelas ${k}</span>
+      <span class="cs-count">${count} siswa</span>
+    `;
+    
+    item.addEventListener('click', () => {
+      switchClass(k); 
+      closeClassSwitcher();
+    });
+    
+    listEl.appendChild(item);
+  });
+}
+
+function toggleClassSwitcher(e) {
+  if (e) e.stopPropagation();
+  const btn = document.getElementById('csBtn');
+  const dd = document.getElementById('csDropdown');
+  
+  const isOpen = dd.classList.contains('open');
+  if (isOpen) {
+    closeClassSwitcher();
+  } else {
+    btn.classList.add('open');
+    dd.classList.add('open');
+    // Refresh list setiap kali dibuka untuk update jumlah siswa terbaru
+    updateClassSwitcherUI(); 
+  }
+}
+
+function closeClassSwitcher() {
+  document.getElementById('csBtn')?.classList.remove('open');
+  document.getElementById('csDropdown')?.classList.remove('open');
+}
+
+// Klik di luar untuk menutup
+document.addEventListener('click', (e) => {
+  const wrap = document.getElementById('classSwitcherWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    closeClassSwitcher();
+  }
+});
 
 function updateClassSelector(){
   const sel = $('#inp-kelas'); if(!sel) return;
@@ -1365,19 +1625,20 @@ function renderMadrasahDropdown(){
       });
       item.appendChild(del);
     }
-    item.addEventListener('click', ()=>{
+        item.addEventListener('click', ()=>{
       state.identitas.madrasah = name;
       const mappedKepala = MADRASAH_KEPALA_MAP[name];
       if(mappedKepala){
         state.identitas.kepala = mappedKepala;
-        const kList = getKepalaList();
-        if(!kList.includes(mappedKepala)){ kList.push(mappedKepala); saveKepalaList(kList); }
-        const nipMap = getKepalaNipMap();
-        if(nipMap[mappedKepala] !== undefined) state.identitas.nipKepala = nipMap[mappedKepala];
+        // ... (kode bawaan biarkan saja) ...
       }
       saveState();
       renderMadrasahDropdown(); renderKepalaDropdown(); closeMadrasahDropdown();
       const elNip = $('#inp-nipKepala'); if(elNip) elNip.value = state.identitas.nipKepala ?? '';
+      
+      initDashFilter(); // <--- TAMBAHKAN INI
+      renderDashboard(); // <--- TAMBAHKAN INI
+      
       if(mappedKepala) toast('✓ Kepala Madrasah otomatis: ' + mappedKepala);
       else toast('ℹ️ Madrasah diganti. Silakan pilih kepala madrasah manual.');
     });
@@ -1400,6 +1661,27 @@ function renderMadrasahDropdown(){
 function openMadrasahDropdown(){ $('#madrasahBtn')?.classList.add('open'); $('#madrasahList')?.classList.add('open'); }
 function closeMadrasahDropdown(){ $('#madrasahBtn')?.classList.remove('open'); $('#madrasahList')?.classList.remove('open'); }
 function toggleMadrasahDropdown(){ $('#madrasahList')?.classList.contains('open') ? closeMadrasahDropdown() : openMadrasahDropdown(); }
+
+function initDashFilter() {
+  const sel = document.getElementById('dashFilterKelas');
+  if (!sel) return;
+
+  const isMTs = (state.identitas.madrasah || '').toLowerCase().includes('mts');
+  const classes = isMTs ? ['VII', 'VIII', 'IX'] : ['X', 'XI', 'XII'];
+
+  sel.innerHTML = '<option value="all">Semua Kelas</option>';
+  classes.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = 'Kelas ' + c;
+    sel.appendChild(opt);
+  });
+
+  if (dashFilterKelas !== 'all' && !classes.includes(dashFilterKelas)) {
+    dashFilterKelas = 'all';
+  }
+  sel.value = dashFilterKelas;
+}
 
 /* ============================================================
    KEPALA MADRASAH
@@ -1816,9 +2098,9 @@ async function autoLoadFromFirebase(){
 /* ============================================================
    NAVIGATION
    ============================================================ */
-$$('nav.tabs button').forEach(btn=>{
+$$('.tabs-scroll button').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    $$('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    $$('.tabs-scroll button').forEach(b=>b.classList.remove('active'));
     $$('.tab-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     $('#tab-'+btn.dataset.tab).classList.add('active');
@@ -1852,42 +2134,81 @@ function renderDashboard() {
   let allStudentScores = []; 
   const kelasStats = {};
   
-  let sumFilled = { 1:0, 2:0, 3:0, uts:0, uas:0 };
+  let sumFilled = {}; 
+  let activeSumatifIndices = new Set();
   let allStudentsFlat = []; // Untuk tabel rekap
 
   const originalState = state;
 
-  CLASSES.forEach(k => {
-    state = master.classes[k]; 
+  // --- LOGIKA FILTER KELAS DASHBOARD ---
+  let classesToProcess = [];
+  if (dashFilterKelas === 'all') {
+    const isMTs = (state.identitas.madrasah || '').toLowerCase().includes('mts');
+    classesToProcess = isMTs ? ['VII', 'VIII', 'IX'] : ['X', 'XI', 'XII'];
+  } else {
+    classesToProcess = [dashFilterKelas];
+  }
+
+  classesToProcess.forEach(k => {
+    state = master.classes[k];  
+    
+    // PENGAMAN: Jika kelas tidak ditemukan, lewati
+    if (!state) return; 
+    
     const cls = state;
     
-    if (!cls || !cls.siswa || cls.siswa.length === 0) {
+    if (!cls.siswa || cls.siswa.length === 0) {
       kelasStats[k] = { n: 0, avg: 0, tuntas: 0, remedial: 0, countedN: 0 };
       return;
     }
 
     const KKM = num(cls.identitas.kkm) || 75;
     let n = cls.siswa.length;
+	 getActiveSumatifIdx().forEach(idx => activeSumatifIndices.add(idx));
     let sumNilai = 0;
     let tuntas = 0;
     let remedial = 0;
     let countedN = 0;
 
-    cls.siswa.forEach(s => {
+        cls.siswa.forEach(s => {
       const h = hitungNilaiAkhir(s); 
       
-      // ⭐ SYARAT KETAT: Hanya hitung jika Sumatif, UTS, DAN UAS sudah terisi lengkap.
+      // Cek ketersediaan data
       const hasSumatif = h.sumArr.length > 0;
       const hasUTS = num(cls.uts?.[s.id]?.awal) > 0 || num(cls.uts?.[s.id]?.perbaikan) > 0;
       const hasUAS = num(cls.uas?.[s.id]?.awal) > 0 || num(cls.uas?.[s.id]?.perbaikan) > 0;
       
-      const isCounted = (hasSumatif && hasUTS && hasUAS);
+      let countAvailable = (hasSumatif ? 1 : 0) + (hasUTS ? 1 : 0) + (hasUAS ? 1 : 0);
       
-      if (isCounted && h.nilaiAkhir > 0) {
-        sumNilai += h.nilaiAkhir;
+      if (countAvailable > 0) {
+        let dynamicScore = 0;
+
+        // LOGIKA DINAMIS BERDASARKAN DATA YANG TERISI
+        if (countAvailable === 1) {
+          // Jika hanya 1 komponen yang terisi (100%)
+          if (hasSumatif) dynamicScore = h.rataSum;
+          else if (hasUTS) dynamicScore = h.uts;
+          else if (hasUAS) dynamicScore = h.uas;
+        } else if (countAvailable === 2) {
+          // Jika 2 komponen terisi (50% - 50%)
+          let sum = 0;
+          if (hasSumatif) sum += h.rataSum;
+          if (hasUTS) sum += h.uts;
+          if (hasUAS) sum += h.uas;
+          dynamicScore = sum / 2;
+        } else if (countAvailable === 3) {
+          // Jika lengkap 3 komponen, pakai persentase dari pengaturan Nilai Akhir
+          const b = state.config.bobotAkhir;
+          const totalBobot = num(b.sumatif) + num(b.uts) + num(b.uas) || 100;
+          dynamicScore = (h.rataSum * num(b.sumatif) + h.uts * num(b.uts) + h.uas * num(b.uas)) / totalBobot;
+        }
+        
+        sumNilai += dynamicScore;
         countedN++;
-        allStudentScores.push(h.nilaiAkhir);
-        if (h.nilaiAkhir >= KKM) tuntas++;
+        allStudentScores.push(dynamicScore);
+        
+        const isTuntas = dynamicScore >= KKM;
+        if (isTuntas) tuntas++;
         else remedial++;
         
         allStudentsFlat.push({ 
@@ -1899,17 +2220,25 @@ function renderDashboard() {
           s3: h.sumArr[2] || 0, 
           uts: h.uts, 
           uas: h.uas, 
-          akhir: h.nilaiAkhir,
-          tuntas: h.tuntas
+          akhir: dynamicScore, // Menggunakan nilai dinamis untuk tabel rekap
+          tuntas: isTuntas
         });
       }
       
-      // Hitung kelengkapan input (untuk progress bar)
-      if (h.sumArr[0] > 0) sumFilled[1]++;
-      if (h.sumArr[1] > 0) sumFilled[2]++;
-      if (h.sumArr[2] > 0) sumFilled[3]++;
-      if (h.uts > 0) sumFilled.uts++;
-      if (h.uas > 0) sumFilled.uas++;
+      // Hitung kelengkapan input dinamis
+      getActiveSumatifIdx().forEach(idx => {
+          const S = cls.sumatif[idx];
+          if (S && S.data[s.id]) {
+              const d = S.data[s.id];
+              const hasUH = d.uh !== '' && d.uh !== null && d.uh !== undefined;
+              const hasTugas = Array.isArray(d.tugas) && d.tugas.some(t => t !== '' && t !== null && t !== undefined);
+              if (hasUH || hasTugas) {
+                  sumFilled[idx] = (sumFilled[idx] || 0) + 1;
+              }
+          }
+      });
+      if (h.uts > 0) sumFilled.uts = (sumFilled.uts || 0) + 1;
+      if (h.uas > 0) sumFilled.uas = (sumFilled.uas || 0) + 1;
     });
 
     const avg = countedN > 0 ? sumNilai / countedN : 0;
@@ -1930,9 +2259,9 @@ function renderDashboard() {
   const getDetails = (type) => {
     let html = `<div class="kpi-details"><div class="kpi-details-title">Rincian Per Kelas</div><div class="kpi-grid">`;
     let hasData = false;
-    CLASSES.forEach(k => {
+    classesToProcess.forEach(k => {
       const d = kelasStats[k];
-      if (d.n === 0) return;
+      if (!d || d.n === 0) return;
       hasData = true;
       let val = '';
       if (type === 'siswa') {
@@ -2006,46 +2335,72 @@ function renderDashboard() {
   document.getElementById('dashTodo').innerHTML = todos.join('');
 
   const calcPct = (val) => totalSiswa > 0 ? (val / totalSiswa * 100) : 0;
-  const p1 = calcPct(sumFilled[1]);
-  const p2 = calcPct(sumFilled[2]);
-  const p3 = calcPct(sumFilled[3]);
-  const pUts = calcPct(sumFilled.uts);
-  const pUas = calcPct(sumFilled.uas);
-  const avgPct = (p1+p2+p3+pUts+pUas) / 5;
+  const getBarCls = (p) => p >= 90 ? '' : (p >= 50 ? 'warn' : 'low');
   
+  // Urutkan index sumatif dari kecil ke besar
+  const sortedSumatif = Array.from(activeSumatifIndices).sort((a,b)=>a-b);
+  
+  let totalPct = 0;
+  let countComponents = 0;
+  
+  sortedSumatif.forEach(idx => {
+      totalPct += calcPct(sumFilled[idx] || 0);
+      countComponents++;
+  });
+  
+  // UTS dan UAS selalu ditampilkan (jika ada siswa)
+  if (totalSiswa > 0) {
+      totalPct += calcPct(sumFilled.uts || 0);
+      totalPct += calcPct(sumFilled.uas || 0);
+      countComponents += 2;
+  }
+  
+  const avgPct = countComponents > 0 ? (totalPct / countComponents) : 0;
   document.getElementById('dashProgAvg').textContent = Math.round(avgPct) + '% lengkap';
   
-  const getBarCls = (p) => p >= 90 ? '' : (p >= 50 ? 'warn' : 'low');
-  document.getElementById('dashProg').innerHTML = `
-    <div class="prog-row">
-      <div class="top"><b>Sumatif 1</b><span>${sumFilled[1]}/${totalSiswa} siswa • ${Math.round(p1)}%</span></div>
-      <div class="bar"><i class="${getBarCls(p1)}" style="width:${p1}%"></i></div>
-    </div>
-    <div class="prog-row">
-      <div class="top"><b>Sumatif 2</b><span>${sumFilled[2]}/${totalSiswa} siswa • ${Math.round(p2)}%</span></div>
-      <div class="bar"><i class="${getBarCls(p2)}" style="width:${p2}%"></i></div>
-    </div>
-    <div class="prog-row">
-      <div class="top"><b>Sumatif 3</b><span>${sumFilled[3]}/${totalSiswa} siswa • ${Math.round(p3)}%</span></div>
-      <div class="bar"><i class="${getBarCls(p3)}" style="width:${p3}%"></i></div>
-    </div>
-    <div class="prog-row">
-      <div class="top"><b>UTS</b><span>${sumFilled.uts}/${totalSiswa} siswa • ${Math.round(pUts)}%</span></div>
-      <div class="bar"><i class="${getBarCls(pUts)}" style="width:${pUts}%"></i></div>
-    </div>
-    <div class="prog-row">
-      <div class="top"><b>UAS</b><span>${sumFilled.uas}/${totalSiswa} siswa • ${Math.round(pUas)}%</span></div>
-      <div class="bar"><i class="${getBarCls(pUas)}" style="width:${pUas}%"></i></div>
-    </div>
-  `;
+  let progHtml = '';
+  // Render HANYA Sumatif yang aktif
+  sortedSumatif.forEach(idx => {
+      const val = sumFilled[idx] || 0;
+      const p = calcPct(val);
+      progHtml += `
+        <div class="prog-row">
+          <div class="top"><b>Sumatif ${idx}</b><span>${val}/${totalSiswa} siswa • ${Math.round(p)}%</span></div>
+          <div class="bar"><i class="${getBarCls(p)}" style="width:${p}%"></i></div>
+        </div>
+      `;
+  });
+  
+  // Render UTS & UAS
+  if (totalSiswa > 0) {
+      const valUts = sumFilled.uts || 0;
+      const pUts = calcPct(valUts);
+      progHtml += `
+        <div class="prog-row">
+          <div class="top"><b>UTS</b><span>${valUts}/${totalSiswa} siswa • ${Math.round(pUts)}%</span></div>
+          <div class="bar"><i class="${getBarCls(pUts)}" style="width:${pUts}%"></i></div>
+        </div>
+      `;
+      
+      const valUas = sumFilled.uas || 0;
+      const pUas = calcPct(valUas);
+      progHtml += `
+        <div class="prog-row">
+          <div class="top"><b>UAS</b><span>${valUas}/${totalSiswa} siswa • ${Math.round(pUas)}%</span></div>
+          <div class="bar"><i class="${getBarCls(pUas)}" style="width:${pUas}%"></i></div>
+        </div>
+      `;
+  }
+  
+  document.getElementById('dashProg').innerHTML = progHtml;
 
   drawDashCharts(allStudentScores, totalTuntas, totalRemedial);
 
   allStudentsFlat.sort((a, b) => b.akhir - a.akhir);
-  const top6 = allStudentsFlat.slice(0, 6);
-  document.getElementById('dashRekapTag').textContent = `${top6.length} dari ${totalCountedN} siswa dinilai lengkap`;
+  const displayData = allStudentsFlat.slice(0, 15); 
+  document.getElementById('dashRekapTag').textContent = `${displayData.length} dari ${totalCountedN} siswa dinilai`;
   
-  document.getElementById('dashRekapBody').innerHTML = top6.map((s, i) => {
+  document.getElementById('dashRekapBody').innerHTML = displayData.map((s, i) => {
     const isTuntas = s.akhir >= 75;
     const badgeCls = isTuntas ? 'badge-tuntas' : 'badge-belum';
     const textStatus = isTuntas ? 'Tuntas' : 'Belum';
@@ -3270,8 +3625,8 @@ function refreshAll(){
   renderKepalaDropdown();
   renderWaliDropdown();
   renderDashboard();
-  
   updateHeroInfo();
+  updateClassSwitcherUI();
 }
 
 /* ============================================================
@@ -3564,6 +3919,14 @@ function init(){
   initUH();
   initRemedial();
   initAkhir();
+  initDashFilter();
+    // Tambahkan event listener ini
+  document.getElementById('dashFilterKelas')?.addEventListener('change', (e) => {
+    dashFilterKelas = e.target.value;
+    renderDashboard();
+  });
+  // ---------------------
+
   refreshAll();
   isInitialized = true;
   autoLoadFromFirebase().catch(e => console.warn('Background sync failed:', e));
