@@ -781,6 +781,66 @@
 <div id="toast"></div>
 
 <script>
+
+/* ============================================================
+   FUNGSI AUTH FETCH UNTUK ADMIN
+   ============================================================ */
+const FB_API_KEY = 'AIzaSyAFbIJl8K24gXB3E5VLTWE-LJeXGou8zx8';
+const LS_AUTH = 'jabalAuth_v1';
+
+function readAuthSession(){
+  try{
+    return JSON.parse(localStorage.getItem(LS_AUTH) || sessionStorage.getItem(LS_AUTH) || 'null');
+  }catch(e){ return null; }
+}
+
+async function refreshIdToken(){
+  const sess = readAuthSession();
+  if(!sess || !sess.refreshToken) throw new Error('NO_REFRESH_TOKEN');
+  const res = await fetch('https://securetoken.googleapis.com/v1/token?key=' + FB_API_KEY, {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: 'grant_type=refresh_token&refresh_token=' + sess.refreshToken
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error('REFRESH_FAILED');
+  
+  sess.idToken = data.id_token;
+  sess.refreshToken = data.refresh_token;
+  sess.expiresAt = Date.now() + parseInt(data.expires_in, 10) * 1000;
+  const store = sess.remember ? localStorage : sessionStorage;
+  store.setItem(LS_AUTH, JSON.stringify(sess));
+  return sess.idToken;
+}
+
+async function authFetch(path, options = {}){
+  const sess = readAuthSession();
+  if(!sess || !sess.idToken) {
+    window.location.href = 'index.html';
+    throw new Error('Sesi tidak valid, silakan login ulang');
+  }
+  
+  const base = (typeof cfg !== 'undefined' && cfg.fbUrl ? cfg.fbUrl : DEFAULT_FB_URL).replace(/\/+$/,'');
+  const buildUrl = (tk) => base + path + (path.includes('?') ? '&' : '?') + 'auth=' + tk;
+  
+  let token = sess.idToken;
+  let res = await fetch(buildUrl(token), options);
+  
+  // Jika token kedaluwarsa (401/403), coba refresh
+  if(res.status === 401 || res.status === 403){
+    try{ 
+      token = await refreshIdToken(); 
+      res = await fetch(buildUrl(token), options);
+    }catch(e){ 
+      localStorage.removeItem(LS_AUTH);
+      sessionStorage.removeItem(LS_AUTH);
+      window.location.href = 'index.html'; 
+      throw e;
+    }
+  }
+  return res;
+}
+
 /* ============================================================
    CONFIG
    ============================================================ */
@@ -789,25 +849,49 @@ const LS_SESSION = 'jabalSession_v1';
 const CLASSES = ['VII','VIII','IX','X','XI','XII'];
 const DEFAULT_FB_URL = 'https://instrumen-jabal-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-(function checkAdminSession(){
-  try {
-    const sess = JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null');
-    if(!sess || sess.role !== 'admin'){
-      document.body.style.display = 'none';
-      setTimeout(() => {
-        alert('Halaman ini hanya untuk Admin.\nSilakan login terlebih dahulu.');
-        window.location.href = 'index.html';
-      }, 100);
-      return;
-    }
-    window.__ADMIN_SESSION__ = sess;
-  } catch(e){
-    window.location.href = 'index.html';
+(async function checkAdminSessionVerified(){
+  const authSess = readAuthSession();
+  const sess = (() => {
+    try{ return JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null'); }
+    catch(e){ return null; }
+  })();
+
+  if(!authSess || !sess || sess.role !== 'admin'){
+    document.body.style.display = 'none';
+    setTimeout(() => {
+      alert('Halaman ini hanya untuk Admin.\nSilakan login terlebih dahulu.');
+      window.location.href = 'index.html';
+    }, 100);
+    return;
   }
+
+  try {
+    const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + FB_API_KEY, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ idToken: authSess.idToken })
+    });
+    if(!res.ok) throw new Error('Token tidak valid');
+  } catch (err) {
+    localStorage.removeItem(LS_AUTH);
+    sessionStorage.removeItem(LS_AUTH);
+    localStorage.removeItem(LS_SESSION);
+    sessionStorage.removeItem(LS_SESSION);
+    document.body.style.display = 'none';
+    setTimeout(() => {
+      alert('Sesi tidak valid atau kedaluwarsa. Silakan login ulang.');
+      window.location.href = 'index.html';
+    }, 100);
+    return;
+  }
+
+  window.__ADMIN_SESSION__ = sess;
 })();
 
 function logoutAdmin(){
   if(!confirm('Logout dari akun admin?\n\nAnda akan kembali ke halaman login.')) return;
+  localStorage.removeItem(LS_AUTH);
+  sessionStorage.removeItem(LS_AUTH);
   localStorage.removeItem(LS_SESSION);
   sessionStorage.removeItem(LS_SESSION);
   window.location.href = 'index.html';
@@ -1115,8 +1199,7 @@ async function reloadAll(){
   updateSyncBadge('syncing');
   toast('⏳ Memuat data dari Firebase...');
   try {
-    const url = cfg.fbUrl + '/' + cfg.path + '.json';
-    const res = await fetch(url);
+    const res = await authFetch('/' + cfg.path + '.json');
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const rawData = await res.json();
     ALL_RAW = rawData || {};
@@ -2281,7 +2364,7 @@ async function reloadAccounts(){
   if(!cfg.fbUrl){ toast('⚠️ Konfigurasi Firebase dulu', 'err'); return; }
   try {
     toast('⏳ Memuat akun...');
-    const res = await fetch(cfg.fbUrl + '/instrumen/users.json');
+    const res = await authFetch('/instrumen/users.json');
     ALL_USERS = (await res.json()) || {};
     renderAccounts();
     toast('✓ ' + Object.keys(ALL_USERS).length + ' akun dimuat', 'ok');
@@ -2397,8 +2480,7 @@ async function saveAccount(){
   try {
     $('#accSaveBtn').textContent = '⏳ Menyimpan...';
     $('#accSaveBtn').disabled = true;
-    const url = cfg.fbUrl + '/instrumen/users/' + encodeURIComponent(username) + '.json';
-    const res = await fetch(url, {
+    const res = await authFetch('/instrumen/users/' + encodeURIComponent(username) + '.json', {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
@@ -2433,8 +2515,7 @@ async function deleteAccount(username){
     'Lanjutkan?';
   if(!confirm(confirmMsg)) return;
   try {
-    const url = cfg.fbUrl + '/instrumen/users/' + encodeURIComponent(username) + '.json';
-    const res = await fetch(url, {method: 'DELETE'});
+        const res = await authFetch('/instrumen/users/' + encodeURIComponent(username) + '.json', {method: 'DELETE'});
     if(!res.ok) throw new Error('HTTP ' + res.status);
     toast('✓ Akun "' + username + '" dihapus', 'ok');
     await reloadAccounts();

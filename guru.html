@@ -6,8 +6,19 @@
 <title>Instrumen Penilaian Guru — MAS Jabal Rahmah</title>
 
 <script src="version.js"></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+        crossorigin="anonymous"
+        integrity=""
+        onerror="window.__CHARTJS_FAILED__=true"></script>
+<!--
+  SheetJS sekarang dimuat LAZY saat Ekspor/Impor Excel (lihat loadSheetJS() di bawah).
+  Untuk mengaktifkan SRI (Subresource Integrity) sebelum deploy produksi:
+    1. Unduh file:  curl -s -o xlsx.js https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js
+    2. Hitung hash: openssl dgst -sha384 -binary xlsx.js | openssl base64 -A
+    3. Isi CDN_CONFIG.SHEETJS_SRI (dan CHARTJS_SRI di tag ini) dengan "sha384-<hasil>".
+  Selama integrity="" (kosong), SRI TIDAK diterapkan — aplikasi tetap berjalan.
+-->
+
 <style>
   :root{
     --green-900:#0d5c2e;--green-700:#12803f;--green-500:#1aa04f;
@@ -574,13 +585,14 @@
       <div class="dropdown-wrap">
         <button class="icon-btn" onclick="toggleDropdown(event)" title="Menu lainnya" id="moreBtn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
         <div class="dropdown-menu" id="moreMenu">
-          <button class="dropdown-item" onclick="exportExcel();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Ekspor Excel</span></button>
-          <button class="dropdown-item" onclick="document.getElementById('fileImport').click();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Impor Excel</span></button>
-          <button class="dropdown-item danger" onclick="resetData();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg><span>Reset Data</span></button>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item" onclick="openSyncModal();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Konfigurasi Firebase</span></button>
-          <button class="dropdown-item" onclick="firebaseSave();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Kirim ke Firebase</span></button>
-          <button class="dropdown-item" onclick="window.print();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span>Cetak</span></button>
+        <button class="dropdown-item" onclick="exportExcel();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Ekspor Excel</span></button>
+        <button class="dropdown-item" onclick="document.getElementById('fileImport').click();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Impor Excel</span></button>
+        <button class="dropdown-item danger" onclick="resetData();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg><span>Reset Data</span></button>
+        <button class="dropdown-item" onclick="loadDemoData();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M2 12h20"/><circle cx="12" cy="12" r="10"/></svg><span>Muat Data Demo</span></button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" onclick="openSyncModal();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Konfigurasi Firebase</span></button>
+        <button class="dropdown-item" onclick="firebaseSave();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Kirim ke Firebase</span></button>
+        <button class="dropdown-item" onclick="window.print();closeDropdown()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span>Cetak</span></button>
         </div>
       </div>
     </div>
@@ -655,7 +667,7 @@
 
     <section class="grid-2">
       <div class="card">
-        <div class="card-h" style="border:none;padding:0;margin-bottom:14px"><h2 style="font-size:15px;font-weight:800;color:var(--green-900)">Distribusi nilai akhir (Semua Kelas)</h2><span class="tag" style="font-size:11.5px;font-weight:700;background:var(--green-100);color:var(--green-900);padding:2px 10px;border-radius:20px;margin-left:8px">KKM 75</span></div>
+        <div class="card-h" style="border:none;padding:0;margin-bottom:14px"><h2 style="font-size:15px;font-weight:800;color:var(--green-900)">Distribusi nilai akhir (Semua Kelas)</h2><span class="tag" id="dashKkmBadge" style="font-size:11.5px;font-weight:700;background:var(--green-100);color:var(--green-900);padding:2px 10px;border-radius:20px;margin-left:8px">KKM 75</span></div>
         <div class="chart-wrap" id="dashDistChart"></div>
         <div class="legend">
           <span><i style="background:#fca5a5"></i>Di bawah KKM</span>
@@ -682,9 +694,11 @@
       <div class="tbl-wrap">
         <table>
           <thead><tr>
-            <th class="sticky" style="min-width:230px; text-align:left;">Siswa</th>
-            <th>Sikap</th><th>S1</th><th>S2</th><th>S3</th><th>UTS</th><th>UAS</th><th>Nilai Akhir</th><th>Status</th>
-          </tr></thead>
+			<th style="width: 50px;">No</th>
+			<th style="min-width: 180px;">Nama Siswa</th>
+			<th>Kelas</th>
+			<th>Sikap</th><th>S1</th><th>S2</th><th>S3</th><th>UTS</th><th>UAS</th><th>Nilai Akhir</th><th>Peringkat</th><th>Status</th>
+			</tr></thead>
           <tbody id="dashRekapBody"></tbody>
         </table>
       </div>
@@ -1119,6 +1133,30 @@
   </div>
 </div>
 
+<!-- MODAL KONFLIK CLOUD vs LOKAL -->
+<div class="modal-overlay" id="cloudConflictModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>⚠️ Konflik Data Cloud vs Lokal</h3>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:12px;font-size:13px;line-height:1.6">
+        Data di Firebase lebih baru dari data lokal Anda, namun Anda memiliki
+        <b>perubahan yang belum tersinkron</b>.
+      </p>
+      <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12.5px;line-height:1.9">
+        <div><b>☁️ Cloud:</b> <span id="cloudConflictCloudTime">—</span></div>
+        <div><b>💻 Lokal:</b> <span id="cloudConflictLocalTime">—</span></div>
+      </div>
+      <p style="font-size:12px;color:var(--gray-600)">Pilih salah satu tindakan:</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="resolveCloudConflict('local')">💻 Pertahankan Lokal</button>
+      <button class="btn btn-primary btn-sm" onclick="resolveCloudConflict('cloud')">☁️ Pakai Data Cloud</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1126,6 +1164,10 @@
    STATE — Master dengan multi-kelas
    ============================================================ */
 const LS_KEY = 'jabalRahmah_master_v10';
+const FB_API_KEY = 'AIzaSyAFbIJl8K24gXB3E5VLTWE-LJeXGou8zx8';
+const AUTH_BASE = 'https://identitytoolkit.googleapis.com/v1';
+const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
+const LS_AUTH = 'jabalAuth_v1';
 const LS_SESSION = 'jabalSession_v1';
 const LS_MADRASAH = 'jabalMadrasahList';
 const LS_KEPALA_LIST = 'jabalKepalaList';
@@ -1156,29 +1198,155 @@ const DEFAULT_KEPALA_NIP_MAP = {
 };
 
 /* ============================================================
+   CDN CONFIG (SRI opsional)
+   ============================================================ */
+const CDN_CONFIG = {
+  CHARTJS_URL: 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
+  CHARTJS_SRI: '', // sha384-... (isi untuk mengaktifkan SRI pada tag eager)
+  SHEETJS_URL: 'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js',
+  SHEETJS_SRI: ''  // sha384-... (isi untuk mengaktifkan SRI pada lazy load)
+};
+
+const LS_BACKUP = 'jabalRahmah_master_v10_backup';
+
+/* ============================================================
    SESSION CHECK
    ============================================================ */
-(function checkSession(){
+/* ============================================================
+   AUTH — helper sesi, refresh, logout paksa
+   ============================================================ */
+function readAuthSession(){
   try{
-    const sess = JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null');
-    if(!sess || sess.role !== 'guru'){
-      document.body.style.display = 'none';
-      setTimeout(()=>{ alert('Anda harus login sebagai Guru terlebih dahulu.'); window.location.href = 'index.html'; }, 100);
-      return;
-    }
-    window.__TEACHER_SESSION__ = sess;
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const el = document.getElementById('greetingName');
-      if(el) el.textContent = sess.nama || 'Guru';
+    return JSON.parse(localStorage.getItem(LS_AUTH) || sessionStorage.getItem(LS_AUTH) || 'null');
+  }catch(e){ return null; }
+}
+function saveAuthSession(sess){
+  const remember = sess.remember !== false;
+  const store = remember ? localStorage : sessionStorage;
+  const other = remember ? sessionStorage : localStorage;
+  other.removeItem(LS_AUTH);
+  store.setItem(LS_AUTH, JSON.stringify(sess));
+}
+function clearAllSessions(){
+  localStorage.removeItem(LS_AUTH);
+  localStorage.removeItem(LS_SESSION);
+  sessionStorage.removeItem(LS_AUTH);
+  sessionStorage.removeItem(LS_SESSION);
+}
+function forceLogout(msg){
+  clearAllSessions();
+  try{ alert(msg || 'Sesi berakhir. Silakan login ulang.'); }catch(e){}
+  window.location.href = 'index.html';
+}
+async function refreshIdToken(){
+  const sess = readAuthSession();
+  if(!sess || !sess.refreshToken) throw new Error('NO_REFRESH_TOKEN');
+  const body = new URLSearchParams({
+    grant_type: 'refresh_token',
+    refresh_token: sess.refreshToken
+  });
+  const res = await fetch(TOKEN_BASE + '/token?key=' + FB_API_KEY, {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: body.toString()
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data?.error?.message || 'REFRESH_FAILED');
+  sess.idToken = data.id_token;
+  sess.refreshToken = data.refresh_token;
+  sess.expiresAt = Date.now() + parseInt(data.expires_in, 10) * 1000;
+  sess.uid = data.user_id;
+  saveAuthSession(sess);
+  return sess.idToken;
+}
+async function ensureValidToken(){
+  const sess = readAuthSession();
+  if(!sess) return null;
+  if(sess.expiresAt && sess.expiresAt - Date.now() > 5*60*1000) return sess.idToken;
+  try{ return await refreshIdToken(); }
+  catch(e){ forceLogout('Sesi kedaluwarsa. Silakan login ulang.'); return null; }
+}
+
+/* ============================================================
+   SESSION CHECK — verifikasi token, wajib uid == teacherId
+   ============================================================ */
+/* ============================================================
+   SESSION CHECK — Verifikasi Token ke Firebase (Anti Palsu)
+   ============================================================ */
+(async function checkSessionVerified(){
+  const authSess = readAuthSession();
+  const sess = (() => {
+    try{ return JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null'); }
+    catch(e){ return null; }
+  })();
+
+  // 1) Pastikan ada file sesi
+  if(!authSess || !sess || sess.role !== 'guru'){
+    document.body.style.display = 'none';
+    setTimeout(()=>{ alert('Anda harus login sebagai Guru terlebih dahulu.'); window.location.href = 'index.html'; }, 100);
+    return;
+  }
+
+  // 2) Pastikan UID sama
+  if(!authSess.uid || sess.teacherId !== authSess.uid){
+    clearAllSessions();
+    document.body.style.display = 'none';
+    setTimeout(()=>{ alert('Sesi lama terdeteksi. Silakan login ulang.'); window.location.href = 'index.html'; }, 100);
+    return;
+  }
+
+  // 3) VERIFIKASI KE FIREBASE: Apakah token ini valid/aktif?
+  try {
+    const tokenToTest = authSess.idToken;
+    const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAFbIJl8K24gXB3E5VLTWE-LJeXGou8zx8', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ idToken: tokenToTest })
     });
-  }catch(e){ window.location.href = 'index.html'; }
+    if(!res.ok) throw new Error('Token kedaluwarsa atau tidak valid');
+  } catch (err) {
+    console.warn('Verifikasi token gagal:', err);
+    clearAllSessions();
+    document.body.style.display = 'none';
+    setTimeout(()=>{ alert('Sesi tidak valid atau kedaluwarsa. Silakan login ulang.'); window.location.href = 'index.html'; }, 100);
+    return;
+  }
+
+  // 4) Lolos verifikasi
+  window.__TEACHER_SESSION__ = { ...sess, uid: authSess.uid };
+  window.__AUTH__ = authSess;
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const el = document.getElementById('greetingName');
+    if(el) el.textContent = sess.nama || 'Guru';
+  });
 })();
 
 function logoutGuru(){
   if(!confirm('Logout dari akun ini?\n\nPastikan data sudah di-sync ke Firebase sebelum logout.')) return;
-  localStorage.removeItem(LS_SESSION);
-  sessionStorage.removeItem(LS_SESSION);
+  clearAllSessions();
   window.location.href = 'index.html';
+}
+
+/* ============================================================
+   authFetch — bungkus fetch RTDB dengan ?auth= + retry 401/403
+   ============================================================ */
+async function authFetch(path, options = {}){
+  const base = (master.fbUrl || DEFAULT_FB_URL).replace(/\/+$/,'');
+  const sess = readAuthSession();
+  if(!sess) throw new Error('NO_SESSION');
+  let token = sess.idToken;
+  const buildUrl = (tk) => base + path + (path.includes('?') ? '&' : '?') + 'auth=' + tk;
+  let res = await fetch(buildUrl(token), options);
+  if(res.status === 401 || res.status === 403){
+    try{ token = await refreshIdToken(); }
+    catch(e){ forceLogout('Sesi kedaluwarsa. Silakan login ulang.'); throw e; }
+    res = await fetch(buildUrl(token), options);
+  }
+  if(res.status === 401 || res.status === 403){
+    forceLogout('Akses ditolak (401/403). Periksa Rules atau login ulang.');
+    throw new Error('HTTP ' + res.status);
+  }
+  return res;
 }
 
 const CLASSES = ['VII','VIII','IX','X','XI','XII'];
@@ -1270,35 +1438,38 @@ function injectSampleData(m) {
     {nama:'Monalisa', absen:92.86, pengamatan:95}, {nama:'Rio Ramadhani Saputra', absen:92.86, pengamatan:95},
     {nama:'Syarif Hidayat', absen:100, pengamatan:100}
   ];
+  const utsX = [54.28, 90.84, 77.8, 76.3, 79.33, 75.99, 95.33];
+  m.classes[kX].siswa = [];
   siswaX.forEach((s, i) => {
     const id = 'sX_' + i;
     m.classes[kX].siswa.push({ id, nama: s.nama, absen: s.absen, pengamatan: s.pengamatan });
-    const utsX = [54.28, 90.84, 77.8, 76.3, 79.33, 75.99, 95.33];
     m.classes[kX].uts[id] = { awal: utsX[i], perbaikan: '' };
-    m.classes[kX].uas[id] = { awal: 0, perbaikan: '' };
+    m.classes[kX].uas[id] = { awal: '', perbaikan: '' };
   });
   const sum1X = [
-    {uh:40, tugas:[80,75,72,0,0,0]}, {uh:81, tugas:[100,90,100,0,0,0]}, {uh:75, tugas:[0,90,72,0,0,0]},
-    {uh:75, tugas:[0,75,72,0,0,0]}, {uh:75, tugas:[75,85,72,0,0,0]}, {uh:75, tugas:[0,75,70,0,0,0]},
-    {uh:95, tugas:[100,95,100,0,0,0]}
+    {uh:40, tugas:[80,75,72,'','','']}, {uh:81, tugas:[100,90,100,'','','']},
+    {uh:75, tugas:['',90,72,'','','']}, {uh:75, tugas:['',75,72,'','','']},
+    {uh:75, tugas:[75,85,72,'','','']}, {uh:75, tugas:['',75,70,'','','']},
+    {uh:95, tugas:[100,95,100,'','','']}
   ];
   const sum2X = [
-    {uh:81, tugas:[0,0,0,0,0,0]}, {uh:91, tugas:[85,100,0,0,0,0]}, {uh:75, tugas:[73,0,0,0,0,0]},
-    {uh:75, tugas:[73,0,0,0,0,0]}, {uh:75, tugas:[73,96.66,0,0,0,0]}, {uh:75, tugas:[73,0,0,0,0,0]},
-    {uh:93, tugas:[90,96.66,0,0,0,0]}
+    {uh:81, tugas:['','','','','','']}, {uh:91, tugas:[85,100,'','','','']},
+    {uh:75, tugas:[73,'','','','','']}, {uh:75, tugas:[73,'','','','','']},
+    {uh:75, tugas:[73,96.66,'','','','']}, {uh:75, tugas:[73,'','','','','']},
+    {uh:93, tugas:[90,96.66,'','','','']}
   ];
-  const sum3X = Array(7).fill({uh:0, tugas:[0,0,0,0,0,0]});
   m.classes[kX].sumatif = {
     1: { materi: "Tahiyat Wa Ta'aruf", data: {} },
     2: { materi: "Al-Bait wa al-Usrah", data: {} },
     3: { materi: "", data: {} }
   };
+  m.classes[kX].uhManual = { 1: {}, 2: {} };
   m.classes[kX].siswa.forEach((s, i) => {
-    m.classes[kX].sumatif[1].data[s.id] = sum1X[i];
-    m.classes[kX].sumatif[2].data[s.id] = sum2X[i];
-    m.classes[kX].sumatif[3].data[s.id] = sum3X[i];
-    m.classes[kX].uhManual[1] = m.classes[kX].uhManual[1] || {};
+    m.classes[kX].sumatif[1].data[s.id] = JSON.parse(JSON.stringify(sum1X[i]));
+    m.classes[kX].sumatif[2].data[s.id] = JSON.parse(JSON.stringify(sum2X[i]));
+    m.classes[kX].sumatif[3].data[s.id] = { uh:'', tugas:['','','','','',''] };
     m.classes[kX].uhManual[1][s.id] = sum1X[i].uh;
+    m.classes[kX].uhManual[2][s.id] = sum2X[i].uh;
   });
 
   // --- KELAS XII ---
@@ -1314,35 +1485,38 @@ function injectSampleData(m) {
     {nama:'Muhammad Faizul', absen:86.67, pengamatan:90}, {nama:'Muhammad Ghozali', absen:80, pengamatan:88},
     {nama:'M. Reski Ramadhan', absen:86.67, pengamatan:88}
   ];
+  const utsXII = [94.48, 34.88, 92.88, 62.6, 72.18, 68.45, 75.98];
+  m.classes[kXII].siswa = [];
   siswaXII.forEach((s, i) => {
     const id = 'sXII_' + i;
     m.classes[kXII].siswa.push({ id, nama: s.nama, absen: s.absen, pengamatan: s.pengamatan });
-    const utsXII = [94.48, 34.88, 92.88, 62.6, 72.18, 68.45, 75.98];
     m.classes[kXII].uts[id] = { awal: utsXII[i], perbaikan: '' };
-    m.classes[kXII].uas[id] = { awal: 0, perbaikan: '' };
+    m.classes[kXII].uas[id] = { awal: '', perbaikan: '' };
   });
   const sum1XII = [
-    {uh:91, tugas:[90,100,0,0,0,0]}, {uh:50, tugas:[1,1,0,0,0,0]}, {uh:92, tugas:[90,100,0,0,0,0]},
-    {uh:0, tugas:[90,1,0,0,0,0]}, {uh:75, tugas:[90,90,0,0,0,0]}, {uh:50, tugas:[80,80,0,0,0,0]},
-    {uh:75, tugas:[90,80,0,0,0,0]}
+    {uh:91, tugas:[90,100,'','','','']}, {uh:50, tugas:[1,1,'','','','']},
+    {uh:92, tugas:[90,100,'','','','']}, {uh:0,  tugas:[90,1,'','','','']},
+    {uh:75, tugas:[90,90,'','','','']}, {uh:50, tugas:[80,80,'','','','']},
+    {uh:75, tugas:[90,80,'','','','']}
   ];
   const sum2XII = [
-    {uh:99, tugas:[94.28,88,0,0,0,0]}, {uh:30, tugas:[1,80,0,0,0,0]}, {uh:93, tugas:[89.28,88,0,0,0,0]},
-    {uh:100, tugas:[90,100,0,0,0,0]}, {uh:72, tugas:[1,85,0,0,0,0]}, {uh:65, tugas:[73,80,0,0,0,0]},
-    {uh:64, tugas:[70,85,0,0,0,0]}
+    {uh:99, tugas:[94.28,88,'','','','']}, {uh:30, tugas:[1,80,'','','','']},
+    {uh:93, tugas:[89.28,88,'','','','']}, {uh:100, tugas:[90,100,'','','','']},
+    {uh:72, tugas:[1,85,'','','','']}, {uh:65, tugas:[73,80,'','','','']},
+    {uh:64, tugas:[70,85,'','','','']}
   ];
-  const sum3XII = Array(7).fill({uh:0, tugas:[0,0,0,0,0,0]});
   m.classes[kXII].sumatif = {
     1: { materi: "Balaghah dan Tasybih", data: {} },
     2: { materi: "Majaz Aqli dan Isti'arah", data: {} },
     3: { materi: "", data: {} }
   };
+  m.classes[kXII].uhManual = { 1: {}, 2: {} };
   m.classes[kXII].siswa.forEach((s, i) => {
-    m.classes[kXII].sumatif[1].data[s.id] = sum1XII[i];
-    m.classes[kXII].sumatif[2].data[s.id] = sum2XII[i];
-    m.classes[kXII].sumatif[3].data[s.id] = sum3XII[i];
-    m.classes[kXII].uhManual[1] = m.classes[kXII].uhManual[1] || {};
+    m.classes[kXII].sumatif[1].data[s.id] = JSON.parse(JSON.stringify(sum1XII[i]));
+    m.classes[kXII].sumatif[2].data[s.id] = JSON.parse(JSON.stringify(sum2XII[i]));
+    m.classes[kXII].sumatif[3].data[s.id] = { uh:'', tugas:['','','','','',''] };
     m.classes[kXII].uhManual[1][s.id] = sum1XII[i].uh;
+    m.classes[kXII].uhManual[2][s.id] = sum2XII[i].uh;
   });
 }
 
@@ -1358,15 +1532,14 @@ function loadMaster(){
       if(!('syncUrl' in m)) m.syncUrl = '';
       if(!('fbUrl' in m) || !m.fbUrl) m.fbUrl = DEFAULT_FB_URL;
       if(!('lastUpdate' in m)) m.lastUpdate = 0;
+      migrateLegacyLists(m);
       Object.keys(m.classes).forEach(k=>normalizeClass(m.classes[k], k));
       return m;
     }
   }catch(e){}
-  
-  // Jika tidak ada data di localStorage, buat baru dan INJEKSI DATA CONTOH
-  const m = { currentClass:'X', logo:null, syncUrl:'', fbUrl: DEFAULT_FB_URL, lastUpdate: 0, classes:{} };
+  const m = { currentClass:'X', logo:null, syncUrl:'', fbUrl: DEFAULT_FB_URL, lastUpdate: 0, classes:{}, refs:{} };
   CLASSES.forEach(c=>m.classes[c] = defaultClassState(c));
-  injectSampleData(m);
+  migrateLegacyLists(m);
   return m;
 }
 
@@ -1440,14 +1613,48 @@ function normalizeClass(c, kelasKey){
   });
 }
 
+let localSaveTimer = null;
+const LOCAL_SAVE_DEBOUNCE = 300;
+
+function scheduleLocalSave(){
+  if(localSaveTimer) clearTimeout(localSaveTimer);
+  localSaveTimer = setTimeout(()=>{ localSaveTimer = null; saveLocalNow(); }, LOCAL_SAVE_DEBOUNCE);
+}
+
+function saveLocalNow(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(master));
+  }catch(e){
+    const isQuota = e && (
+      e.name === 'QuotaExceededError' ||
+      e.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+      e.code === 22 || e.code === 1014
+    );
+    if(isQuota){
+      toast('⚠️ Penyimpanan lokal penuh. Kirim ke Firebase lalu bersihkan data lama.', true);
+    } else {
+      console.error('[saveLocalNow]', e);
+      toast('⚠️ Gagal menyimpan lokal: ' + (e.message || e.name), true);
+    }
+  }
+}
+
+// Nama lama dipertahankan: tulis lokal segera (dipakai sebelum kirim ke Firebase)
+function saveLocalOnly(){ saveLocalNow(); }
+
+// Flush paksa — dipanggil sebelum tab ditutup/disembunyikan
+function flushLocalSave(){
+  if(localSaveTimer){ clearTimeout(localSaveTimer); localSaveTimer = null; }
+  saveLocalNow();
+}
+
 function saveState(){
-  localStorage.setItem(LS_KEY, JSON.stringify(master));
+  scheduleLocalSave();
   if(isInitialized){
     markUnsaved();
     scheduleAutoSync();
   }
 }
-function saveLocalOnly(){ localStorage.setItem(LS_KEY, JSON.stringify(master)); }
 
 function scheduleAutoSync(){
   if(window.__IS_SYNCING__){ pendingSave = true; return; }
@@ -1580,6 +1787,24 @@ const num = v => { const n = parseFloat(String(v).replace(',','.')); return isNa
 const fmt = (n,d=2)=> (n===null||n===undefined||isNaN(n))?'':Number(n).toFixed(d).replace('.',',');
 const fmtInt = n => (n===null||n===undefined||isNaN(n))?'':Math.round(n);
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function isFilled(v){ return v !== '' && v !== null && v !== undefined; }
+function binNilai(v){
+  const n = num(v);
+  if(n <= 10) return 0;
+  if(n >= 100) return 9;
+  return Math.ceil(n / 10) - 1;
+}
+function clampNilai(val, min, max){
+  const n = num(val);
+  if(n < min) return min;
+  if(n > max) return max;
+  return n;
+}
+function exportNum(v){
+  if(!isFilled(v)) return '';
+  const n = parseFloat(String(v).replace(',','.'));
+  return isNaN(n) ? '' : n;
+}
 
 function toast(msg, isErr){
   const t = $('#toast'); t.textContent = msg;
@@ -1587,14 +1812,88 @@ function toast(msg, isErr){
   clearTimeout(t._tm); t._tm = setTimeout(()=>t.classList.remove('show'),2800);
 }
 
+function toastUndo(msg, onUndo){
+  const t = $('#toast'); if(!t) return;
+  t.innerHTML = `<span>${esc(msg)}</span> <button id="toastUndoBtn" style="margin-left:12px;background:rgba(255,255,255,.22);color:#fff;border:none;padding:4px 10px;border-radius:6px;font-weight:700;cursor:pointer;font-family:inherit;font-size:12px">Urungkan</button>`;
+  t.classList.remove('err');
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  const btn = t.querySelector('#toastUndoBtn');
+  if(btn) btn.onclick = ()=>{ try{ onUndo(); }catch(e){ console.error(e); } t.classList.remove('show'); };
+  t._tm = setTimeout(()=>t.classList.remove('show'), 7000);
+}
+
+function showChartFallback(canvasId){
+  const el = document.getElementById(canvasId);
+  if(!el) return;
+  const wrap = el.closest('.chart-box') || el.parentElement;
+  if(!wrap || wrap.querySelector('.chart-fallback')) return;
+  wrap.innerHTML = '<div class="chart-fallback" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:180px;color:var(--gray-400);font-size:12px;text-align:center;padding:20px;line-height:1.7;gap:4px">📊<br><b style="color:var(--gray-600)">Grafik tidak tersedia</b><br><span style="font-size:11px">Chart.js gagal dimuat (offline?). Periksa koneksi lalu muat ulang halaman.</span></div>';
+}
+
 /* ============================================================
    MADRASAH LIST
    ============================================================ */
-function getMadrasahList(){
-  try{ const r = localStorage.getItem(LS_MADRASAH); if(r){ const a = JSON.parse(r); if(Array.isArray(a) && a.length) return a; } }catch(e){}
-  return [...DEFAULT_MADRASAH_LIST];
+/* (kosong — fungsi getMadrasahList/saveMadrasahList ada di blok REFS di bawah) */
+
+/* ============================================================
+   REFS: Daftar madrasah/kepala/wali/NIP — tersimpan di master.refs
+   ============================================================ */
+function safeParseLS(key){
+  try{ const raw = localStorage.getItem(key); if(!raw) return null; return JSON.parse(raw); }catch(e){ return null; }
 }
-function saveMadrasahList(list){ localStorage.setItem(LS_MADRASAH, JSON.stringify(list)); }
+
+function ensureRefs(){
+  if(!master.refs || typeof master.refs !== 'object') master.refs = {};
+  if(!Array.isArray(master.refs.madrasahList) || !master.refs.madrasahList.length) master.refs.madrasahList = [...DEFAULT_MADRASAH_LIST];
+  if(!Array.isArray(master.refs.kepalaList)   || !master.refs.kepalaList.length)   master.refs.kepalaList   = [...DEFAULT_KEPALA_LIST];
+  if(!Array.isArray(master.refs.waliList)     || !master.refs.waliList.length)     master.refs.waliList     = [...DEFAULT_WALI_LIST];
+  if(!master.refs.kepalaNipMap || typeof master.refs.kepalaNipMap !== 'object')    master.refs.kepalaNipMap = {...DEFAULT_KEPALA_NIP_MAP};
+}
+
+function migrateLegacyLists(m){
+  if(!m || typeof m !== 'object') return;
+  m.refs = m.refs || {};
+  if(!Array.isArray(m.refs.madrasahList) || !m.refs.madrasahList.length){
+    const legacy = safeParseLS(LS_MADRASAH);
+    if(Array.isArray(legacy) && legacy.length) m.refs.madrasahList = legacy;
+  }
+  if(!Array.isArray(m.refs.kepalaList) || !m.refs.kepalaList.length){
+    const legacy = safeParseLS(LS_KEPALA_LIST);
+    if(Array.isArray(legacy) && legacy.length) m.refs.kepalaList = legacy;
+  }
+  if(!Array.isArray(m.refs.waliList) || !m.refs.waliList.length){
+    const legacy = safeParseLS(LS_WALI_LIST);
+    if(Array.isArray(legacy) && legacy.length) m.refs.waliList = legacy;
+  }
+  if(!m.refs.kepalaNipMap || typeof m.refs.kepalaNipMap !== 'object' || !Object.keys(m.refs.kepalaNipMap).length){
+    const legacy = safeParseLS(LS_KEPALA_NIP_MAP);
+    if(legacy && typeof legacy === 'object') m.refs.kepalaNipMap = legacy;
+  }
+  if(!Array.isArray(m.refs.madrasahList) || !m.refs.madrasahList.length) m.refs.madrasahList = [...DEFAULT_MADRASAH_LIST];
+  if(!Array.isArray(m.refs.kepalaList)   || !m.refs.kepalaList.length)   m.refs.kepalaList   = [...DEFAULT_KEPALA_LIST];
+  if(!Array.isArray(m.refs.waliList)     || !m.refs.waliList.length)     m.refs.waliList     = [...DEFAULT_WALI_LIST];
+  if(!m.refs.kepalaNipMap || typeof m.refs.kepalaNipMap !== 'object')    m.refs.kepalaNipMap = {...DEFAULT_KEPALA_NIP_MAP};
+}
+
+function getMadrasahList(){ ensureRefs(); return master.refs.madrasahList.slice(); }
+function saveMadrasahList(list){ ensureRefs(); master.refs.madrasahList = list; saveState(); }
+
+function getKepalaList(){ ensureRefs(); return master.refs.kepalaList.slice(); }
+function saveKepalaList(list){ ensureRefs(); master.refs.kepalaList = list; saveState(); }
+
+function getWaliList(){ ensureRefs(); return master.refs.waliList.slice(); }
+function saveWaliList(list){ ensureRefs(); master.refs.waliList = list; saveState(); }
+
+function getKepalaNipMap(){ ensureRefs(); return {...master.refs.kepalaNipMap}; }
+function saveKepalaNipMap(map){ ensureRefs(); master.refs.kepalaNipMap = map; saveState(); }
+
+function setKepalaNip(kepala, nip){
+  if(!kepala) return;
+  const map = getKepalaNipMap();
+  map[kepala] = nip;
+  saveKepalaNipMap(map);
+}
 
 function renderMadrasahDropdown(){
   const list = getMadrasahList();
@@ -1686,17 +1985,6 @@ function initDashFilter() {
 /* ============================================================
    KEPALA MADRASAH
    ============================================================ */
-function getKepalaList(){
-  try{ const r = localStorage.getItem(LS_KEPALA_LIST); if(r){ const a = JSON.parse(r); if(Array.isArray(a) && a.length) return a; } }catch(e){}
-  return [...DEFAULT_KEPALA_LIST];
-}
-function saveKepalaList(list){ localStorage.setItem(LS_KEPALA_LIST, JSON.stringify(list)); }
-function getKepalaNipMap(){
-  try{ const r = localStorage.getItem(LS_KEPALA_NIP_MAP); if(r){ const m = JSON.parse(r); if(m && typeof m === 'object') return m; } }catch(e){}
-  return {...DEFAULT_KEPALA_NIP_MAP};
-}
-function saveKepalaNipMap(map){ localStorage.setItem(LS_KEPALA_NIP_MAP, JSON.stringify(map)); }
-function setKepalaNip(kepala, nip){ if(!kepala) return; const map = getKepalaNipMap(); map[kepala] = nip; saveKepalaNipMap(map); }
 
 function renderKepalaDropdown(){
   const list = getKepalaList();
@@ -1780,11 +2068,6 @@ function toggleKepalaDropdown(){ $('#kepalaList')?.classList.contains('open') ? 
 /* ============================================================
    WALI KELAS
    ============================================================ */
-function getWaliList(){
-  try{ const r = localStorage.getItem(LS_WALI_LIST); if(r){ const a = JSON.parse(r); if(Array.isArray(a) && a.length) return a; } }catch(e){}
-  return [...DEFAULT_WALI_LIST];
-}
-function saveWaliList(list){ localStorage.setItem(LS_WALI_LIST, JSON.stringify(list)); }
 
 function renderWaliDropdown(){
   const list = getWaliList();
@@ -1860,23 +2143,38 @@ function toggleWaliDropdown(){ $('#waliList')?.classList.contains('open') ? clos
 /* ============================================================
    CALCULATIONS
    ============================================================ */
-function getActiveSumatifIdx(){ return (state.config.sumatifEnabled || []).map((v,i)=>v?i+1:0).filter(x=>x>0); }
-function getActiveUHIdx(){ return (state.config.uhEnabled || []).map((v,i)=>v?i+1:0).filter(x=>x>0); }
-function getUHConfig(k){
-  if(!state.config.uhConfig || typeof state.config.uhConfig !== 'object') state.config.uhConfig = {};
-  if(!state.config.uhConfig[k] || typeof state.config.uhConfig[k] !== 'object'){
-    state.config.uhConfig[k] = { soal:5, skorMaxPerSoal:[20,20,20,20,20] };
+function getActiveSumatifIdx(cls){
+  cls = cls || state;
+  return (cls.config.sumatifEnabled || []).map((v,i)=>v?i+1:0).filter(x=>x>0);
+}
+function getActiveUHIdx(cls){
+  cls = cls || state;
+  return (cls.config.uhEnabled || []).map((v,i)=>v?i+1:0).filter(x=>x>0);
+}
+function getUHConfig(k, cls){
+  cls = cls || state;
+  if(!cls.config.uhConfig || typeof cls.config.uhConfig !== 'object') cls.config.uhConfig = {};
+  if(!cls.config.uhConfig[k] || typeof cls.config.uhConfig[k] !== 'object'){
+    cls.config.uhConfig[k] = { soal:5, skorMaxPerSoal:[20,20,20,20,20] };
   }
-  const c = state.config.uhConfig[k];
+  const c = cls.config.uhConfig[k];
   if(!Array.isArray(c.skorMaxPerSoal)) c.skorMaxPerSoal = Array(c.soal || 5).fill(c.skorMax || 20);
   if(!c.soal) c.soal = c.skorMaxPerSoal.length || 5;
   return c;
 }
-function getUHTotalMaks(k){ return (getUHConfig(k).skorMaxPerSoal || []).reduce((a,b)=>a+num(b),0); }
+function getUHTotalMaks(k, cls){
+  cls = cls || state;
+  return (getUHConfig(k, cls).skorMaxPerSoal || []).reduce((a,b)=>a+num(b),0);
+}
 function hitungNilaiAkhirUjian(d, KKM){
   KKM = num(KKM) || num(state.identitas.kkm) || 75;
   const awal = num(d?.awal), perbaikan = num(d?.perbaikan);
-  if(perbaikan > 0){
+  const hasAwal = isFilled(d?.awal);
+  const hasPerbaikan = isFilled(d?.perbaikan);
+  if(!hasAwal && !hasPerbaikan) return 0;
+  // Jika awal sudah tuntas, perbaikan diabaikan
+  if(hasAwal && awal >= KKM) return awal;
+  if(hasPerbaikan){
     if(perbaikan > KKM) return KKM;
     return Math.max(awal, perbaikan);
   }
@@ -1904,38 +2202,33 @@ function applyRemedialRule(nilaiAwal, R, KKM){
   if(rmax > KKM) return KKM;
   return Math.max(num(nilaiAwal), r1, r2);
 }
-function getUHNilaiRaw(siswa, k){
-  const UM = state.uhManual?.[k];
-  if(UM && UM[siswa.id] != null && UM[siswa.id] !== '') return num(UM[siswa.id]);
-  const U = state.uh?.[k];
-  if(U && U.data && U.data[siswa.id]){
-    const rawData = U.data[siswa.id];
-    const dArr = Array.isArray(rawData) ? rawData : [];
-    const total = dArr.reduce((a,b)=>a+num(b),0);
-    const max = getUHTotalMaks(k);
+function getUHNilaiRaw(siswa, k, cls){
+  cls = cls || state;
+  if(isUHManualFilled(siswa, k, cls)){
+    return num(cls.uhManual[k][siswa.id]);
+  }
+  if(isUHAnalisisFilled(siswa, k, cls)){
+    const d = cls.uh[k].data[siswa.id];
+    const total = d.reduce((a,b)=>a+num(b),0);
+    const max = getUHTotalMaks(k, cls);
     return max > 0 ? total / max * 100 : total;
   }
   return 0;
 }
-function getUHNilai(siswa, k){
-  const raw = getUHNilaiRaw(siswa, k);
-  if(raw <= 0) return 0;
-  const KKM = num(state.identitas.kkm) || 75;
+function getUHNilai(siswa, k, cls){
+  cls = cls || state;
+  if(!isUHFilled(siswa, k, cls)) return 0;
+  const raw = getUHNilaiRaw(siswa, k, cls);
+  const KKM = num(cls.identitas.kkm) || 75;
   if(raw >= KKM) return raw;
-  const R = state.remedialUH?.[k]?.[siswa.id];
+  const R = cls.remedialUH?.[k]?.[siswa.id];
   if(R && (num(R.r1) > 0 || num(R.r2) > 0)) return applyRemedialRule(raw, R, KKM);
   return raw;
 }
-function getUHSource(siswa, k){
-  const UM = state.uhManual?.[k];
-  if(UM && UM[siswa.id] != null && UM[siswa.id] !== '') return 'manual';
-  const U = state.uh?.[k];
-  if(U && U.data && U.data[siswa.id]){
-    const rawData = U.data[siswa.id];
-    const dArr = Array.isArray(rawData) ? rawData : [];
-    const val = dArr.reduce((a,b)=>a+num(b),0);
-    if(val > 0) return 'analisis';
-  }
+function getUHSource(siswa, k, cls){
+  cls = cls || state;
+  if(isUHManualFilled(siswa, k, cls)) return 'manual';
+  if(isUHAnalisisFilled(siswa, k, cls)) return 'analisis';
   return 'kosong';
 }
 
@@ -1975,11 +2268,19 @@ function saveFirebaseUrl(){
 
 async function firebaseSave(silent = false){
   if(window.__IS_SYNCING__) return;
-  window.__IS_SYNCING__ = true;
-  const url = (master.fbUrl || DEFAULT_FB_URL).replace(/\/+$/,'');
-  if(!url){ if(!silent) toast('⚠️ Isi URL Firebase dulu', true); window.__IS_SYNCING__ = false; return; }
   const sess = window.__TEACHER_SESSION__ || {};
-  const teacherId = sess.teacherId || ('guru_' + Date.now());
+  const teacherId = sess.uid;
+  if(!teacherId){
+    console.warn('[firebaseSave] Sesi tanpa uid — sinkronisasi dihentikan.');
+    updateSyncBadge('error');
+    if(!silent) toast('✗ Sesi tidak valid, silakan login ulang', true);
+    return;
+  }
+  window.__IS_SYNCING__ = true;
+  if(!master.fbUrl){
+    if(!silent) toast('⚠️ Isi URL Firebase dulu', true);
+    window.__IS_SYNCING__ = false; return;
+  }
   const teacherName = sess.nama || 'Guru';
   updateSyncBadge('syncing');
   let payload;
@@ -1995,18 +2296,13 @@ async function firebaseSave(silent = false){
     window.__IS_SYNCING__ = false;
     return;
   }
-  if(teacherName){
-    Object.values(payload.classes || {}).forEach(cls=>{
-      if(cls && cls.identitas && !cls.identitas.guru) cls.identitas.guru = teacherName;
-    });
-  }
   try{
-    const res1 = await fetch(url + '/instrumen/personal/' + teacherId + '.json', {
+    const res1 = await authFetch('/instrumen/personal/' + teacherId + '.json', {
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
     });
     if(!res1.ok){ const txt = await res1.text().catch(()=>''); throw new Error('Personal HTTP ' + res1.status + ' ' + txt.slice(0,120)); }
-    const teacherPayload = { nama: teacherName, nip: sess.username || '-', teacherId: teacherId, lastUpdate: payload.lastUpdate, master: payload };
-    const res2 = await fetch(url + '/instrumen/teachers/' + teacherId + '.json', {
+    const teacherPayload = { nama: teacherName, nip: sess.nipGuru || '-', teacherId, uid: teacherId, lastUpdate: payload.lastUpdate, master: payload };
+    const res2 = await authFetch('/instrumen/teachers/' + teacherId + '.json', {
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(teacherPayload)
     });
     if(!res2.ok){ const txt = await res2.text().catch(()=>''); throw new Error('Teachers HTTP ' + res2.status + ' ' + txt.slice(0,120)); }
@@ -2023,43 +2319,36 @@ async function firebaseSave(silent = false){
 }
 
 async function firebaseLoad(){
-  const url = (master.fbUrl || DEFAULT_FB_URL).replace(/\/+$/,'');
-  if(!url){ toast('⚠️ Isi URL Firebase dulu', true); openSyncModal(); return; }
-  if(!confirm('Muat dari Firebase? Semua data lokal Anda akan ditimpa dengan data dari cloud.')) return;
   const sess = window.__TEACHER_SESSION__ || {};
-  const teacherId = sess.teacherId || ('guru_' + Date.now());
+  const teacherId = sess.uid;
+  if(!teacherId){ toast('✗ Sesi tidak valid, silakan login ulang', true); return; }
+  if(!master.fbUrl){ toast('⚠️ Isi URL Firebase dulu', true); openSyncModal(); return; }
+  if(!confirm('Muat dari Firebase? Semua data lokal Anda akan ditimpa dengan data dari cloud.')) return;
   toast('⏳ Memuat dari Firebase...');
   closeSyncModal();
-  const paths = ['/instrumen/personal/' + teacherId + '.json', '/instrumen/teachers/' + teacherId + '/master.json'];
-  let loaded = null, usedPath = '';
-  for(const p of paths){
-    try{
-      const res = await fetch(url + p, { cache:'no-store' });
-      if(!res.ok) continue;
-      const txt = await res.text();
-      if(!txt || txt === 'null' || txt.trim() === '') continue;
-      let data;
-      try{ data = JSON.parse(txt); }catch(e){ continue; }
-      if(data && data.classes && typeof data.classes === 'object'){ loaded = data; usedPath = p; break; }
-    }catch(err){ console.warn('[Load]', p, err.message); }
-  }
-  if(!loaded){ toast('⚠️ Tidak ada data valid untuk akun ini.', true); return; }
   try{
+    const res = await authFetch('/instrumen/personal/' + teacherId + '.json', { cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const loaded = await res.json();
+    if(!loaded || !loaded.classes) throw new Error('Data tidak ditemukan untuk akun ini');
     loaded.classes = loaded.classes || {};
     CLASSES.forEach(c=>{
       if(!loaded.classes[c]) loaded.classes[c] = defaultClassState(c);
       else normalizeClass(loaded.classes[c], c);
     });
+    migrateLegacyLists(loaded);
     if(!loaded.currentClass || !CLASSES.includes(loaded.currentClass)) loaded.currentClass = 'XII';
-    loaded.fbUrl = master.fbUrl || DEFAULT_FB_URL;
+    loaded.fbUrl = master.fbUrl;
     if(!('lastUpdate' in loaded)) loaded.lastUpdate = Date.now();
+    backupMasterBeforeOverwrite();
     master = loaded;
     state = master.classes[master.currentClass];
     state.identitas.kelas = master.currentClass;
     saveLocalOnly();
     autoFillFromSession();
     renderLogo(); updateClassSelector(); bindIdentitasValues(); initAkhir(); refreshAll();
-    toast('✓ Data dimuat dari Firebase (' + (usedPath.includes('personal') ? 'backup pribadi' : 'data admin') + ')');
+    clearUnsaved();
+    toast('✓ Data dimuat dari Firebase');
     updateSyncBadge('saved');
   }catch(err){
     console.error('Firebase load error:', err);
@@ -2067,26 +2356,96 @@ async function firebaseLoad(){
   }
 }
 
-async function autoLoadFromFirebase(){
-  const url = (master.fbUrl || DEFAULT_FB_URL).replace(/\/+$/,'');
-  if(!url) return;
-  const sess = window.__TEACHER_SESSION__ || {};
-  const teacherId = sess.teacherId || ('guru_' + Date.now());
+/* ============================================================
+   BACKUP + KONFLIK CLOUD/LOCAL
+   ============================================================ */
+function backupMasterBeforeOverwrite(){
   try{
-    const res = await fetch(url + '/instrumen/personal/' + teacherId + '.json', { cache:'no-store' });
+    localStorage.setItem(LS_BACKUP, JSON.stringify(master));
+  }catch(e){
+    console.warn('[backup] gagal:', e);
+  }
+}
+
+function restoreFromBackup(){
+  try{
+    const raw = localStorage.getItem(LS_BACKUP);
+    if(!raw){ toast('⚠️ Cadangan tidak ditemukan', true); return; }
+    const backup = JSON.parse(raw);
+    backup.classes = backup.classes || {};
+    CLASSES.forEach(c=>{
+      if(!backup.classes[c]) backup.classes[c] = defaultClassState(c);
+      else normalizeClass(backup.classes[c], c);
+    });
+    migrateLegacyLists(backup);
+    master = backup;
+    state = master.classes[master.currentClass] || master.classes['XII'];
+    saveLocalOnly();
+    refreshAll();
+    toast('✓ Data lokal dipulihkan dari cadangan');
+  }catch(e){
+    console.error('[restoreFromBackup]', e);
+    toast('✗ Gagal memulihkan cadangan: ' + e.message, true);
+  }
+}
+
+let __PENDING_CLOUD_DATA__ = null;
+function showCloudConflictModal(cloudData){
+  __PENDING_CLOUD_DATA__ = cloudData;
+  const fmtTime = (ts) => ts ? new Date(ts).toLocaleString('id-ID', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+  const elC = document.getElementById('cloudConflictCloudTime');
+  const elL = document.getElementById('cloudConflictLocalTime');
+  if(elC) elC.textContent = fmtTime(cloudData.lastUpdate || 0);
+  if(elL) elL.textContent = fmtTime(master.lastUpdate || 0);
+  document.getElementById('cloudConflictModal').classList.add('show');
+}
+
+function resolveCloudConflict(choice){
+  document.getElementById('cloudConflictModal').classList.remove('show');
+  const cloudData = __PENDING_CLOUD_DATA__;
+  __PENDING_CLOUD_DATA__ = null;
+  if(!cloudData) return;
+  if(choice === 'cloud'){
+    backupMasterBeforeOverwrite();
+    master = cloudData;
+    state = master.classes[master.currentClass] || master.classes['XII'];
+    saveLocalOnly();
+    clearUnsaved();
+    refreshAll();
+    updateSyncBadge('saved');
+    toastUndo('✓ Data cloud dipakai. Klik Urungkan bila salah.', restoreFromBackup);
+  } else {
+    firebaseSave(true);
+    toast('ℹ️ Data lokal dipertahankan, sedang dikirim ke cloud');
+  }
+}
+
+async function autoLoadFromFirebase(){
+  const sess = window.__TEACHER_SESSION__ || {};
+  const teacherId = sess.uid;
+  if(!teacherId || !master.fbUrl) return;
+  try{
+    const res = await authFetch('/instrumen/personal/' + teacherId + '.json', { cache:'no-store' });
     if(!res.ok) return;
     const data = await res.json();
     if(!data || !data.classes) return;
+    data.classes = data.classes || {};
+    CLASSES.forEach(c=>{
+      if(!data.classes[c]) data.classes[c] = defaultClassState(c);
+      else normalizeClass(data.classes[c], c);
+    });
+    migrateLegacyLists(data);
     const cloudTime = data.lastUpdate || 0;
     const localTime = master.lastUpdate || 0;
     if(cloudTime > localTime){
+      if(window.__UNSAVED__){ showCloudConflictModal(data); return; }
+      backupMasterBeforeOverwrite();
       master = data;
-      CLASSES.forEach(c=>{ if(!master.classes[c]) master.classes[c] = defaultClassState(c); });
       state = master.classes[master.currentClass] || master.classes['XII'];
       saveLocalOnly();
       refreshAll();
-      toast('✓ Data ditarik dari Firebase (versi lebih baru)');
       updateSyncBadge('saved');
+      toastUndo('✓ Data ditarik dari Firebase. Klik Urungkan bila salah.', restoreFromBackup);
     } else if(localTime > cloudTime){
       firebaseSave(true);
     } else {
@@ -2130,17 +2489,15 @@ function renderDashboard() {
   document.getElementById('heroDate').textContent = d.toLocaleDateString('id-ID', options);
 
   let totalSiswa = 0, totalNilai = 0, totalTuntas = 0, totalRemedial = 0;
-  let totalCountedN = 0; // Jumlah siswa yang lengkap dinilai (Sumatif, UTS, UAS)
-  let allStudentScores = []; 
+  let totalCountedN = 0;
+  let allStudentScores = [];
   const kelasStats = {};
-  
-  let sumFilled = {}; 
+  let sumFilled = {};
   let activeSumatifIndices = new Set();
-  let allStudentsFlat = []; // Untuk tabel rekap
+  let allStudentsFlat = [];
+  let utsIssues = [], uasIssues = [], uhIssues = [], sumatifIssues = [], incompleteIssues = [];
+  let kkmRef = null;
 
-  const originalState = state;
-
-  // --- LOGIKA FILTER KELAS DASHBOARD ---
   let classesToProcess = [];
   if (dashFilterKelas === 'all') {
     const isMTs = (state.identitas.madrasah || '').toLowerCase().includes('mts');
@@ -2150,108 +2507,148 @@ function renderDashboard() {
   }
 
   classesToProcess.forEach(k => {
-    state = master.classes[k];  
-    
-    // PENGAMAN: Jika kelas tidak ditemukan, lewati
-    if (!state) return; 
-    
-    const cls = state;
-    
+    const cls = master.classes[k];
+    if (!cls) { kelasStats[k] = { n:0, avg:0, tuntas:0, remedial:0, countedN:0, kkm:75 }; return; }
+    const KKM = num(cls.identitas.kkm) || 75;
+    if(kkmRef === null) kkmRef = KKM;
+
     if (!cls.siswa || cls.siswa.length === 0) {
-      kelasStats[k] = { n: 0, avg: 0, tuntas: 0, remedial: 0, countedN: 0 };
+      kelasStats[k] = { n: 0, avg: 0, tuntas: 0, remedial: 0, countedN: 0, kkm: KKM };
       return;
     }
 
-    const KKM = num(cls.identitas.kkm) || 75;
     let n = cls.siswa.length;
-	 getActiveSumatifIdx().forEach(idx => activeSumatifIndices.add(idx));
-    let sumNilai = 0;
-    let tuntas = 0;
-    let remedial = 0;
-    let countedN = 0;
+    getActiveSumatifIdx(cls).forEach(idx => activeSumatifIndices.add(idx));
+    let sumNilai = 0, tuntas = 0, remedial = 0, countedN = 0;
 
-        cls.siswa.forEach(s => {
-      const h = hitungNilaiAkhir(s); 
-      
-      // Cek ketersediaan data
-      const hasSumatif = h.sumArr.length > 0;
-      const hasUTS = num(cls.uts?.[s.id]?.awal) > 0 || num(cls.uts?.[s.id]?.perbaikan) > 0;
-      const hasUAS = num(cls.uas?.[s.id]?.awal) > 0 || num(cls.uas?.[s.id]?.perbaikan) > 0;
-      
-      let countAvailable = (hasSumatif ? 1 : 0) + (hasUTS ? 1 : 0) + (hasUAS ? 1 : 0);
-      
-      if (countAvailable > 0) {
-        let dynamicScore = 0;
+    // Kumpulkan data per kelas untuk peringkat per kelas
+    const classRows = [];
+    cls.siswa.forEach(s => {
+      const h = hitungNilaiAkhir(s, cls);
+      const utsData = cls.uts?.[s.id] || {};
+      const uasData = cls.uas?.[s.id] || {};
+      const hasUTS = isFilled(utsData.awal) || isFilled(utsData.perbaikan);
+      const hasUAS = isFilled(uasData.awal) || isFilled(uasData.perbaikan);
+      const dinilai = h.bobotUsed > 0;
 
-        // LOGIKA DINAMIS BERDASARKAN DATA YANG TERISI
-        if (countAvailable === 1) {
-          // Jika hanya 1 komponen yang terisi (100%)
-          if (hasSumatif) dynamicScore = h.rataSum;
-          else if (hasUTS) dynamicScore = h.uts;
-          else if (hasUAS) dynamicScore = h.uas;
-        } else if (countAvailable === 2) {
-          // Jika 2 komponen terisi (50% - 50%)
-          let sum = 0;
-          if (hasSumatif) sum += h.rataSum;
-          if (hasUTS) sum += h.uts;
-          if (hasUAS) sum += h.uas;
-          dynamicScore = sum / 2;
-        } else if (countAvailable === 3) {
-          // Jika lengkap 3 komponen, pakai persentase dari pengaturan Nilai Akhir
-          const b = state.config.bobotAkhir;
-          const totalBobot = num(b.sumatif) + num(b.uts) + num(b.uas) || 100;
-          dynamicScore = (h.rataSum * num(b.sumatif) + h.uts * num(b.uts) + h.uas * num(b.uas)) / totalBobot;
-        }
-        
-        sumNilai += dynamicScore;
+      if (dinilai) {
+        sumNilai += h.nilaiAkhir;
         countedN++;
-        allStudentScores.push(dynamicScore);
-        
-        const isTuntas = dynamicScore >= KKM;
-        if (isTuntas) tuntas++;
-        else remedial++;
-        
-        allStudentsFlat.push({ 
-          kelas: k, 
-          nama: s.nama, 
-          sikap: h.sikap, 
-          s1: h.sumArr[0] || 0, 
-          s2: h.sumArr[1] || 0, 
-          s3: h.sumArr[2] || 0, 
-          uts: h.uts, 
-          uas: h.uas, 
-          akhir: dynamicScore, // Menggunakan nilai dinamis untuk tabel rekap
-          tuntas: isTuntas
-        });
+        allStudentScores.push(h.nilaiAkhir);
+        if (h.tuntas) tuntas++; else remedial++;
       }
-      
-      // Hitung kelengkapan input dinamis
-      getActiveSumatifIdx().forEach(idx => {
-          const S = cls.sumatif[idx];
-          if (S && S.data[s.id]) {
-              const d = S.data[s.id];
-              const hasUH = d.uh !== '' && d.uh !== null && d.uh !== undefined;
-              const hasTugas = Array.isArray(d.tugas) && d.tugas.some(t => t !== '' && t !== null && t !== undefined);
-              if (hasUH || hasTugas) {
-                  sumFilled[idx] = (sumFilled[idx] || 0) + 1;
-              }
-          }
+
+      classRows.push({
+        s, h, hasUTS, hasUAS, dinilai,
+        s1: h.sumArr[0], s2: h.sumArr[1], s3: h.sumArr[2]
       });
-      if (h.uts > 0) sumFilled.uts = (sumFilled.uts || 0) + 1;
-      if (h.uas > 0) sumFilled.uas = (sumFilled.uas || 0) + 1;
+
+      getActiveSumatifIdx(cls).forEach(idx => {
+        const S = cls.sumatif[idx];
+        if (S && S.data[s.id]) {
+          const dd = S.data[s.id];
+          const hasUH = isFilled(dd.uh);
+          const hasTugas = Array.isArray(dd.tugas) && dd.tugas.some(t => isFilled(t));
+          if (hasUH || hasTugas) sumFilled[idx] = (sumFilled[idx] || 0) + 1;
+        }
+      });
+      if (h.hasUts) sumFilled.uts = (sumFilled.uts || 0) + 1;
+      if (h.hasUas) sumFilled.uas = (sumFilled.uas || 0) + 1;
+    });
+
+    // Peringkat per kelas
+    const sorted = [...classRows].filter(r => r.dinilai).sort((a,b) => b.h.nilaiAkhir - a.h.nilaiAkhir);
+    let lastVal = null, lastRank = 0;
+    const rankMap = new Map();
+    sorted.forEach((r, i) => {
+      const v = +r.h.nilaiAkhir.toFixed(2);
+      if (v !== lastVal) { lastRank = i + 1; lastVal = v; }
+      rankMap.set(r.s.id, lastRank);
+    });
+    classRows.forEach(r => {
+      allStudentsFlat.push({
+        kelas: k, nama: r.s.nama, sikap: r.h.sikap,
+        s1: r.s1, s2: r.s2, s3: r.s3,
+        uts: r.h.uts, uas: r.h.uas,
+        hasUTS: r.hasUTS, hasUAS: r.hasUAS,
+        akhir: r.h.nilaiAkhir, tuntas: r.h.tuntas,
+        peringkat: rankMap.get(r.s.id) || null,
+        dinilai: r.dinilai
+      });
     });
 
     const avg = countedN > 0 ? sumNilai / countedN : 0;
-    kelasStats[k] = { n, avg, tuntas, remedial, countedN };
-    
+    kelasStats[k] = { n, avg, tuntas, remedial, countedN, kkm: KKM };
     totalSiswa += n;
     totalNilai += sumNilai;
     totalTuntas += tuntas;
     totalRemedial += remedial;
     totalCountedN += countedN;
+
+    // PENGUMPULAN TINDAKAN SPESIFIK
+    cls.siswa.forEach(s => {
+      const h = hitungNilaiAkhirUjian(cls.uts?.[s.id], KKM);
+      if (h > 0 && h < KKM) utsIssues.push({ kelas: k, text: `${s.nama} (${fmt(h)})` });
+    });
+    cls.siswa.forEach(s => {
+      const h = hitungNilaiAkhirUjian(cls.uas?.[s.id], KKM);
+      if (h > 0 && h < KKM) uasIssues.push({ kelas: k, text: `${s.nama} (${fmt(h)})` });
+    });
+    getActiveUHIdx(cls).forEach(uhIdx => {
+      const students = [];
+      cls.siswa.forEach(s => {
+        if (!isUHFilled(s, uhIdx, cls)) return;
+        const raw = getUHNilaiRaw(s, uhIdx, cls);
+        if (raw < KKM) {
+          const val = getUHNilai(s, uhIdx, cls);
+          if (val < KKM) students.push(`${s.nama} (${fmt(raw)})`);
+        }
+      });
+      if (students.length > 0) {
+        const materi = cls.sumatif[uhIdx]?.materi || `UH ${uhIdx}`;
+        uhIssues.push({ kelas: k, materi, text: students.join(', ') });
+      }
+    });
+    getActiveSumatifIdx(cls).forEach(sumIdx => {
+      const students = [];
+      cls.siswa.forEach(s => {
+        const S = cls.sumatif[sumIdx];
+        if (S && S.data[s.id]) {
+          const dd = S.data[s.id];
+          const hasUH = isFilled(dd.uh);
+          const hasTugas = Array.isArray(dd.tugas) && dd.tugas.some(t => isFilled(t));
+          if (hasUH || hasTugas) {
+            const h = hitungSumatif(s, dd, cls);
+            if (h.rata > 0 && h.rata < KKM) students.push(`${s.nama} (${fmt(h.rata)})`);
+          }
+        }
+      });
+      if (students.length > 0) {
+        const materi = cls.sumatif[sumIdx]?.materi || `Sumatif ${sumIdx}`;
+        sumatifIssues.push({ kelas: k, materi, text: students.join(', ') });
+      }
+    });
+    const missingUts = cls.siswa.filter(s => !isFilled(cls.uts?.[s.id]?.awal)).length;
+    if (missingUts > 0) incompleteIssues.push({ kelas: k, text: `UTS: ${missingUts} siswa kosong` });
+    const missingUas = cls.siswa.filter(s => !isFilled(cls.uas?.[s.id]?.awal)).length;
+    if (missingUas > 0) incompleteIssues.push({ kelas: k, text: `UAS: ${missingUas} siswa kosong` });
+    getActiveSumatifIdx(cls).forEach(idx => {
+      let missing = 0;
+      cls.siswa.forEach(s => {
+        const S = cls.sumatif[idx];
+        if (!S || !S.data[s.id]) { missing++; return; }
+        const dd = S.data[s.id];
+        const hasUH = isFilled(dd.uh);
+        const hasTugas = Array.isArray(dd.tugas) && dd.tugas.some(t => isFilled(t));
+        if (!hasUH && !hasTugas) missing++;
+      });
+      if (missing > 0) incompleteIssues.push({ kelas: k, text: `Sumatif ${idx}: ${missing} siswa kosong` });
+    });
   });
 
-  state = originalState;
+  if(kkmRef === null) kkmRef = 75;
+  const badgeEl = document.getElementById('dashKkmBadge');
+  if(badgeEl) badgeEl.textContent = 'KKM ' + kkmRef;
 
   const avgOverall = totalCountedN > 0 ? totalNilai / totalCountedN : 0;
   const pctOverall = totalCountedN > 0 ? (totalTuntas / totalCountedN) * 100 : 0;
@@ -2260,23 +2657,18 @@ function renderDashboard() {
     let html = `<div class="kpi-details"><div class="kpi-details-title">Rincian Per Kelas</div><div class="kpi-grid">`;
     let hasData = false;
     classesToProcess.forEach(k => {
-      const d = kelasStats[k];
-      if (!d || d.n === 0) return;
+      const d2 = kelasStats[k];
+      if (!d2 || d2.n === 0) return;
       hasData = true;
+      const kkmCls = d2.kkm || 75;
       let val = '';
-      if (type === 'siswa') {
-        val = `<b>${d.countedN}/${d.n}</b>`;
-      }
-      if (type === 'avg') {
-        val = `<b class="${d.avg >= 75 ? 'text-green':'text-red'}">${fmt(d.avg)}</b>`;
-      }
+      if (type === 'siswa') val = `<b>${d2.countedN}/${d2.n}</b>`;
+      if (type === 'avg') val = `<b class="${d2.avg >= kkmCls ? 'text-green':'text-red'}">${fmt(d2.avg)}</b>`;
       if (type === 'tuntas') {
-        const p = d.countedN > 0 ? (d.tuntas/d.countedN)*100 : 0;
+        const p = d2.countedN > 0 ? (d2.tuntas/d2.countedN)*100 : 0;
         val = `<b class="${p >= 70 ? 'text-green':'text-red'}">${Math.round(p)}%</b>`;
       }
-      if (type === 'remedial') {
-        val = `<b class="${d.remedial > 0 ? 'text-red':''}">${d.remedial}</b>`;
-      }
+      if (type === 'remedial') val = `<b class="${d2.remedial > 0 ? 'text-red':''}">${d2.remedial}</b>`;
       html += `<div class="kpi-grid-item"><span>${k}</span> ${val}</div>`;
     });
     if (!hasData) html += `<div style="grid-column:1/-1;text-align:center;color:var(--gray-400);font-size:11px;padding:4px">Belum ada data siswa</div>`;
@@ -2289,7 +2681,7 @@ function renderDashboard() {
       <div class="kpi-top">
         <div class="ico b"><svg class="i"><use href="#i-users"/></svg></div>
         <div><div class="lbl">Total Siswa</div><div class="val">${totalSiswa}</div>
-        <div class="trend" style="color:var(--gray-600)">${totalCountedN} siswa sudah dinilai lengkap</div></div>
+        <div class="trend" style="color:var(--gray-600)">${totalCountedN} siswa sudah dinilai</div></div>
       </div>
       ${getDetails('siswa')}
     </div>
@@ -2297,7 +2689,7 @@ function renderDashboard() {
       <div class="kpi-top">
         <div class="ico g"><svg class="i"><use href="#i-chart"/></svg></div>
         <div><div class="lbl">Rata-rata Nilai</div><div class="val">${fmt(avgOverall)}</div>
-        <div class="trend ${avgOverall>=75?'text-green':'text-red'}">${avgOverall>=75?'▲ di atas':'▼ di bawah'} KKM 75</div></div>
+        <div class="trend ${avgOverall >= kkmRef ? 'text-green':'text-red'}">${avgOverall >= kkmRef ? '▲ di atas':'▼ di bawah'} KKM ${kkmRef}</div></div>
       </div>
       ${getDetails('avg')}
     </div>
@@ -2319,110 +2711,109 @@ function renderDashboard() {
     </div>
   `;
 
-  let todos = [];
-  if (totalRemedial > 0) {
-    todos.push(`<li><button onclick="pindahTab('remedial')"><span class="t-ico r"><svg class="i"><use href="#i-redo"/></svg></span><span class="t-body"><b>${totalRemedial} siswa perlu remedial</b><span>Di seluruh kelas — klik untuk buka tab Remedial</span></span></button></li>`);
-  }
-  
-  let belumDinilai = totalSiswa - totalCountedN;
-  if (belumDinilai > 0) {
-    todos.push(`<li><button onclick="pindahTab('uas')"><span class="t-ico a"><svg class="i"><use href="#i-alert"/></svg></span><span class="t-body"><b>${belumDinilai} siswa belum lengkap nilainya</b><span>Lengkapi Sumatif/UTS/UAS sebelum rekap nilai akhir</span></span></button></li>`);
-  }
-  
-  todos.push(`<li><button onclick="pindahTab('identitas')"><span class="t-ico b"><svg class="i"><use href="#i-cloud"/></svg></span><span class="t-body"><b>Cek Data Siswa</b><span>Pastikan semua siswa sudah dimasukkan</span></span></button></li>`);
-
+  // Tindakan spesifik
+let todos = [];
+if (utsIssues.length > 0) {
+  const text = utsIssues.slice(0, 3).map(i => `Kls ${i.kelas}: ${i.text}`).join(' • ') + (utsIssues.length > 3 ? ' • ...' : '');
+  todos.push(`<li><button onclick="switchClass('${utsIssues[0].kelas}'); pindahTab('uts')"><span class="t-ico r"><svg class="i"><use href="#i-redo"/></svg></span><span class="t-body"><b>${utsIssues.length} Siswa Perlu Perbaikan UTS</b><span>${esc(text)}</span></span></button></li>`);
+}
+if (uasIssues.length > 0) {
+  const text = uasIssues.slice(0, 3).map(i => `Kls ${i.kelas}: ${i.text}`).join(' • ') + (uasIssues.length > 3 ? ' • ...' : '');
+  todos.push(`<li><button onclick="switchClass('${uasIssues[0].kelas}'); pindahTab('uas')"><span class="t-ico r"><svg class="i"><use href="#i-redo"/></svg></span><span class="t-body"><b>${uasIssues.length} Siswa Perlu Perbaikan UAS</b><span>${esc(text)}</span></span></button></li>`);
+}
+if (uhIssues.length > 0) {
+  const text = uhIssues.slice(0, 2).map(i => `Kls ${i.kelas} - ${i.materi}: ${i.text}`).join(' • ') + (uhIssues.length > 2 ? ' • ...' : '');
+  todos.push(`<li><button onclick="switchClass('${uhIssues[0].kelas}'); pindahTab('remedial')"><span class="t-ico a"><svg class="i"><use href="#i-redo"/></svg></span><span class="t-body"><b>Remedial UH (${uhIssues.length} Kelas/Materi)</b><span>${esc(text)}</span></span></button></li>`);
+}
+if (sumatifIssues.length > 0) {
+  const text = sumatifIssues.slice(0, 2).map(i => `Kls ${i.kelas} - ${i.materi}: ${i.text}`).join(' • ') + (sumatifIssues.length > 2 ? ' • ...' : '');
+  todos.push(`<li><button onclick="switchClass('${sumatifIssues[0].kelas}'); pindahTab('sumatif')"><span class="t-ico b"><svg class="i"><use href="#i-alert"/></svg></span><span class="t-body"><b>Sumatif Belum Tuntas (${sumatifIssues.length} Kelas/Materi)</b><span>${esc(text)}</span></span></button></li>`);
+}
+if (incompleteIssues.length > 0) {
+  const text = incompleteIssues.slice(0, 3).map(i => `Kls ${i.kelas} - ${i.text}`).join(' • ') + (incompleteIssues.length > 3 ? ' • ...' : '');
+  todos.push(`<li><button onclick="switchClass('${incompleteIssues[0].kelas}'); pindahTab('identitas')"><span class="t-ico a"><svg class="i"><use href="#i-alert"/></svg></span><span class="t-body"><b>Data Nilai Belum Lengkap</b><span>${esc(text)}</span></span></button></li>`);
+}
+if (todos.length === 0) {
+  todos.push(`<li style="padding: 20px; text-align: center; color: var(--green-700); font-weight: 600; background: var(--green-50); border-radius: 10px; border: 1px dashed var(--green-300);"><b>🎉 Luar biasa! Semua data nilai sudah lengkap dan tidak ada siswa yang perlu remedial.</b></li>`);
+}
   document.getElementById('dashTodoCount').textContent = todos.length;
   document.getElementById('dashTodo').innerHTML = todos.join('');
 
   const calcPct = (val) => totalSiswa > 0 ? (val / totalSiswa * 100) : 0;
   const getBarCls = (p) => p >= 90 ? '' : (p >= 50 ? 'warn' : 'low');
-  
-  // Urutkan index sumatif dari kecil ke besar
   const sortedSumatif = Array.from(activeSumatifIndices).sort((a,b)=>a-b);
-  
-  let totalPct = 0;
-  let countComponents = 0;
-  
-  sortedSumatif.forEach(idx => {
-      totalPct += calcPct(sumFilled[idx] || 0);
-      countComponents++;
-  });
-  
-  // UTS dan UAS selalu ditampilkan (jika ada siswa)
+  let totalPct = 0, countComponents = 0;
+  sortedSumatif.forEach(idx => { totalPct += calcPct(sumFilled[idx] || 0); countComponents++; });
   if (totalSiswa > 0) {
-      totalPct += calcPct(sumFilled.uts || 0);
-      totalPct += calcPct(sumFilled.uas || 0);
-      countComponents += 2;
+    totalPct += calcPct(sumFilled.uts || 0);
+    totalPct += calcPct(sumFilled.uas || 0);
+    countComponents += 2;
   }
-  
   const avgPct = countComponents > 0 ? (totalPct / countComponents) : 0;
   document.getElementById('dashProgAvg').textContent = Math.round(avgPct) + '% lengkap';
-  
+
   let progHtml = '';
-  // Render HANYA Sumatif yang aktif
   sortedSumatif.forEach(idx => {
-      const val = sumFilled[idx] || 0;
-      const p = calcPct(val);
-      progHtml += `
-        <div class="prog-row">
-          <div class="top"><b>Sumatif ${idx}</b><span>${val}/${totalSiswa} siswa • ${Math.round(p)}%</span></div>
-          <div class="bar"><i class="${getBarCls(p)}" style="width:${p}%"></i></div>
-        </div>
-      `;
+    const val = sumFilled[idx] || 0;
+    const p = calcPct(val);
+    progHtml += `<div class="prog-row"><div class="top"><b>Sumatif ${idx}</b><span>${val}/${totalSiswa} siswa • ${Math.round(p)}%</span></div><div class="bar"><i class="${getBarCls(p)}" style="width:${p}%"></i></div></div>`;
   });
-  
-  // Render UTS & UAS
   if (totalSiswa > 0) {
-      const valUts = sumFilled.uts || 0;
-      const pUts = calcPct(valUts);
-      progHtml += `
-        <div class="prog-row">
-          <div class="top"><b>UTS</b><span>${valUts}/${totalSiswa} siswa • ${Math.round(pUts)}%</span></div>
-          <div class="bar"><i class="${getBarCls(pUts)}" style="width:${pUts}%"></i></div>
-        </div>
-      `;
-      
-      const valUas = sumFilled.uas || 0;
-      const pUas = calcPct(valUas);
-      progHtml += `
-        <div class="prog-row">
-          <div class="top"><b>UAS</b><span>${valUas}/${totalSiswa} siswa • ${Math.round(pUas)}%</span></div>
-          <div class="bar"><i class="${getBarCls(pUas)}" style="width:${pUas}%"></i></div>
-        </div>
-      `;
+    const valUts = sumFilled.uts || 0, pUts = calcPct(valUts);
+    progHtml += `<div class="prog-row"><div class="top"><b>UTS</b><span>${valUts}/${totalSiswa} siswa • ${Math.round(pUts)}%</span></div><div class="bar"><i class="${getBarCls(pUts)}" style="width:${pUts}%"></i></div></div>`;
+    const valUas = sumFilled.uas || 0, pUas = calcPct(valUas);
+    progHtml += `<div class="prog-row"><div class="top"><b>UAS</b><span>${valUas}/${totalSiswa} siswa • ${Math.round(pUas)}%</span></div><div class="bar"><i class="${getBarCls(pUas)}" style="width:${pUas}%"></i></div></div>`;
   }
-  
   document.getElementById('dashProg').innerHTML = progHtml;
 
-  drawDashCharts(allStudentScores, totalTuntas, totalRemedial);
+  drawDashCharts(allStudentScores, totalTuntas, totalRemedial, kkmRef);
 
+  // Rekap: urutkan berdasarkan akhir desc, tampilkan top 15
   allStudentsFlat.sort((a, b) => b.akhir - a.akhir);
-  const displayData = allStudentsFlat.slice(0, 15); 
+  const displayData = allStudentsFlat.slice(0, 15);
   document.getElementById('dashRekapTag').textContent = `${displayData.length} dari ${totalCountedN} siswa dinilai`;
-  
+
+  const cellNum = (v) => {
+    if (!isFilled(v)) return { disp: '—', cls: '' };
+    const n = num(v);
+    return { disp: fmt(n, 0), cls: n < kkmRef ? 'cell-red' : '' };
+  };
+  const cellSumatif = (v) => {
+    if (v === undefined || v === null) return { disp: '—', cls: '' };
+    return { disp: fmt(v, 0), cls: v < kkmRef ? 'cell-red' : '' };
+  };
+
   document.getElementById('dashRekapBody').innerHTML = displayData.map((s, i) => {
-    const isTuntas = s.akhir >= 75;
+    const isTuntas = s.akhir >= kkmRef;
     const badgeCls = isTuntas ? 'badge-tuntas' : 'badge-belum';
     const textStatus = isTuntas ? 'Tuntas' : 'Belum';
+    const cUts = s.hasUTS ? cellNum(s.uts) : { disp: '—', cls: '' };
+    const cUas = s.hasUAS ? cellNum(s.uas) : { disp: '—', cls: '' };
+    const cS1 = cellSumatif(s.s1);
+    const cS2 = cellSumatif(s.s2);
+    const cS3 = cellSumatif(s.s3);
     return `
-      <tr>
-        <td style="text-align:left"><b>${i+1}</b> &nbsp; ${esc(s.nama)} <span style="font-size:10.5px;color:var(--gray-400);margin-left:6px">(${s.kelas})</span></td>
-        <td>${fmt(s.sikap,0)}</td>
-        <td class="${s.s1 < 75 ? 'cell-red' : ''}">${fmt(s.s1,0)}</td>
-        <td class="${s.s2 < 75 ? 'cell-red' : ''}">${fmt(s.s2,0)}</td>
-        <td class="${s.s3 < 75 ? 'cell-red' : ''}">${fmt(s.s3,0)}</td>
-        <td class="${s.uts < 75 ? 'cell-red' : ''}">${fmt(s.uts,0)}</td>
-        <td class="${s.uas < 75 ? 'cell-red' : ''}">${fmt(s.uas,0)}</td>
-        <td class="cell-green" style="font-weight:800">${fmt(s.akhir)}</td>
-        <td><span class="${badgeCls}">${textStatus}</span></td>
-      </tr>
-    `;
+  <tr>
+    <td style="text-align:center;">${i+1}</td>
+    <td style="text-align:center;"><b>${esc(s.nama)}</b></td>
+    <td>${s.kelas}</td>
+    <td>${fmt(s.sikap,0)}</td>
+    <td class="${cS1.cls}">${cS1.disp}</td>
+    <td class="${cS2.cls}">${cS2.disp}</td>
+    <td class="${cS3.cls}">${cS3.disp}</td>
+    <td class="${cUts.cls}">${cUts.disp}</td>
+    <td class="${cUas.cls}">${cUas.disp}</td>
+    <td class="cell-green" style="font-weight:800">${fmt(s.akhir)}</td>
+    <td class="cell-rank"><b>${s.peringkat || '-'}</b></td>
+    <td><span class="${badgeCls}">${textStatus}</span></td>
+  </tr>`;
   }).join('');
 }
 
-function drawDashCharts(scores, tuntas, remedial) {
+function drawDashCharts(scores, tuntas, remedial, KKM) {
+  KKM = num(KKM) || 75;
   const bins = Array(10).fill(0);
-  scores.forEach(v => { const i = v <= 10 ? 0 : v >= 100 ? 9 : Math.floor((v - .0001) / 10); bins[Math.min(9, Math.max(0, i))]++; });
+  scores.forEach(v => bins[binNilai(v)]++);
   const max = Math.max(2, ...bins);
   const W = 520, H = 220, pl = 28, pb = 28, pt = 14, bw = (W - pl - 8) / 10;
   let g = '';
@@ -2432,16 +2823,16 @@ function drawDashCharts(scores, tuntas, remedial) {
   }
   const bars = bins.map((f, i) => {
     const lo = i * 10, hi = i === 9 ? 100 : lo + 10;
-    const col = hi <= 75 ? '#fca5a5' : (lo >= 75 ? '#86efac' : '#fde68a');
+    const col = hi <= KKM ? '#fca5a5' : (lo >= KKM ? '#86efac' : '#fde68a');
     const h = (H - pb - pt) * f / max, x = pl + i * bw + 5, y = H - pb - h;
     return `<rect x="${x}" y="${y}" width="${bw - 10}" height="${Math.max(h, 0)}" rx="6" fill="${col}"></rect>
       ${f ? `<text x="${x + (bw - 10) / 2}" y="${y - 5}" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2937">${f}</text>` : ''}
       <text x="${x + (bw - 10) / 2}" y="${H - 9}" text-anchor="middle" font-size="10.5" fill="#6b7280">${lo}</text>`;
   }).join('');
-  const kx = pl + (75 / 100) * (W - pl - 8);
+  const kx = pl + (KKM / 100) * (W - pl - 8);
   document.getElementById('dashDistChart').innerHTML = `<svg viewBox="0 0 ${W} ${H}">${g}${bars}
     <line x1="${kx}" x2="${kx}" y1="${pt}" y2="${H - pb}" stroke="#12803f" stroke-dasharray="4 4" stroke-width="1.5"/>
-    <text x="${kx + 4}" y="${pt + 8}" font-size="11" font-weight="700" fill="#12803f">KKM 75</text></svg>`;
+    <text x="${kx + 4}" y="${pt + 8}" font-size="11" font-weight="700" fill="#12803f">KKM ${KKM}</text></svg>`;
 
   const total = tuntas + remedial;
   const R = 52, C = 2 * Math.PI * R, tl = total > 0 ? (tuntas / total) * C : 0;
@@ -2660,29 +3051,33 @@ function getSumatif(k){
   if(!s.data || typeof s.data !== 'object') s.data = {};
   return s;
 }
-function hitungSumatif(siswa, sData){
-  const b = state.config.bobotSumatif;
+function hitungSumatif(siswa, sData, cls){
+  cls = cls || state;
+  const b = cls.config.bobotSumatif;
   const totalBobot = num(b.sikap)+num(b.uh)+num(b.tugas) || 100;
   const sikap = (num(siswa.absen)+num(siswa.pengamatan))/2;
   const uh = num(sData?.uh);
-  const tugas = Array.isArray(sData?.tugas) ? sData.tugas.map(num).filter(v=>v>0) : [];
-  const totalTugas = tugas.length ? tugas.reduce((a,b)=>a+b,0)/tugas.length : 0;
+  const tugasArr = Array.isArray(sData?.tugas) ? sData.tugas : [];
+  // Hanya tugas yang terisi (termasuk 0 yang sah) yang dihitung
+  const tugasFilled = tugasArr.filter(isFilled);
+  const totalTugas = tugasFilled.length ? tugasFilled.reduce((a,b)=>a+num(b),0)/tugasFilled.length : 0;
   const rata = (sikap*num(b.sikap) + uh*num(b.uh) + totalTugas*num(b.tugas)) / totalBobot;
   return { sikap, uh, totalTugas, rata };
 }
 function syncSumatifFromUH(){
+  // Hanya tulis bila Auto UH aktif
+  const cb = $('#autoUH');
+  if(!cb || !cb.checked) return;
   getActiveSumatifIdx().forEach(i=>{
     if(!state.sumatif[i]) state.sumatif[i] = { materi:'', data:{} };
     state.siswa.forEach(s=>{
-      const src = getUHSource(s, i);
       if(!state.sumatif[i].data[s.id]) state.sumatif[i].data[s.id] = { uh:'', tugas:Array(N_TUGAS).fill('') };
-      if (!Array.isArray(state.sumatif[i].data[s.id].tugas)) state.sumatif[i].data[s.id].tugas = Array(N_TUGAS).fill('');
-      if(src === 'kosong') {
-        state.sumatif[i].data[s.id].uh = ''; // ⭐ CLEAR VALUE IF KOSONG
+      if(!Array.isArray(state.sumatif[i].data[s.id].tugas)) state.sumatif[i].data[s.id].tugas = Array(N_TUGAS).fill('');
+      if(!isUHFilled(s, i)) {
+        state.sumatif[i].data[s.id].uh = '';
         return;
       }
-      const nilai = getUHNilai(s, i);
-      state.sumatif[i].data[s.id].uh = nilai;
+      state.sumatif[i].data[s.id].uh = getUHNilai(s, i);
     });
   });
   saveState();
@@ -2704,7 +3099,8 @@ function renderSumatif(){
     return;
   }
   const KKM = num(state.identitas.kkm) || 75;
-  let sumRata=0, sumSikap=0, sumUH=0, sumTugas=0, cnt=0;
+  let sumAbsen=0, sumPengamatan=0, sumSikap=0, sumUH=0, sumTugas=0, sumRata=0, cnt=0;
+
   state.siswa.forEach((s,i)=>{
     const d = S.data[s.id] || (S.data[s.id] = { uh:'', tugas:Array(N_TUGAS).fill('') });
     if(!Array.isArray(d.tugas)) d.tugas = Array(N_TUGAS).fill('');
@@ -2719,34 +3115,46 @@ function renderSumatif(){
         else if(src === 'manual') uhSrcBadge = '<span class="badge-info" style="font-size:9px;margin-left:4px" title="Manual">M</span>';
         else uhSrcBadge = '<span class="badge-cap" style="font-size:9px;margin-left:4px" title="Analisis UH">A</span>';
       } else {
-        d.uh = ''; // ⭐ CLEAR VALUE IF KOSONG
+        d.uh = '';
       }
     }
     const h = hitungSumatif(s, d);
-    sumRata += h.rata; sumSikap += h.sikap; sumUH += h.uh; sumTugas += h.totalTugas; cnt++;
+    sumAbsen += num(s.absen);
+    sumPengamatan += num(s.pengamatan);
+    sumSikap += h.sikap;
+    sumUH += h.uh;
+    sumTugas += h.totalTugas;
+    sumRata += h.rata;
+    cnt++;
     const uhAttr = autoUH ? 'readonly' : '';
     const uhStyle = autoUH ? 'background:var(--gray-100);color:var(--gray-600);cursor:not-allowed' : '';
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${i+1}</td>
       <td>${esc(s.nama)}</td>
-      <td class="cell-calc">${fmt(h.sikap)}</td>
-      <td class="cell-calc">${fmt(h.sikap)}</td>
-      <td class="cell-calc">${fmt(h.sikap)}</td>
+      <td class="cell-calc" data-role="absen">${fmt(num(s.absen))}</td>
+      <td class="cell-calc" data-role="pengamatan">${fmt(num(s.pengamatan))}</td>
+      <td class="cell-calc" data-role="sikap">${fmt(h.sikap)}</td>
       <td><input type="number" value="${d.uh??''}" data-id="${s.id}" data-f="uh" min="0" max="100" ${uhAttr} style="${uhStyle}">${uhSrcBadge}</td>
       ${Array.from({length:N_TUGAS},(_,j)=>`<td><input type="number" value="${d.tugas[j]??''}" data-id="${s.id}" data-f="tugas" data-j="${j}" min="0" max="100"></td>`).join('')}
-      <td class="cell-calc">${fmt(h.totalTugas)}</td>
-      <td class="cell-green">${fmt(h.rata)}</td>`;
+      <td class="cell-calc" data-role="ttugas">${fmt(h.totalTugas)}</td>
+      <td class="cell-green" data-role="rata">${fmt(h.rata)}</td>`;
     tb.appendChild(tr);
   });
-  tf.innerHTML = `<tr class="row-avg">
-    <td colspan="2">RATA-RATA</td>
-    <td>${fmt(sumSikap/cnt)}</td><td>${fmt(sumSikap/cnt)}</td><td>${fmt(sumSikap/cnt)}</td>
-    <td>${fmt(sumUH/cnt)}</td>
-    <td colspan="6"></td>
-    <td>${fmt(sumTugas/cnt)}</td>
-    <td>${fmt(sumRata/cnt)}</td>
-  </tr>`;
+  const renderTfoot = () => {
+    tf.innerHTML = `<tr class="row-avg">
+      <td colspan="2">RATA-RATA</td>
+      <td data-tf="absen">${fmt(sumAbsen/cnt)}</td>
+      <td data-tf="pengamatan">${fmt(sumPengamatan/cnt)}</td>
+      <td data-tf="sikap">${fmt(sumSikap/cnt)}</td>
+      <td data-tf="uh">${fmt(sumUH/cnt)}</td>
+      <td colspan="${N_TUGAS}"></td>
+      <td data-tf="ttugas">${fmt(sumTugas/cnt)}</td>
+      <td data-tf="rata">${fmt(sumRata/cnt)}</td>
+    </tr>`;
+  };
+  renderTfoot();
+
   tb.querySelectorAll('input').forEach(inp=>{
     if(inp.readOnly) return;
     inp.addEventListener('input', ()=>{
@@ -2756,18 +3164,33 @@ function renderSumatif(){
       else d.tugas[+inp.dataset.j] = inp.value;
       const s = state.siswa.find(x=>x.id===id);
       const h = hitungSumatif(s, d);
-      const tds = inp.closest('tr').querySelectorAll('td');
+      const tr = inp.closest('tr');
+      const tds = tr.querySelectorAll('td');
       tds[tds.length-2].textContent = fmt(h.totalTugas);
       tds[tds.length-1].textContent = fmt(h.rata);
       saveState();
-      let sr=0, ss=0, su=0, st=0, c=0;
-      state.siswa.forEach(sw=>{
-        const hh = hitungSumatif(sw, S.data[sw.id]||{});
-        sr+=hh.rata; ss+=hh.sikap; su+=hh.uh; st+=hh.totalTugas; c++;
+
+      // Recompute semua baris (absen/pengamatan tidak berubah tapi tetap konsisten)
+      let sa=0, sp=0, ss=0, su=0, st=0, sr=0, c=0;
+      state.siswa.forEach(sw => {
+        const hh = hitungSumatif(sw, S.data[sw.id] || {});
+        sa += num(sw.absen); sp += num(sw.pengamatan);
+        ss += hh.sikap; su += hh.uh; st += hh.totalTugas; sr += hh.rata;
+        c++;
       });
-      const f = tf.querySelectorAll('td');
-      f[1].textContent=fmt(ss/c); f[2].textContent=fmt(ss/c); f[3].textContent=fmt(ss/c);
-      f[4].textContent=fmt(su/c); f[f.length-2].textContent=fmt(st/c); f[f.length-1].textContent=fmt(sr/c);
+      const f = tf.querySelector('[data-tf="absen"]');
+      if(f) f.textContent = fmt(sa/c);
+      const fp = tf.querySelector('[data-tf="pengamatan"]');
+      if(fp) fp.textContent = fmt(sp/c);
+      const fs = tf.querySelector('[data-tf="sikap"]');
+      if(fs) fs.textContent = fmt(ss/c);
+      const fu = tf.querySelector('[data-tf="uh"]');
+      if(fu) fu.textContent = fmt(su/c);
+      const ft = tf.querySelector('[data-tf="ttugas"]');
+      if(ft) ft.textContent = fmt(st/c);
+      const fr = tf.querySelector('[data-tf="rata"]');
+      if(fr) fr.textContent = fmt(sr/c);
+
       renderAkhir();
     });
   });
@@ -3152,6 +3575,7 @@ function getNilaiAwalForRemedial(siswa, jenis){
   if(jenis.startsWith('uh-')) return getUHNilaiRaw(siswa, jenis.slice(3));
   return 0;
 }
+
 function renderRemedial(){
   const KKM = num(state.identitas.kkm) || 75;
   const sel = $('#selRemedial'); if(!sel) return;
@@ -3162,13 +3586,15 @@ function renderRemedial(){
     $('#remedialStats').innerHTML=''; $('#badgeRemedial').textContent='-'; $('#badgeRemChart').textContent='-';
     drawRemedialCharts(jenis||'', [], []); return;
   }
-  const k = jenis.slice(3);
-  const hasManual = state.uhManual[k] && Object.keys(state.uhManual[k]).length > 0;
-  const materi = state.sumatif[k]?.materi || state.uh[k]?.materi || '';
-  const badgeText = 'UH ' + k + (materi ? ' — ' + materi : '');
+  const uhIdx = jenis.startsWith('uh-') ? jenis.slice(3) : null;
+  const hasManual = uhIdx && state.uhManual[uhIdx] && Object.keys(state.uhManual[uhIdx]).length > 0;
+  const materi = uhIdx ? (state.sumatif[uhIdx]?.materi || state.uh[uhIdx]?.materi || '') : '';
+  const badgeText = uhIdx ? ('UH ' + uhIdx + (materi ? ' — ' + materi : '')) : jenis;
   $('#badgeRemedial').textContent = badgeText;
   $('#badgeRemChart').textContent = badgeText;
-  $('#remedialInfo').textContent = `Nilai awal = nilai UH ${k} mentah (prioritas: ${hasManual?'Input UH Manual':'Analisis UH'}).`;
+  $('#remedialInfo').textContent = uhIdx
+    ? `Nilai awal = nilai UH ${uhIdx} mentah (prioritas: ${hasManual?'Input UH Manual':'Analisis UH'}).`
+    : '';
   const tb = $('#tblRemedial tbody'); tb.innerHTML='';
   if(!state.siswa.length){
     tb.innerHTML = `<tr><td colspan="7" style="padding:24px;color:var(--gray-400)">Belum ada data siswa.</td></tr>`;
@@ -3177,14 +3603,16 @@ function renderRemedial(){
   const store = getRemedialStore(jenis);
   let no = 1, count = 0;
   state.siswa.forEach(s=>{
+    // Cek terisi (bukan nilai > 0) — UH=0 yang diisi tetap masuk remedial
+    if(uhIdx && !isUHFilled(s, uhIdx)) return;
     const nilaiAwal = getNilaiAwalForRemedial(s, jenis);
-    if(nilaiAwal <= 0) return;
+    if(uhIdx && !isUHFilled(s, uhIdx)) return;
+    if(nilaiAwal >= KKM) return; // sudah tuntas, tidak perlu remedial
     const R = store[s.id] || (store[s.id] = {r1:'', r2:''});
     const na = applyRemedialRule(nilaiAwal, R, KKM);
     const tuntas = na >= KKM;
     const rmax = Math.max(num(R.r1), num(R.r2));
     const capped = rmax > KKM;
-    if(nilaiAwal >= KKM) return;
     count++;
     const statusBadge = tuntas
       ? `<span class="badge-tuntas">Tuntas</span>${capped?' <span class="badge-cap">cap</span>':''}`
@@ -3202,7 +3630,7 @@ function renderRemedial(){
   });
   if(!count){
     tb.innerHTML = `<tr><td colspan="7" style="padding:24px;color:var(--green-700);font-weight:600">
-      ✓ Tidak ada siswa yang perlu remedial untuk UH ${k} (semua ≥ KKM ${KKM}).</td></tr>`;
+      ✓ Tidak ada siswa yang perlu remedial untuk ${uhIdx ? 'UH '+uhIdx : 'jenis ini'} (semua ≥ KKM ${KKM}).</td></tr>`;
   }
   tb.querySelectorAll('input').forEach(inp=>{
     inp.addEventListener('input', ()=>{
@@ -3235,16 +3663,19 @@ function renderRemedial(){
   });
   updateRemedialSummary(jenis, KKM);
 }
+
 function updateRemedialSummary(jenis, KKM){
   KKM = num(KKM) || num(state.identitas.kkm) || 75;
   if(!jenis){ $('#remedialStats').innerHTML = ''; drawRemedialCharts('', [], []); return; }
+  const uhIdx = jenis.startsWith('uh-') ? jenis.slice(3) : null;
   const store = getRemedialStore(jenis);
   const semuaNilaiAkhir = [];
   const pairsAwalAkhir = [];
   let count = 0;
   state.siswa.forEach(s=>{
+    // Cek terisi (bukan > 0) — UH=0 yang diisi tetap dihitung
+    if(uhIdx && !isUHFilled(s, uhIdx)) return;
     const nilaiAwal = getNilaiAwalForRemedial(s, jenis);
-    if(nilaiAwal <= 0) return;
     const R = store[s.id] || {r1:'', r2:''};
     const na = applyRemedialRule(nilaiAwal, R, KKM);
     semuaNilaiAkhir.push(na);
@@ -3262,41 +3693,6 @@ function updateRemedialSummary(jenis, KKM){
     <div class="stat"><div class="lbl">Tuntas</div><div class="val" style="color:var(--green-700)">${tuntasCount}</div><div class="sub">${total?fmt(tuntasCount/total*100,1):0}%</div></div>
     <div class="stat"><div class="lbl">Rata-rata</div><div class="val">${fmt(avg)}</div><div class="sub">min ${fmt(min)}, max ${fmt(max)}</div></div>`;
   drawRemedialCharts(jenis, semuaNilaiAkhir, pairsAwalAkhir);
-}
-function drawRemedialCharts(jenis, nilaiArr, pairs){
-  const KKM = num(state.identitas.kkm) || 75;
-  const ctx1 = document.getElementById('chartRemedial');
-  if(ctx1){
-    const intervals = ['0-10','11-20','21-30','31-40','41-50','51-60','61-70','71-80','81-90','91-100'];
-    const freq = Array(10).fill(0);
-    nilaiArr.forEach(v=>{ let idx; if(v<=10) idx=0; else if(v>=100) idx=9; else idx=Math.floor(v/10); freq[Math.min(9,Math.max(0,idx))]++; });
-    const colors = intervals.map((_,i)=>{ const lo=i*10, hi=i===9?100:(i*10+10); return hi<=KKM?'#fecaca':(lo>=KKM?'#86efac':'#fde68a'); });
-    if(charts.chartRemedial) charts.chartRemedial.destroy();
-    charts.chartRemedial = new Chart(ctx1, {
-      type:'bar',
-      data:{ labels: intervals, datasets:[{ label:'Frekuensi', data:freq, backgroundColor:colors, borderRadius:6, borderWidth:0 }] },
-      options:{ responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:c=>` ${c.parsed.y} siswa` } } },
-        scales:{ y:{ beginAtZero:true, ticks:{ stepSize:1, precision:0 }, grid:{color:'#f3f4f6'} }, x:{ grid:{display:false}, ticks:{ font:{size:10} } } } }
-    });
-  }
-  const ctx2 = document.getElementById('chartRemCompare');
-  if(ctx2){
-    const top = [...pairs].sort((a,b)=>a.akhir-b.akhir).slice(0,15);
-    const labels = top.map(p=>p.nama.length>12?p.nama.slice(0,11)+'…':p.nama);
-    if(charts.chartRemCompare) charts.chartRemCompare.destroy();
-    charts.chartRemCompare = new Chart(ctx2, {
-      type:'bar',
-      data:{ labels, datasets:[
-        { label:'Nilai Awal', data: top.map(p=>+p.awal.toFixed(2)), backgroundColor:'#fecaca', borderRadius:4 },
-        { label:'Nilai Akhir', data: top.map(p=>+p.akhir.toFixed(2)), backgroundColor:'#86efac', borderRadius:4 }
-      ]},
-      options:{ responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ position:'bottom', labels:{ padding:12, font:{size:11, weight:'600'} } },
-          tooltip:{ callbacks:{ label:c=>` ${c.dataset.label}: ${fmt(c.parsed.y)}` } } },
-        scales:{ x:{ grid:{display:false}, ticks:{ font:{size:9} } }, y:{ beginAtZero:true, max:100, grid:{color:'#f3f4f6'} } } }
-    });
-  }
 }
 
 /* ============================================================
@@ -3400,7 +3796,7 @@ function renderDeskripsi(key){
   const intervals = ['0-10','11-20','21-30','31-40','41-50','51-60','61-70','71-80','81-90','91-100'];
   const distFreq = arr => {
     const f = Array(10).fill(0);
-    arr.forEach(v=>{ let idx; if(v<=10) idx=0; else if(v>=100) idx=9; else idx=Math.floor(v/10); f[Math.min(9,Math.max(0,idx))]++; });
+    arr.forEach(v => f[binNilai(v)]++);
     return f;
   };
   const freqAwal = distFreq(nilaiAwal), freqAkhir = distFreq(nilaiAkhir);
@@ -3487,26 +3883,66 @@ function updateBobotAkhirInfo(){
   $('#rumusAkhirInfo').innerHTML = `(Rata² Sumatif × ${b.sumatif}%) + (UTS × ${b.uts}%) + (UAS × ${b.uas}%)` +
     (total === 100 ? '' : ` <span style="color:#92400e">(total = ${total}%, dinormalisasi)</span>`);
 }
-function hitungNilaiAkhir(siswa){
-  const b = state.config.bobotAkhir;
-  const totalBobot = num(b.sumatif)+num(b.uts)+num(b.uas) || 100;
-  const KKM = num(state.identitas.kkm) || 75;
+function hitungNilaiAkhir(siswa, cls){
+  cls = cls || state;
+  const b = cls.config.bobotAkhir;
+  const KKM = num(cls.identitas.kkm) || 75;
   const sikap = (num(siswa.absen)+num(siswa.pengamatan))/2;
   const sumArr = [];
-  getActiveSumatifIdx().forEach(i=>{
-    const S = state.sumatif[i];
+  getActiveSumatifIdx(cls).forEach(i=>{
+    const S = cls.sumatif[i];
     if(S && S.data[siswa.id]){
       const d = S.data[siswa.id];
-      const hasUH = d.uh !== '' && d.uh !== null && d.uh !== undefined;
-      const hasTugas = Array.isArray(d.tugas) && d.tugas.some(t => t !== '' && t !== null && t !== undefined);
-      if(hasUH || hasTugas) sumArr.push(hitungSumatif(siswa, d).rata);
+      const hasUH = isFilled(d.uh);
+      const hasTugas = Array.isArray(d.tugas) && d.tugas.some(t => isFilled(t));
+      if(hasUH || hasTugas) sumArr.push(hitungSumatif(siswa, d, cls).rata);
     }
   });
   const rataSum = sumArr.length ? sumArr.reduce((a,c)=>a+c,0)/sumArr.length : 0;
-  const uts = hitungNilaiAkhirUjian(state.uts[siswa.id], KKM);
-  const uas = hitungNilaiAkhirUjian(state.uas[siswa.id], KKM);
-  const nilaiAkhir = (rataSum*num(b.sumatif) + uts*num(b.uts) + uas*num(b.uas)) / totalBobot;
-  return { sikap, sumArr, rataSum, uts, uas, nilaiAkhir, tuntas: nilaiAkhir>=KKM };
+
+  const utsData = cls.uts?.[siswa.id] || {};
+  const uasData = cls.uas?.[siswa.id] || {};
+  const uts = hitungNilaiAkhirUjian(utsData, KKM);
+  const uas = hitungNilaiAkhirUjian(uasData, KKM);
+
+  const hasSum = sumArr.length > 0;
+  const hasUts = isFilled(utsData.awal) || isFilled(utsData.perbaikan);
+  const hasUas = isFilled(uasData.awal) || isFilled(uasData.perbaikan);
+
+  // Bobot hanya untuk komponen yang ada nilainya (partial-component)
+  const bobotSum = hasSum ? num(b.sumatif) : 0;
+  const bobotUts = hasUts ? num(b.uts) : 0;
+  const bobotUas = hasUas ? num(b.uas) : 0;
+  const bobotUsed = bobotSum + bobotUts + bobotUas;
+  const bobotDiv = bobotUsed > 0 ? bobotUsed : (num(b.sumatif)+num(b.uts)+num(b.uas) || 100);
+
+  const nilaiAkhir = (
+    (hasSum ? rataSum * num(b.sumatif) : 0) +
+    (hasUts ? uts * num(b.uts) : 0) +
+    (hasUas ? uas * num(b.uas) : 0)
+  ) / bobotDiv;
+
+  return {
+    sikap, sumArr, rataSum, uts, uas, nilaiAkhir,
+    tuntas: nilaiAkhir >= KKM,
+    bobotUsed, hasSum, hasUts, hasUas
+  };
+}
+function isUHManualFilled(siswa, k, cls){
+  cls = cls || state;
+  const UM = cls.uhManual?.[k];
+  return !!UM && isFilled(UM[siswa.id]);
+}
+function isUHAnalisisFilled(siswa, k, cls){
+  cls = cls || state;
+  const U = cls.uh?.[k];
+  if(!U || !U.data || !U.data[siswa.id]) return false;
+  const d = U.data[siswa.id];
+  return Array.isArray(d) && d.some(isFilled);
+}
+function isUHFilled(siswa, k, cls){
+  cls = cls || state;
+  return isUHManualFilled(siswa, k, cls) || isUHAnalisisFilled(siswa, k, cls);
 }
 function renderAkhir(){
   const KKM = num(state.identitas.kkm) || 75;
@@ -3576,9 +4012,10 @@ function renderAkhir(){
 const charts = {};
 function drawDistChart(canvasId, values, KKM){
   const ctx = document.getElementById(canvasId); if(!ctx) return;
+  if(typeof Chart === 'undefined'){ showChartFallback(canvasId); return; }
   const intervals = ['0-10','11-20','21-30','31-40','41-50','51-60','61-70','71-80','81-90','91-100'];
   const freq = Array(10).fill(0);
-  values.forEach(v=>{ let idx; if(v<=10) idx=0; else if(v>=100) idx=9; else idx=Math.floor(v/10); freq[Math.min(9,Math.max(0,idx))]++; });
+  values.forEach(v => freq[binNilai(v)]++);
   const colors = intervals.map((_,i)=>{ const lo=i*10, hi=i===9?100:(i*10+10); return hi<=KKM?'#fecaca':(lo>=KKM?'#86efac':'#fde68a'); });
   if(charts[canvasId]) charts[canvasId].destroy();
   charts[canvasId] = new Chart(ctx, {
@@ -3591,6 +4028,7 @@ function drawDistChart(canvasId, values, KKM){
 }
 function drawTuntasChart(canvasId, tuntas, belum){
   const ctx = document.getElementById(canvasId); if(!ctx) return;
+  if(typeof Chart === 'undefined'){ showChartFallback(canvasId); return; }
   if(charts[canvasId]) charts[canvasId].destroy();
   charts[canvasId] = new Chart(ctx, {
     type:'doughnut',
@@ -3599,6 +4037,46 @@ function drawTuntasChart(canvasId, tuntas, belum){
     options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
       plugins:{ legend:{ position:'bottom', labels:{ padding:16, font:{size:12, weight:'600'} } } } }
   });
+}
+function drawRemedialCharts(jenis, nilaiArr, pairs){
+  const KKM = num(state.identitas.kkm) || 75;
+  if(typeof Chart === 'undefined'){
+    showChartFallback('chartRemedial');
+    showChartFallback('chartRemCompare');
+    return;
+  }
+  const ctx1 = document.getElementById('chartRemedial');
+  if(ctx1){
+    const intervals = ['0-10','11-20','21-30','31-40','41-50','51-60','61-70','71-80','81-90','91-100'];
+    const freq = Array(10).fill(0);
+    nilaiArr.forEach(v => freq[binNilai(v)]++);
+    const colors = intervals.map((_,i)=>{ const lo=i*10, hi=i===9?100:(i*10+10); return hi<=KKM?'#fecaca':(lo>=KKM?'#86efac':'#fde68a'); });
+    if(charts.chartRemedial) charts.chartRemedial.destroy();
+    charts.chartRemedial = new Chart(ctx1, {
+      type:'bar',
+      data:{ labels: intervals, datasets:[{ label:'Frekuensi', data:freq, backgroundColor:colors, borderRadius:6, borderWidth:0 }] },
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:c=>` ${c.parsed.y} siswa` } } },
+        scales:{ y:{ beginAtZero:true, ticks:{ stepSize:1, precision:0 }, grid:{color:'#f3f4f6'} }, x:{ grid:{display:false}, ticks:{ font:{size:10} } } } }
+    });
+  }
+  const ctx2 = document.getElementById('chartRemCompare');
+  if(ctx2){
+    const top = [...pairs].sort((a,b)=>a.akhir-b.akhir).slice(0,15);
+    const labels = top.map(p=>p.nama.length>12?p.nama.slice(0,11)+'…':p.nama);
+    if(charts.chartRemCompare) charts.chartRemCompare.destroy();
+    charts.chartRemCompare = new Chart(ctx2, {
+      type:'bar',
+      data:{ labels, datasets:[
+        { label:'Nilai Awal', data: top.map(p=>+p.awal.toFixed(2)), backgroundColor:'#fecaca', borderRadius:4 },
+        { label:'Nilai Akhir', data: top.map(p=>+p.akhir.toFixed(2)), backgroundColor:'#86efac', borderRadius:4 }
+      ]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ position:'bottom', labels:{ padding:12, font:{size:11, weight:'600'} } },
+          tooltip:{ callbacks:{ label:c=>` ${c.dataset.label}: ${fmt(c.parsed.y)}` } } },
+        scales:{ x:{ grid:{display:false}, ticks:{ font:{size:9} } }, y:{ beginAtZero:true, max:100, grid:{color:'#f3f4f6'} } } }
+    });
+  }
 }
 
 /* ============================================================
@@ -3630,9 +4108,37 @@ function refreshAll(){
 }
 
 /* ============================================================
+   LAZY LOAD SHEETJS
+   ============================================================ */
+let __SHEETJS_PROMISE__ = null;
+function loadSheetJS(){
+  if(window.XLSX) return Promise.resolve(window.XLSX);
+  if(__SHEETJS_PROMISE__) return __SHEETJS_PROMISE__;
+  __SHEETJS_PROMISE__ = new Promise((resolve, reject)=>{
+    const s = document.createElement('script');
+    s.src = CDN_CONFIG.SHEETJS_URL;
+    s.crossOrigin = 'anonymous';
+    if(CDN_CONFIG.SHEETJS_SRI) s.integrity = CDN_CONFIG.SHEETJS_SRI;
+    s.onload = ()=> resolve(window.XLSX);
+    s.onerror = ()=>{
+      __SHEETJS_PROMISE__ = null; // izinkan retry
+      reject(new Error('SheetJS gagal dimuat (periksa koneksi internet)'));
+    };
+    document.head.appendChild(s);
+  });
+  return __SHEETJS_PROMISE__;
+}
+
+/* ============================================================
    EXCEL EXPORT / IMPORT
    ============================================================ */
-function exportExcel(){
+async function exportExcel(){
+  try{
+    await loadSheetJS();
+  }catch(err){
+    toast('✗ Excel tidak tersedia: ' + err.message, true);
+    return;
+  }
   const wb = XLSX.utils.book_new();
   const KKM = num(state.identitas.kkm) || 75;
   const idRows = [
@@ -3665,7 +4171,11 @@ function exportExcel(){
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(idRows), 'Identitas');
 
   const swRows = [['No','Nama Siswa','Absen','Pengamatan','Total Sikap']];
-  state.siswa.forEach((s,i)=>{ swRows.push([i+1, s.nama, num(s.absen), num(s.pengamatan), (num(s.absen)+num(s.pengamatan))/2]); });
+  state.siswa.forEach((s,i)=>{
+    const totalSikap = (isFilled(s.absen) || isFilled(s.pengamatan))
+      ? (num(s.absen)+num(s.pengamatan))/2 : '';
+    swRows.push([i+1, s.nama, exportNum(s.absen), exportNum(s.pengamatan), totalSikap]);
+  });
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(swRows), 'Data Siswa');
 
   getActiveSumatifIdx().forEach(i=>{
@@ -3675,9 +4185,11 @@ function exportExcel(){
     state.siswa.forEach((s,j)=>{
       const d = S.data[s.id] || {uh:'',tugas:[]};
       const h = hitungSumatif(s, d);
-      rows.push([j+1, s.nama, +h.sikap.toFixed(2), num(d.uh),
-        ...Array.from({length:N_TUGAS},(_,k)=>num(d.tugas?.[k])),
-        +h.totalTugas.toFixed(2), +h.rata.toFixed(2)]);
+      const tugasFilled = (d.tugas||[]).filter(isFilled);
+      rows.push([j+1, s.nama, +h.sikap.toFixed(2), exportNum(d.uh),
+        ...Array.from({length:N_TUGAS},(_,k)=>exportNum(d.tugas?.[k])),
+        tugasFilled.length ? +h.totalTugas.toFixed(2) : '',
+        +h.rata.toFixed(2)]);
     });
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'Sumatif '+i);
   });
@@ -3692,9 +4204,14 @@ function exportExcel(){
     state.siswa.forEach((s,j)=>{
       const rawData = U.data[s.id] || [];
       const d = Array.isArray(rawData) ? rawData : [];
-      const total = d.reduce((a,b)=>a+num(b),0);
-      const nilai = totalMaks>0 ? total/totalMaks*100 : 0;
-      rows.push([j+1, s.nama, ...Array.from({length:cfg.soal},(_,k)=>num(d[k])), total, +nilai.toFixed(2), nilai>=KKM?'Tuntas':'Belum']);
+      const filled = d.some(isFilled);
+      const total = filled ? d.reduce((a,b)=>a+num(b),0) : '';
+      const nilai = (filled && totalMaks>0) ? total/totalMaks*100 : '';
+      rows.push([j+1, s.nama,
+        ...Array.from({length:cfg.soal},(_,k)=>exportNum(d[k])),
+        total,
+        nilai === '' ? '' : +nilai.toFixed(2),
+        filled ? (nilai>=KKM?'Tuntas':'Belum') : '']);
     });
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'UH '+i);
   });
@@ -3704,7 +4221,7 @@ function exportExcel(){
   const uhmRows = [uhmHead];
   state.siswa.forEach((s,j)=>{
     const row = [j+1, s.nama];
-    activeUH.forEach(i=>row.push(num(state.uhManual[i]?.[s.id])));
+    activeUH.forEach(i=>row.push(exportNum(state.uhManual[i]?.[s.id])));
     uhmRows.push(row);
   });
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(uhmRows), 'UH Manual');
@@ -3718,7 +4235,8 @@ function exportExcel(){
     state.siswa.forEach((s,i)=>{
       const d = state[key][s.id] || {};
       const a = hitungNilaiAkhirUjian(d, KKM);
-      r.push([i+1, s.nama, num(d.awal), num(d.perbaikan), +a.toFixed(2), a>=KKM&&a>0?'Tuntas':'Belum', rankMap.get(s.id) ?? '-']);
+      r.push([i+1, s.nama, exportNum(d.awal), exportNum(d.perbaikan), +a.toFixed(2),
+        a>=KKM && a>0 ? 'Tuntas' : 'Belum', rankMap.get(s.id) ?? '-']);
     });
     return r;
   };
@@ -3730,18 +4248,24 @@ function exportExcel(){
   const sorted = [...hasil].sort((a,b)=>b.nilaiAkhir-a.nilaiAkhir);
   const rankMap = new Map(); let lv=null, lr=0;
   sorted.forEach((h,i)=>{ const v=+h.nilaiAkhir.toFixed(2); if(v!==lv){lr=i+1;lv=v;} rankMap.set(h.s.id,lr); });
-  hasil.forEach((h,i)=>{ akhirRows.push([i+1, h.s.nama, +h.sikap.toFixed(2), +h.rataSum.toFixed(2), +h.uts.toFixed(2), +h.uas.toFixed(2), +h.nilaiAkhir.toFixed(2), rankMap.get(h.s.id)]); });
+  hasil.forEach((h,i)=>{
+    akhirRows.push([i+1, h.s.nama, +h.sikap.toFixed(2), +h.rataSum.toFixed(2),
+      +h.uts.toFixed(2), +h.uas.toFixed(2), +h.nilaiAkhir.toFixed(2), rankMap.get(h.s.id)]);
+  });
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(akhirRows), 'Nilai Akhir');
 
   getActiveUHIdx().forEach(i=>{
     const rows = [['No','Nama','Nilai Awal','Remedial 1','Remedial 2','Nilai Akhir','Status']];
     const R = state.remedialUH[i]||{}; let rn=1;
     state.siswa.forEach(s=>{
+      if(!isUHFilled(s, i)) return;
       const nilaiAwal = getUHNilaiRaw(s, i);
-      if(nilaiAwal >= KKM || nilaiAwal <= 0) return;
+      if(nilaiAwal >= KKM) return;
       const RR = R[s.id] || {};
       const na = applyRemedialRule(nilaiAwal, RR, KKM);
-      rows.push([rn++, s.nama, +nilaiAwal.toFixed(2), num(RR.r1), num(RR.r2), +na.toFixed(2), na>=KKM?'Tuntas':'Belum']);
+      rows.push([rn++, s.nama, +nilaiAwal.toFixed(2),
+        exportNum(RR.r1), exportNum(RR.r2), +na.toFixed(2),
+        na>=KKM ? 'Tuntas' : 'Belum']);
     });
     XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'Remedial UH'+i);
   });
@@ -3751,114 +4275,265 @@ function exportExcel(){
   toast('✓ Berhasil ekspor kelas ' + master.currentClass);
 }
 
-function importExcel(ev){
-  const file = ev.target.files[0]; if(!file) return;
+async function importExcel(ev){
+  const file = ev.target.files[0];
+  if(!file){ ev.target.value=''; return; }
+  try{
+    await loadSheetJS();
+  }catch(err){
+    toast('✗ Excel tidak tersedia: ' + err.message, true);
+    ev.target.value='';
+    return;
+  }
   const reader = new FileReader();
   reader.onload = e=>{
     try{
       const wb = XLSX.read(e.target.result, {type:'array'});
+
+      const tmp = {
+        identitas: {},
+        siswaRows: [],
+        sumatif: {},
+        uh: {},
+        uhManual: {},
+        uts: {},
+        uas: {},
+        remedialUH: {}
+      };
+      const sheetsRead = [];
+
       if(wb.Sheets['Identitas']){
+        sheetsRead.push('Identitas');
         const aoa = XLSX.utils.sheet_to_json(wb.Sheets['Identitas'], {header:1});
         const map = {};
         aoa.forEach(r=>{ if(r[0] && r[1]!==undefined) map[r[0]] = r[1]; });
         const mp = { 'Nama Madrasah':'madrasah','Tahun Ajaran':'tahun','Kepala Madrasah':'kepala','NIP/NUPTK Kepala':'nipKepala','Mata Pelajaran':'mapel','Semester':'semester','Wali Kelas':'wali' };
-        Object.entries(mp).forEach(([k,v])=>{ if(map[k]!==undefined) state.identitas[v] = map[k]; });
-        if(map['KKM']) state.identitas.kkm = num(map['KKM']);
-        if(map['Ketuntasan Klasikal (%)']) state.identitas.kkt = num(map['Ketuntasan Klasikal (%)']);
-        if(map['Bobot Sikap (%)']) state.config.bobotSumatif.sikap = num(map['Bobot Sikap (%)']);
-        if(map['Bobot UH (%)']) state.config.bobotSumatif.uh = num(map['Bobot UH (%)']);
-        if(map['Bobot Tugas (%)']) state.config.bobotSumatif.tugas = num(map['Bobot Tugas (%)']);
-        if(map['Bobot NA - Sumatif (%)']) state.config.bobotAkhir.sumatif = num(map['Bobot NA - Sumatif (%)']);
-        if(map['Bobot NA - UTS (%)']) state.config.bobotAkhir.uts = num(map['Bobot NA - UTS (%)']);
-        if(map['Bobot NA - UAS (%)']) state.config.bobotAkhir.uas = num(map['Bobot NA - UAS (%)']);
-        if(map['NIP/NUPTK Kepala'] !== undefined && state.identitas.kepala){
-          setKepalaNip(state.identitas.kepala, String(map['NIP/NUPTK Kepala']));
-        }
+        Object.entries(mp).forEach(([k,v])=>{ if(map[k]!==undefined) tmp.identitas[v] = map[k]; });
+        if(map['KKM'] !== undefined) tmp.identitas.kkm = num(map['KKM']);
+        if(map['Ketuntasan Klasikal (%)'] !== undefined) tmp.identitas.kkt = num(map['Ketuntasan Klasikal (%)']);
+        if(map['Bobot Sikap (%)'] !== undefined) tmp.identitas.bobotSikap = num(map['Bobot Sikap (%)']);
+        if(map['Bobot UH (%)'] !== undefined) tmp.identitas.bobotUH = num(map['Bobot UH (%)']);
+        if(map['Bobot Tugas (%)'] !== undefined) tmp.identitas.bobotTugas = num(map['Bobot Tugas (%)']);
+        if(map['Bobot NA - Sumatif (%)'] !== undefined) tmp.identitas.bobotNASum = num(map['Bobot NA - Sumatif (%)']);
+        if(map['Bobot NA - UTS (%)'] !== undefined) tmp.identitas.bobotNAUts = num(map['Bobot NA - UTS (%)']);
+        if(map['Bobot NA - UAS (%)'] !== undefined) tmp.identitas.bobotNAUas = num(map['Bobot NA - UAS (%)']);
       }
+
       if(wb.Sheets['Data Siswa']){
+        sheetsRead.push('Data Siswa');
         const aoa = XLSX.utils.sheet_to_json(wb.Sheets['Data Siswa'], {header:1});
-        const siswa = [];
         for(let i=1;i<aoa.length;i++){
           const r = aoa[i]; if(!r || !r[1]) continue;
-          siswa.push({ id: uid(), nama: String(r[1]), absen: num(r[2])||100, pengamatan: num(r[3])||100 });
+          tmp.siswaRows.push({
+            nama: String(r[1]).trim(),
+            absen: isFilled(r[2]) ? num(r[2]) : '',
+            pengamatan: isFilled(r[3]) ? num(r[3]) : ''
+          });
         }
-        if(siswa.length) state.siswa = siswa;
       }
+
       for(let i=1;i<=MAX_SUMATIF;i++){
         const sh = wb.Sheets['Sumatif '+i]; if(!sh) continue;
+        sheetsRead.push('Sumatif '+i);
         const aoa = XLSX.utils.sheet_to_json(sh, {header:1});
-        state.sumatif[i] = { materi: aoa[0]?.[1] || '', data:{} };
-        if(!state.uh[i]) state.uh[i] = { materi:'', tanggal:'', data:{} };
-        state.uh[i].materi = aoa[0]?.[1] || '';
+        tmp.sumatif[i] = { materi: aoa[0]?.[1] || '', rows: [] };
         for(let r=2;r<aoa.length;r++){
           const row = aoa[r]; if(!row || !row[1]) continue;
-          const s = state.siswa.find(x=>x.nama.trim()===String(row[1]).trim());
-          if(!s) continue;
-          state.sumatif[i].data[s.id] = { uh: row[3] ?? '', tugas: [row[4],row[5],row[6],row[7],row[8],row[9]].map(v=>v??'') };
+          tmp.sumatif[i].rows.push({
+            nama: String(row[1]).trim(),
+            uh: isFilled(row[3]) ? row[3] : '',
+            tugas: [row[4],row[5],row[6],row[7],row[8],row[9]].map(v => isFilled(v) ? v : '')
+          });
         }
       }
+
       for(let i=1;i<=MAX_UH;i++){
         const sh = wb.Sheets['UH '+i]; if(!sh) continue;
+        sheetsRead.push('UH '+i);
         const aoa = XLSX.utils.sheet_to_json(sh, {header:1});
         const skorMaksArr = String(aoa[2]?.[1]||'').split(',').map(x=>num(x)).filter(x=>x>0);
         const materiFromUH = aoa[0]?.[1]||'';
-        if(!state.uh[i]) state.uh[i] = { materi:'', tanggal:'', data:{} };
-        state.uh[i] = { materi: materiFromUH || state.sumatif[i]?.materi || '', tanggal: aoa[1]?.[1]||'', data:{} };
-        if(materiFromUH && state.sumatif[i]) state.sumatif[i].materi = materiFromUH;
         const header = aoa[3] || [];
         let jmlCols = 0;
         for(let c=2;c<header.length;c++){ if(String(header[c]).startsWith('S')) jmlCols++; else break; }
         if(jmlCols === 0) jmlCols = skorMaksArr.length || 5;
-        state.config.uhConfig[i] = { soal: jmlCols, skorMaxPerSoal: skorMaksArr.length?skorMaksArr:Array(jmlCols).fill(20) };
-        while(state.config.uhConfig[i].skorMaxPerSoal.length < jmlCols) state.config.uhConfig[i].skorMaxPerSoal.push(20);
-        state.config.uhConfig[i].skorMaxPerSoal = state.config.uhConfig[i].skorMaxPerSoal.slice(0,jmlCols);
+        tmp.uh[i] = {
+          materi: materiFromUH,
+          tanggal: aoa[1]?.[1]||'',
+          soal: jmlCols,
+          skorMaxPerSoal: skorMaksArr.length ? skorMaksArr : Array(jmlCols).fill(20),
+          rows: []
+        };
+        while(tmp.uh[i].skorMaxPerSoal.length < jmlCols) tmp.uh[i].skorMaxPerSoal.push(20);
+        tmp.uh[i].skorMaxPerSoal = tmp.uh[i].skorMaxPerSoal.slice(0,jmlCols);
         for(let r=4;r<aoa.length;r++){
           const row = aoa[r]; if(!row || !row[1]) continue;
-          const s = state.siswa.find(x=>x.nama.trim()===String(row[1]).trim());
-          if(!s) continue;
-          state.uh[i].data[s.id] = Array.from({length:jmlCols},(_,k)=>row[2+k]??'');
+          tmp.uh[i].rows.push({
+            nama: String(row[1]).trim(),
+            skor: Array.from({length:jmlCols},(_,k)=> isFilled(row[2+k]) ? row[2+k] : '')
+          });
         }
       }
+
       if(wb.Sheets['UH Manual']){
+        sheetsRead.push('UH Manual');
         const aoa = XLSX.utils.sheet_to_json(wb.Sheets['UH Manual'], {header:1});
+        const activeUH = getActiveUHIdx();
         for(let r=1;r<aoa.length;r++){
           const row = aoa[r]; if(!row || !row[1]) continue;
-          const s = state.siswa.find(x=>x.nama.trim()===String(row[1]).trim());
-          if(!s) continue;
-          const active = getActiveUHIdx();
-          active.forEach((i,idx)=>{
+          const nm = String(row[1]).trim();
+          activeUH.forEach((i, idx)=>{
             const v = row[idx+2];
-            if(v !== undefined && v !== ''){
-              if(!state.uhManual[i]) state.uhManual[i] = {};
-              state.uhManual[i][s.id] = v;
+            if(isFilled(v)){
+              if(!tmp.uhManual[i]) tmp.uhManual[i] = {};
+              tmp.uhManual[i][nm] = v;
             }
           });
         }
       }
+
       ['UTS','UAS'].forEach(shName=>{
         const sh = wb.Sheets[shName]; if(!sh) return;
+        sheetsRead.push(shName);
         const key = shName.toLowerCase();
         const aoa = XLSX.utils.sheet_to_json(sh, {header:1});
         for(let r=1;r<aoa.length;r++){
           const row = aoa[r]; if(!row || !row[1]) continue;
           if(String(row[0]).startsWith('A.') || String(row[0]).startsWith('B.') || String(row[0]).startsWith('KETERANGAN') || String(row[0]).startsWith('Rata')) continue;
-          const s = state.siswa.find(x=>x.nama.trim()===String(row[1]).trim());
-          if(s) state[key][s.id] = { awal: row[2]??'', perbaikan: row[3]??'' };
+          tmp[key][String(row[1]).trim()] = {
+            awal: isFilled(row[2]) ? row[2] : '',
+            perbaikan: isFilled(row[3]) ? row[3] : ''
+          };
         }
       });
+
       for(let i=1;i<=MAX_UH;i++){
         const sh = wb.Sheets['Remedial UH'+i]; if(!sh) continue;
-        if(!state.remedialUH[i]) state.remedialUH[i] = {};
+        sheetsRead.push('Remedial UH'+i);
         const aoa = XLSX.utils.sheet_to_json(sh, {header:1});
+        tmp.remedialUH[i] = {};
         for(let r=1;r<aoa.length;r++){
           const row = aoa[r]; if(!row || !row[1]) continue;
-          const s = state.siswa.find(x=>x.nama.trim()===String(row[1]).trim());
-          if(s) state.remedialUH[i][s.id] = { r1: row[3]??'', r2: row[4]??'' };
+          tmp.remedialUH[i][String(row[1]).trim()] = {
+            r1: isFilled(row[3]) ? row[3] : '',
+            r2: isFilled(row[4]) ? row[4] : ''
+          };
         }
       }
+
+      const existingByName = new Map();
+      state.siswa.forEach(s => existingByName.set(String(s.nama||'').trim().toLowerCase(), s));
+
+      const recognized = [];
+      const toAdd = [];
+      const skipped = [];
+      const seenInFile = new Set();
+
+      tmp.siswaRows.forEach(r => {
+        const key = r.nama.toLowerCase();
+        if(seenInFile.has(key)){ skipped.push(r.nama); return; }
+        seenInFile.add(key);
+        if(existingByName.has(key)){
+          recognized.push({ existing: existingByName.get(key), row: r });
+        } else {
+          toAdd.push(r);
+        }
+      });
+
+      const allValueSheets = [];
+      Object.values(tmp.sumatif).forEach(o => o.rows && o.rows.forEach(x => allValueSheets.push(x.nama)));
+      Object.values(tmp.uh).forEach(o => o.rows && o.rows.forEach(x => allValueSheets.push(x.nama)));
+      const unmatchedNames = allValueSheets.filter(n => {
+        const k = n.toLowerCase();
+        return !seenInFile.has(k) && !existingByName.has(k);
+      });
+      const unmatchedUnique = [...new Set(unmatchedNames)];
+
+      const lines = [
+        'Ringkasan impor untuk kelas ' + master.currentClass + ':',
+        '• Sheet dibaca: ' + (sheetsRead.length ? sheetsRead.join(', ') : '—'),
+        '• Siswa dikenali: ' + recognized.length,
+        '• Siswa baru (akan ditambahkan): ' + toAdd.length,
+        '• Baris duplikat dilewati: ' + skipped.length,
+        '• Nama tidak ditemukan di kelas: ' + unmatchedUnique.length
+      ];
+      if(skipped.length) lines.push('\nDuplikat (dilewati): ' + skipped.slice(0, 8).join(', ') + (skipped.length > 8 ? ', …' : ''));
+      if(unmatchedUnique.length) lines.push('\nTidak dikenali: ' + unmatchedUnique.slice(0, 8).join(', ') + (unmatchedUnique.length > 8 ? ', …' : ''));
+      lines.push('\nLanjutkan impor dan timpa nilai?');
+
+      if(!confirm(lines.join('\n'))){ ev.target.value=''; return; }
+
+      Object.assign(state.identitas, tmp.identitas);
+      if(tmp.identitas.bobotSikap !== undefined) state.config.bobotSumatif.sikap = tmp.identitas.bobotSikap;
+      if(tmp.identitas.bobotUH !== undefined) state.config.bobotSumatif.uh = tmp.identitas.bobotUH;
+      if(tmp.identitas.bobotTugas !== undefined) state.config.bobotSumatif.tugas = tmp.identitas.bobotTugas;
+      if(tmp.identitas.bobotNASum !== undefined) state.config.bobotAkhir.sumatif = tmp.identitas.bobotNASum;
+      if(tmp.identitas.bobotNAUts !== undefined) state.config.bobotAkhir.uts = tmp.identitas.bobotNAUts;
+      if(tmp.identitas.bobotNAUas !== undefined) state.config.bobotAkhir.uas = tmp.identitas.bobotNAUas;
+
+      recognized.forEach(({existing, row}) => {
+        if(isFilled(row.absen)) existing.absen = row.absen;
+        if(isFilled(row.pengamatan)) existing.pengamatan = row.pengamatan;
+      });
+      toAdd.forEach(r => {
+        const newS = {
+          id: uid(),
+          nama: r.nama,
+          absen: isFilled(r.absen) ? r.absen : 100,
+          pengamatan: isFilled(r.pengamatan) ? r.pengamatan : 100
+        };
+        state.siswa.push(newS);
+        existingByName.set(r.nama.toLowerCase(), newS);
+      });
+
+      const findSid = (nama) => {
+        const s = existingByName.get(String(nama||'').trim().toLowerCase());
+        return s ? s.id : null;
+      };
+
+      Object.entries(tmp.sumatif).forEach(([k, S]) => {
+        state.sumatif[k] = { materi: S.materi, data: {} };
+        S.rows.forEach(row => {
+          const sid = findSid(row.nama);
+          if(sid) state.sumatif[k].data[sid] = { uh: row.uh, tugas: row.tugas.slice() };
+        });
+      });
+
+      Object.entries(tmp.uh).forEach(([k, U]) => {
+        state.uh[k] = { materi: U.materi, tanggal: U.tanggal, data: {} };
+        state.config.uhConfig[k] = { soal: U.soal, skorMaxPerSoal: U.skorMaxPerSoal.slice() };
+        U.rows.forEach(row => {
+          const sid = findSid(row.nama);
+          if(sid) state.uh[k].data[sid] = row.skor.slice();
+        });
+      });
+
+      Object.entries(tmp.uhManual).forEach(([k, m]) => {
+        state.uhManual[k] = {};
+        Object.entries(m).forEach(([nama, v]) => {
+          const sid = findSid(nama);
+          if(sid) state.uhManual[k][sid] = v;
+        });
+      });
+
+      ['uts','uas'].forEach(key => {
+        Object.entries(tmp[key]).forEach(([nama, d]) => {
+          const sid = findSid(nama);
+          if(sid) state[key][sid] = { awal: d.awal, perbaikan: d.perbaikan };
+        });
+      });
+
+      Object.entries(tmp.remedialUH).forEach(([k, m]) => {
+        state.remedialUH[k] = {};
+        Object.entries(m).forEach(([nama, v]) => {
+          const sid = findSid(nama);
+          if(sid) state.remedialUH[k][sid] = v;
+        });
+      });
+
       saveState();
       bindIdentitasValues(); initAkhir(); refreshAll();
-      toast('✓ Berhasil impor Excel ke kelas ' + master.currentClass);
+      toast('✓ Impor selesai: ' + recognized.length + ' dikenali, ' + toAdd.length + ' baru');
     }catch(err){
       console.error(err);
       toast('✗ Gagal impor: ' + err.message, true);
@@ -3872,7 +4547,7 @@ function importExcel(ev){
    RESET
    ============================================================ */
 function resetData(){
-  if(!confirm('Reset SEMUA data (semua kelas) ke pengaturan awal?\n\nTindakan ini tidak bisa dibatalkan.')) return;
+  if(!confirm('Reset SEMUA data (semua kelas) ke pengaturan awal?\n\nData contoh TIDAK dimuat otomatis. Untuk memuat demo, gunakan tombol "Muat Data Demo".\n\nLanjutkan?')) return;
   localStorage.removeItem(LS_KEY);
   localStorage.removeItem(LS_KEPALA_NIP_MAP);
   localStorage.removeItem(LS_MADRASAH);
@@ -3880,11 +4555,27 @@ function resetData(){
   localStorage.removeItem(LS_WALI_LIST);
   master = { currentClass:'X', logo:null, syncUrl:'', fbUrl: DEFAULT_FB_URL, lastUpdate: 0, classes:{} };
   CLASSES.forEach(c=>master.classes[c] = defaultClassState(c));
-  injectSampleData(master); // Isi ulang dengan data contoh saat direset
   state = master.classes[master.currentClass];
   saveState();
   renderLogo(); autoFillFromSession(); bindIdentitasValues(); initAkhir(); refreshAll();
-  toast('✓ Data semua kelas & daftar direset (Data contoh dimuat)');
+  toast('✓ Data semua kelas & daftar direset');
+  }
+
+function loadDemoData(){
+  if(!confirm(
+    'Muat data contoh (demo)?\n\n' +
+    '⚠️ Data yang ada di kelas X dan XII saat ini akan DIGANTI dengan data demo.\n' +
+    'Kelas VII, VIII, IX, dan XI tidak terpengaruh.\n\n' +
+    'Lanjutkan?'
+  )) return;
+  // Reset kelas X & XII dulu supaya demo bersifat idempoten (tidak duplikasi)
+  master.classes['X'] = defaultClassState('X');
+  master.classes['XII'] = defaultClassState('XII');
+  injectSampleData(master);
+  state = master.classes[master.currentClass];
+  saveState();
+  bindIdentitasValues(); initAkhir(); refreshAll();
+  toast('✓ Data demo dimuat ke kelas X dan XII');
 }
 
 /* ============================================================
@@ -3908,7 +4599,13 @@ function updateHeroInfo() {
 /* ============================================================
    INIT
    ============================================================ */
-function init(){
+async function init(){
+  document.body.style.display = 'none';
+  const token = await ensureValidToken();
+  if(!token) return;
+  document.body.style.display = '';
+  ensureRefs();
+  migrateLegacyLists(master);
   state.identitas.kelas = master.currentClass;
   autoFillFromSession();
   updateClassSelector();
@@ -3931,7 +4628,38 @@ function init(){
   isInitialized = true;
   autoLoadFromFirebase().catch(e => console.warn('Background sync failed:', e));
 }
-init();
+
+/* ============================================================
+   VALIDASI ANGKA: CLAMP 0..MAX SAAT BLUR
+   ============================================================ */
+(function initNumericValidation(){
+  const scoreTables = ['tblSiswa','tblSumatif','tblUH','tblUHManual','tblRemedial','tblUTS','tblUAS'];
+  document.addEventListener('blur', function(e){
+    const el = e.target;
+    if(!el || el.tagName !== 'INPUT' || el.type !== 'number') return;
+    if(el.readOnly || el.disabled) return;
+    const tbl = el.closest('table');
+    if(!tbl || !scoreTables.includes(tbl.id)) return;
+    const raw = el.value;
+    if(raw === '' || raw === null) return;
+    const n = num(raw);
+    const min = el.hasAttribute('min') ? num(el.min) : 0;
+    const max = el.hasAttribute('max') ? num(el.max) : 100;
+    if(isNaN(n)) return;
+    if(n < min || n > max){
+      const clamped = Math.max(min, Math.min(max, n));
+      el.value = clamped;
+      el.style.transition = 'background .3s, border-color .3s';
+      el.style.background = '#fee2e2';
+      el.style.borderColor = '#dc2626';
+      setTimeout(() => { el.style.background = ''; el.style.borderColor = ''; }, 800);
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      toast('⚠️ Nilai dikoreksi ke ' + clamped + ' (harus ' + min + '–' + max + ')', true);
+    }
+  }, true);
+})();
+
+init().catch(e => console.error('[init]', e));
 
 /* ============================================================
    VERSION DISPLAY + CHANGELOG
@@ -4010,12 +4738,13 @@ function clearUnsaved(){
 document.addEventListener('input', markUnsaved, true);
 document.addEventListener('change', markUnsaved, true);
 
-window.addEventListener('beforeunload', (e)=>{
-  if(window.__UNSAVED__){
-    e.preventDefault();
-    e.returnValue = '⚠️ Ada perubahan yang belum disinkronkan ke Firebase. Yakin keluar?';
-    return e.returnValue;
-  }
+/* ============================================================
+   FLUSH PENYIMPANAN LOKAL SAAT TAB DITUTUP/DISEMBUNYIKAN
+   ============================================================ */
+window.addEventListener('beforeunload', flushLocalSave);
+window.addEventListener('pagehide', flushLocalSave);
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState === 'hidden') flushLocalSave();
 });
 
 console.time('[Boot] Guru siap dalam');

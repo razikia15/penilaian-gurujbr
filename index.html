@@ -20,7 +20,6 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   
-/* ⭐ BACKGROUND BARU: Gambar + Overlay Gradien Hijau */
   body{
     font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
     min-height:100vh;
@@ -30,18 +29,16 @@
     position: relative;
   }
 
-  /* ⭐ LOGO DI POJOK KIRI ATAS WEB — HANYA LOGO */
   .web-brand {
     position: absolute;
-    top: -80px;     /* Jarak dari atas */
-    left: 10px;    /* Jarak dari kiri */
+    top: -80px;
+    left: 10px;
     z-index: 999;
   }
   
-  /* ⭐ UKURAN LOGO DIUBAH DI SINI */
   .web-brand .brand-logo-img {
-    width: 250px;  /* Diperbesar dari 80px */
-    height: 250px; /* Diperbesar dari 80px */
+    width: 250px;
+    height: 250px;
     object-fit: contain;
     background: transparent;
     border: none;
@@ -50,7 +47,6 @@
     border-radius: 0;
   }
 
-  /* ⭐ KARTU UTAMA (Split Screen) */
   .login-wrapper{
     width:100%;max-width:1100px;
     height: 680px;
@@ -63,7 +59,6 @@
     z-index: 10;
   }
 
-  /* ================= SISI KIRI ================= */
   .login-left{
     background: linear-gradient(160deg, rgba(10, 31, 68, 0.90) 0%, rgba(13, 92, 46, 0.95) 100%), url('background-login.jpg') center/cover no-repeat;
     color:#fff;
@@ -72,7 +67,6 @@
     position:relative;overflow:hidden;
   }
   
-  /* ⭐ WRAPPER UNTUK KONTEN TENGAH */
   .left-content {
     flex-grow: 1;
     display: flex;
@@ -82,7 +76,6 @@
     margin-top: 20px;
   }
 
-  /* Teks Utama (Hero) */
   .hero-content .welcome-text {
     font-size: 13px; font-style: italic; font-weight: 500;
     margin-bottom: 12px; opacity: 0.9; display: flex; align-items: center; gap: 8px;
@@ -97,7 +90,6 @@
     font-size: 14px; line-height: 1.6; opacity: 0.85; max-width: 90%;
   }
 
-  /* Grid Fitur (Horizontal 3 Kolom) */
   .features-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -106,14 +98,10 @@
     padding-top: 24px;
   }
   .feature-item {
-    display: flex; 
-    flex-direction: column; 
-    align-items: center;
-    text-align: center;
-    gap: 8px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: 8px;
   }
   
-  /* ⭐ IKON DIPERBARUI: Putih, Hijau, Lebih Besar */
   .feature-icon {
     width: 44px; height: 44px; border-radius: 50%;
     background: #fff;
@@ -125,7 +113,6 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   }
   
-  /* ⭐ TEKS DI BAWAH IKON DIRAPIKAN */
   .feature-item b {
     font-size: 13.5px; font-weight: 700; display: block; margin-bottom: 4px;
     line-height: 1.3;
@@ -134,21 +121,16 @@
     font-size: 11.5px; opacity: 0.8; line-height: 1.5; display: block;
   }
 
-  /* Quote di Bagian Bawah */
   .quote-bottom {
     font-size: 12.5px; font-style: italic; opacity: 0.9;
     border-top: 1px solid rgba(255,255,255,0.2);
     padding-top: 18px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: auto;
+    display: flex; align-items: center; gap: 8px; margin-top: auto;
   }
   .quote-bottom::before {
     content: ''; display: block; width: 20px; height: 2px; background: #fff;
   }
 
-  /* ================= SISI KANAN (FORM LOGIN) ================= */
   .login-right{
     padding:48px 44px;display:flex;flex-direction:column;justify-content:center;
     background: #fff;
@@ -180,7 +162,6 @@
   .role-btn .role-label{font-size:12.5px;font-weight:700;color:var(--gray-800)}
   .role-btn.active .role-label{color:var(--green-900)}
 
-  /* ⭐ INPUT GROUP DENGAN IKON */
   .input-group{margin-bottom:16px;position:relative}
   .input-group label{
     display:block;font-size:11.5px;font-weight:700;
@@ -288,7 +269,6 @@
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ===== Changelog Modal ===== */
   .changelog-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
   .changelog-modal.show{display:flex}
   .changelog-box{background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:changelogFade .25s ease}
@@ -307,7 +287,6 @@
   .changelog-badge{font-size:9.5px;background:#dbeafe;color:#1e40af;padding:2px 7px;border-radius:10px;font-weight:700}
   .changelog-empty{text-align:center;padding:24px;color:#9ca3af;font-size:12.5px}
 
-  /* Responsive untuk HP */
   @media(max-width:860px){
     .web-brand {
       position: relative;
@@ -317,7 +296,7 @@
       display: flex;
       justify-content: center;
     }
-    .web-brand .brand-logo-img { width: 80px; height: 80px; } /* Ukuran di HP */
+    .web-brand .brand-logo-img { width: 80px; height: 80px; }
     
     body { flex-direction: column; padding: 10px; }
     .login-wrapper{grid-template-columns:1fr;max-width:460px; height: auto;}
@@ -329,25 +308,19 @@
 </head>
 <body>
 
-<!-- ⭐ LOGO DI POJOK KIRI ATAS WEB — HANYA LOGO -->
 <div class="web-brand">
   <img src="logo.png" alt="Logo Jabal Rahmah" class="brand-logo-img">
 </div>
 
 <div class="login-wrapper">
-  <!-- SISI KIRI: Background Gelap + Gambar, Teks Putih -->
   <div class="login-left">
-    
-    <!-- ⭐ WRAPPER UNTUK KONTEN TENGAH -->
     <div class="left-content">
-      <!-- Teks Utama -->
       <div class="hero-content">
         <div class="welcome-text">Selamat Datang di</div>
         <h1>Instrumen Penilaian<br>Jabal Rahmah</h1>
         <p>Sistem penilaian terintegrasi untuk guru dan admin madrasah. Mudah, aman, dan terpercaya.</p>
       </div>
 
-      <!-- Fitur Horizontal -->
       <div class="features-grid">
         <div class="feature-item">
           <div class="feature-icon">📖</div>
@@ -367,13 +340,11 @@
       </div>
     </div>
 
-    <!-- Quote Bawah -->
     <div class="quote-bottom">
       Berilmu | Berakhlak | Berprestasi
     </div>
   </div>
 
-  <!-- SISI KANAN: Form Login -->
   <div class="login-right">
     <h2>Selamat Datang 👋</h2>
     <div class="sub">Silakan pilih role dan masuk ke akun Anda.</div>
@@ -389,13 +360,7 @@
       </button>
     </div>
 
-    <div id="defaultNotice" class="default-notice" style="display:none">
-      <b>⚠️ Belum ada akun terdaftar.</b><br>
-      Hubungi admin untuk membuat akun terlebih dahulu, atau gunakan akun default:<br>
-      Admin: <code>admin</code> / <code>admin123</code><br>
-      Guru: <code>guru</code> / <code>guru123</code><br>
-      <span style="font-size:11px;opacity:.8">Ganti password setelah login pertama.</span>
-    </div>
+    <div id="defaultNotice" class="default-notice" style="display:none"></div>
 
     <div class="msg" id="msgBox" role="alert" aria-live="polite"></div>
 
@@ -438,7 +403,6 @@
   </div>
 </div>
 
-<!-- ⭐ MODAL CHANGELOG -->
 <div class="changelog-modal" id="changelogModal" onclick="if(event.target===this)closeChangelog()">
   <div class="changelog-box">
     <div class="changelog-header">
@@ -451,10 +415,15 @@
 
 <script>
 /* ============================================================
-   KONFIGURASI FIREBASE
+   KONFIGURASI FIREBASE + AUTH (TAHAP 2B)
    ============================================================ */
 const FB_URL = 'https://instrumen-jabal-default-rtdb.asia-southeast1.firebasedatabase.app';
+const FB_API_KEY = 'AIzaSyAFbIJl8K24gXB3E5VLTWE-LJeXGou8zx8';
+const AUTH_BASE = 'https://identitytoolkit.googleapis.com/v1';
+const TOKEN_BASE = 'https://securetoken.googleapis.com/v1';
 const LS_SESSION = 'jabalSession_v1';
+const LS_AUTH = 'jabalAuth_v1';
+const EMAIL_DOMAIN = '@jabalrahmah.local';
 
 /* ============================================================
    HELPERS
@@ -476,17 +445,81 @@ function togglePw(){
   inp.type = inp.type === 'password' ? 'text' : 'password';
 }
 
-/* ============================================================
-   LUPA PASSWORD
-   ============================================================ */
 function showForgot(){
   alert(
     'Lupa password? Hubungi admin madrasah untuk reset password.\n\n' +
     '📱 WhatsApp: 085212431707\n' +
     '📧 Email: muhammadarrazi46@gmail.com\n\n' +
-    'Admin dapat mengubah password Anda langsung dari Firebase Console:\n' +
-    'Realtime Database → instrumen/users/{username} → password'
+    'Admin dapat mereset password Anda dari Firebase Console:\n' +
+    'Authentication → Users → pilih user → Reset password'
   );
+}
+
+/* ============================================================
+   AUTH REST API — login & refresh
+   ============================================================ */
+async function authSignIn(username, password){
+  if(!FB_API_KEY || FB_API_KEY.startsWith('GANTI_')){
+    throw new Error('Firebase API Key belum diisi. Hubungi admin.');
+  }
+  const email = username + EMAIL_DOMAIN;
+  const res = await fetch(AUTH_BASE + '/accounts:signInWithPassword?key=' + FB_API_KEY, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const data = await res.json();
+  if(!res.ok){
+    const code = data?.error?.message || 'AUTH_ERROR';
+    const map = {
+      'EMAIL_NOT_FOUND': 'Username tidak ditemukan',
+      'INVALID_PASSWORD': 'Password salah',
+      'USER_DISABLED': 'Akun dinonaktifkan',
+      'INVALID_LOGIN_CREDENTIALS': 'Username atau password salah',
+      'TOO_MANY_ATTEMPTS_TRY_LATER': 'Terlalu banyak percobaan, coba lagi nanti',
+      'INVALID_EMAIL': 'Username tidak valid'
+    };
+    throw new Error(map[code] || code);
+  }
+  return data;
+}
+
+async function authRefresh(refreshToken){
+  const body = new URLSearchParams({
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken
+  });
+  const res = await fetch(TOKEN_BASE + '/token?key=' + FB_API_KEY, {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: body.toString()
+  });
+  const data = await res.json();
+  if(!res.ok) throw new Error(data?.error?.message || 'REFRESH_FAILED');
+  return {
+    idToken: data.id_token,
+    refreshToken: data.refresh_token,
+    expiresIn: parseInt(data.expires_in, 10),
+    uid: data.user_id
+  };
+}
+
+function readAuthSession(){
+  try{
+    return JSON.parse(localStorage.getItem(LS_AUTH) || sessionStorage.getItem(LS_AUTH) || 'null');
+  }catch(e){ return null; }
+}
+function clearAuthSession(){
+  localStorage.removeItem(LS_AUTH);
+  sessionStorage.removeItem(LS_AUTH);
+  localStorage.removeItem(LS_SESSION);
+  sessionStorage.removeItem(LS_SESSION);
+}
+function saveAuthSession(sess, remember){
+  const store = remember ? localStorage : sessionStorage;
+  const other = remember ? sessionStorage : localStorage;
+  other.removeItem(LS_AUTH);
+  store.setItem(LS_AUTH, JSON.stringify(sess));
 }
 
 /* ============================================================
@@ -507,35 +540,25 @@ function getSelectedRole(){
 }
 
 /* ============================================================
-   RESOLVE NIP GURU — fallback berlapis
+   RESOLVE NIP GURU
    ============================================================ */
 function resolveNipGuru(user, username){
-  if (user && user.nip && String(user.nip).trim() !== ''){
-    return String(user.nip).trim();
-  }
-  if (user && user.teacherId){
-    const m = String(user.teacherId).match(/^guru_(.+)$/);
-    if (m && m[1]) return m[1];
-  }
+  if (user && user.nip && String(user.nip).trim() !== '') return String(user.nip).trim();
   return username || '';
 }
 
-function resolveTeacherId(user, nipGuru, username){
-  if (user && user.teacherId && String(user.teacherId).trim() !== ''){
-    return String(user.teacherId).trim();
-  }
-  if (nipGuru) return 'guru_' + nipGuru;
-  return 'guru_' + (username || Date.now());
-}
-
 /* ============================================================
-   LOGIN
+   LOGIN — Firebase Auth + role check dari /users
    ============================================================ */
 $('#loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   hideMsg();
 
-  const username = $('#inpUsername').value.trim().toLowerCase();
+  let username = $('#inpUsername').value.trim().toLowerCase();
+  // Jika user memasukkan email lengkap, ambil bagian depannya saja
+  if (username.includes('@')) {
+    username = username.split('@')[0];
+  }
   const password = $('#inpPassword').value;
   const role = getSelectedRole();
   const remember = $('#chkRemember').checked;
@@ -549,67 +572,59 @@ $('#loginForm').addEventListener('submit', async (e) => {
   btn.disabled = true;
   $('#btnLabel').innerHTML = '<span class="spinner"></span> Memverifikasi...';
 
-  try {
-    const url = FB_URL + '/instrumen/users/' + encodeURIComponent(username) + '.json';
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('Gagal terhubung ke server');
-    const user = await res.json();
+  try{
+    const auth = await authSignIn(username, password);
+    const now = Date.now();
+    const expiresAt = now + parseInt(auth.expiresIn, 10) * 1000;
 
-    if(!user){
-      showMsg('✗ Username tidak ditemukan', 'err');
-      btn.disabled = false;
-      $('#btnLabel').textContent = 'Masuk';
-      return;
+    const authSess = {
+      uid: auth.localId,
+      username,
+      email: auth.email,
+      idToken: auth.idToken,
+      refreshToken: auth.refreshToken,
+      expiresAt,
+      remember
+    };
+    saveAuthSession(authSess, remember);
+
+    // Ambil profil dari RTDB
+    const profRes = await fetch(
+      FB_URL + '/instrumen/users/' + encodeURIComponent(username) + '.json?auth=' + auth.idToken
+    );
+    if(!profRes.ok){
+      clearAuthSession();
+      throw new Error('Gagal membaca profil (HTTP ' + profRes.status + '). Cek Rules /users.');
+    }
+    const prof = await profRes.json();
+    if(!prof){ clearAuthSession(); throw new Error('Profil akun tidak ditemukan di /users'); }
+    if(prof.role !== role){
+      clearAuthSession();
+      throw new Error('Akun ini bukan untuk role "' + role + '". Pilih role yang benar.');
+    }
+    if(prof.uid && prof.uid !== auth.localId){
+      clearAuthSession();
+      throw new Error('Akun tidak sinkron (uid mismatch). Hubungi admin.');
     }
 
-    if(user.password !== password){
-      showMsg('✗ Password salah', 'err');
-      btn.disabled = false;
-      $('#btnLabel').textContent = 'Masuk';
-      return;
-    }
-
-    if(user.role !== role){
-      showMsg('✗ Akun ini bukan untuk role "' + role + '". Pilih role yang benar.', 'err');
-      btn.disabled = false;
-      $('#btnLabel').textContent = 'Masuk';
-      return;
-    }
-
-    const nipGuru = resolveNipGuru(user, username);
-    const teacherId = resolveTeacherId(user, nipGuru, username);
-
+    const nipGuru = resolveNipGuru(prof, username);
     const session = {
       username,
-      role: user.role,
-      nama: user.nama || username,
-      nipGuru: nipGuru,
-      teacherId: teacherId,
+      role: prof.role,
+      nama: prof.nama || username,
+      nipGuru,
+      teacherId: auth.localId,
+      uid: auth.localId,
       loginAt: Date.now(),
       remember
     };
-
-    if(remember){
-      localStorage.setItem(LS_SESSION, JSON.stringify(session));
-    } else {
-      sessionStorage.setItem(LS_SESSION, JSON.stringify(session));
-    }
-
-    if (user.role === 'guru' && !user.nip){
-      console.warn('[Login] User "' + username + '" tidak punya field "nip" di Firebase. ' +
-                   'NIP di session diambil dari fallback: ' + (nipGuru || '(kosong)'));
-    }
+    if(remember) localStorage.setItem(LS_SESSION, JSON.stringify(session));
+    else sessionStorage.setItem(LS_SESSION, JSON.stringify(session));
 
     showMsg('✓ Login berhasil. Mengalihkan...', 'ok');
-
     setTimeout(() => {
-      if(user.role === 'admin'){
-        window.location.href = 'admin.html';
-      } else {
-        window.location.href = 'guru.html';
-      }
-    }, 700);
-
+      window.location.href = prof.role === 'admin' ? 'admin.html' : 'guru.html';
+    }, 600);
   } catch(err){
     console.error(err);
     showMsg('✗ ' + err.message, 'err');
@@ -619,74 +634,70 @@ $('#loginForm').addEventListener('submit', async (e) => {
 });
 
 /* ============================================================
-   AUTO REDIRECT — jika sudah login
+   AUTO REDIRECT — verifikasi token dulu
    ============================================================ */
-(function checkExistingSession(){
-  try {
-    const sess = JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null');
-    if(sess && sess.role){
-      showMsg('✓ Anda sudah login sebagai ' + sess.nama + '. Mengalihkan...', 'ok');
-      setTimeout(() => {
-        window.location.href = sess.role === 'admin' ? 'admin.html' : 'guru.html';
-      }, 800);
+(async function checkExistingSession(){
+  const authSess = readAuthSession();
+  const sess = (() => {
+    try{ return JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null'); }
+    catch(e){ return null; }
+  })();
+  if(!authSess || !sess || !sess.role) return;
+
+  const stillValid = authSess.expiresAt && (authSess.expiresAt - Date.now() > 5*60*1000);
+  if(!stillValid){
+    try{
+      const refreshed = await authRefresh(authSess.refreshToken);
+      authSess.idToken = refreshed.idToken;
+      authSess.refreshToken = refreshed.refreshToken;
+      authSess.expiresAt = Date.now() + refreshed.expiresIn * 1000;
+      authSess.uid = refreshed.uid;
+      saveAuthSession(authSess, authSess.remember !== false);
+    }catch(e){
+      console.warn('[AutoRedirect] refresh gagal:', e);
+      clearAuthSession();
+      return;
     }
-  } catch(e){}
+  }
+  showMsg('✓ Anda sudah login sebagai ' + sess.nama + '. Mengalihkan...', 'ok');
+  setTimeout(() => {
+    window.location.href = sess.role === 'admin' ? 'admin.html' : 'guru.html';
+  }, 700);
 })();
 
 /* ============================================================
-   CEK APAKAH ADA AKUN DI FIREBASE
+   CEK API KEY
    ============================================================ */
-(async function checkDefaultAccounts(){
-  try {
-    const res = await fetch(FB_URL + '/instrumen/users.json');
-    const users = await res.json();
-    if(!users || Object.keys(users).length === 0){
-      $('#defaultNotice').style.display = 'block';
-    }
-  } catch(e){
-    console.warn('Gagal cek akun default:', e);
+(function checkDefaultAccounts(){
+  if(!FB_API_KEY || FB_API_KEY.startsWith('GANTI_')){
+    const el = $('#defaultNotice');
+    el.style.display = 'block';
+    el.innerHTML =
+      '<b>⚠️ Firebase API Key belum diisi.</b><br>' +
+      'Buka <code>index.html</code> dan <code>guru.html</code>, cari <code>FB_API_KEY</code>, ' +
+      'ganti dengan <b>Web API Key</b> dari Firebase Console → Project Settings → General → Web API Key.';
   }
 })();
 
 /* ============================================================
-   ⭐ VERSION DISPLAY + CHANGELOG
+   VERSION DISPLAY + CHANGELOG
    ============================================================ */
 (function initVersionDisplay(){
   function applyVersion(){
-    const info = window.APP_INFO || {
-      version: '1.1.0',
-      buildDate: '2026-10-04',
-      changelog: []
-    };
+    const info = window.APP_INFO || { version:'2.0.0', buildDate:'', changelog:[] };
     const elV = document.getElementById('appVersion');
     const elD = document.getElementById('appBuildDate');
-
-    if (elV) elV.textContent = 'v' + (info.version || '1.0.0');
+    if (elV) elV.textContent = 'v' + (info.version || '2.0.0');
     if (elD) elD.textContent = info.buildDate || '—';
-
-    console.log(
-      '%c[Version]%c ' + (info.version || '?') + ' | ' + (info.buildDate || '?'),
-      'background:#1e3a8a;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700',
-      'color:#64748b'
-    );
-
-    if (!window.APP_INFO) {
-      console.warn('[Version] version.js tidak ditemukan — pakai default fallback.');
-    }
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', applyVersion);
-  } else {
-    applyVersion();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyVersion);
+  else applyVersion();
 })();
 
 function showChangelog(){
   const body = document.getElementById('changelogBody');
-  const info = window.APP_INFO || { version: '1.1.0', changelog: [] };
+  const info = window.APP_INFO || { version: '2.0.0', changelog: [] };
   const curVer = 'v' + (info.version || '');
-
   if (!info.changelog || !info.changelog.length){
     body.innerHTML = '<div class="changelog-empty">Belum ada riwayat update.</div>';
   } else {
@@ -694,10 +705,7 @@ function showChangelog(){
       const isCurrent = (v.version === curVer);
       return `
         <div class="changelog-item">
-          <h4>
-            ${v.version || '—'}
-            ${isCurrent ? '<span class="changelog-badge">Saat ini</span>' : ''}
-          </h4>
+          <h4>${v.version || '—'}${isCurrent ? '<span class="changelog-badge">Saat ini</span>' : ''}</h4>
           <div class="date">${v.date || ''}</div>
           <ul>${(v.highlights || []).map(h => '<li>' + h + '</li>').join('')}</ul>
         </div>`;
@@ -705,13 +713,12 @@ function showChangelog(){
   }
   document.getElementById('changelogModal').classList.add('show');
 }
-
 function closeChangelog(){
   document.getElementById('changelogModal').classList.remove('show');
 }
 
 /* ============================================================
-   ⭐ ONLINE / OFFLINE INDICATOR
+   ONLINE / OFFLINE INDICATOR
    ============================================================ */
 (function initNetworkIndicator(){
   function updateStatus(){
@@ -730,14 +737,6 @@ function closeChangelog(){
   document.addEventListener('DOMContentLoaded', updateStatus);
   updateStatus();
 })();
-
-/* ============================================================
-   ⭐ BOOT TIME LOG (debug only, aman dihapus)
-   ============================================================ */
-console.time('[Boot] Login siap dalam');
-window.addEventListener('load', () => {
-  console.timeEnd('[Boot] Login siap dalam');
-});
 </script>
 </body>
 </html>
