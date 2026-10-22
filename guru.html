@@ -2308,10 +2308,10 @@ async function firebaseSave(silent = false){
   if(window.__IS_SYNCING__) return;
   const sess = window.__TEACHER_SESSION__ || {};
   const teacherId = sess.uid;
-  if(!teacherId){
-    console.warn('[firebaseSave] Sesi tanpa uid — sinkronisasi dihentikan.');
+  if(!teacherId || !sess.teacherId || sess.teacherId !== teacherId){
+    console.warn('[firebaseSave] UID sesi tidak konsisten — sinkronisasi dihentikan.', {teacherId, sessionTeacherId:sess.teacherId});
     updateSyncBadge('error');
-    if(!silent) toast('✗ Sesi tidak valid, silakan login ulang', true);
+    if(!silent) toast('✗ UID akun tidak konsisten. Logout lalu login ulang dengan akun Firebase yang benar.', true);
     return;
   }
   window.__IS_SYNCING__ = true;
@@ -2337,13 +2337,24 @@ async function firebaseSave(silent = false){
   try{
         const safePayload = encodeFirebaseKeys(payload); // <-- Tambahkan baris ini
     
-    const res1 = await authFetch('/instrumen/personal/' + teacherId + '.json', {
+    const res1 = await authFetch('/instrumen/personal/' + encodeURIComponent(teacherId) + '.json', {
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(safePayload)
     });
     if(!res1.ok){ const txt = await res1.text().catch(()=>''); throw new Error('Personal HTTP ' + res1.status + ' ' + txt.slice(0,120)); }
     
-    const teacherPayload = { nama: teacherName, nip: sess.nipGuru || '-', teacherId, uid: teacherId, lastUpdate: payload.lastUpdate, master: safePayload };
-    const res2 = await authFetch('/instrumen/teachers/' + teacherId + '.json', {
+    const profileUrl = '/instrumen/teachers/' + encodeURIComponent(teacherId) + '.json';
+    const oldProfileRes = await authFetch(profileUrl, {cache:'no-store'});
+    if(!oldProfileRes.ok) throw new Error('Gagal membaca profil guru (HTTP ' + oldProfileRes.status + ')');
+    const oldProfile = await oldProfileRes.json() || {};
+    // Metadata profil yang dikelola admin dipertahankan agar sesi guru yang masih lama
+    // tidak menimpa nama/NIP terbaru. UID selalu berasal dari Firebase Authentication.
+    const teacherPayload = {
+      ...oldProfile,
+      nama: oldProfile.nama || teacherName,
+      nip: oldProfile.nip || sess.nipGuru || sess.nip || '-',
+      teacherId, uid: teacherId, lastUpdate: payload.lastUpdate, master: safePayload
+    };
+    const res2 = await authFetch(profileUrl, {
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(teacherPayload)
     });
     if(!res2.ok){ const txt = await res2.text().catch(()=>''); throw new Error('Teachers HTTP ' + res2.status + ' ' + txt.slice(0,120)); }
@@ -2368,7 +2379,7 @@ async function firebaseLoad(){
   toast('⏳ Memuat dari Firebase...');
   closeSyncModal();
   try{
-    const res = await authFetch('/instrumen/personal/' + teacherId + '.json', { cache:'no-store' });
+    const res = await authFetch('/instrumen/personal/' + encodeURIComponent(teacherId) + '.json', { cache:'no-store' });
     if(!res.ok) throw new Error('HTTP ' + res.status);
     
     // PERBAIKAN DI SINI: Gunakan loadedRaw lalu decode
@@ -2470,7 +2481,7 @@ async function autoLoadFromFirebase(){
   const teacherId = sess.uid;
   if(!teacherId || !master.fbUrl) return;
   try{
-    const res = await authFetch('/instrumen/personal/' + teacherId + '.json', { cache:'no-store' });
+    const res = await authFetch('/instrumen/personal/' + encodeURIComponent(teacherId) + '.json', { cache:'no-store' });
     if(!res.ok) return;
     
     // PERBAIKAN DI SINI: Gunakan dataRaw lalu decode
