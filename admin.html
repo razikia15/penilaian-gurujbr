@@ -134,41 +134,10 @@
   .hero-content{position:relative;z-index:1;max-width:1200px;width:100%;color:#fff;animation:fadeIn .6s ease-out}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   
-  /* ⭐ H1 - Judul Utama */
   .hero-content h1{font-size:28px;font-weight:800;margin-bottom:6px;text-shadow:0 2px 4px rgba(0,0,0,.3);letter-spacing:-.5px}
+  .hero-content h2{font-size:30px;font-weight:800;margin-bottom:12px;color:#bfdbfe;text-shadow:0 2px 4px rgba(0,0,0,.3);letter-spacing:-.3px}
+  .hero-content p{font-size:13.5px;opacity:.9;margin-bottom:20px;max-width:100%;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.4);white-space:nowrap}
   
-  /* ⭐ H2 - Jabal Rahmah (ukuran 30px) */
-  .hero-content h2{
-    font-size:30px;
-    font-weight:800;
-    margin-bottom:12px;
-    color:#bfdbfe;
-    text-shadow:0 2px 4px rgba(0,0,0,.3);
-    letter-spacing:-.3px;
-  }
-  
-  /* ⭐ P - Satu baris */
-  .hero-content p{
-    font-size:13.5px;
-    opacity:.9;
-    margin-bottom:20px;
-    max-width:100%;
-    line-height:1.6;
-    text-shadow:0 1px 3px rgba(0,0,0,.4);
-    white-space:nowrap;
-  }
-  
-  .hero-actions{display:flex;gap:10px;flex-wrap:wrap}
-  .btn-hero{
-    background:rgba(255,255,255,.15);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,.3);color:#fff;
-    padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:600;
-    cursor:pointer;transition:all .2s ease;display:flex;align-items:center;gap:6px;font-family:inherit;
-  }
-  .btn-hero:hover{background:rgba(255,255,255,.3);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
-  .btn-hero.btn-danger{background:rgba(220,38,38,.6);border-color:rgba(220,38,38,.8)}
-  .btn-hero.btn-danger:hover{background:rgba(220,38,38,.85)}
-
   /* ===== BUTTONS ===== */
   .btn{border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:5px;font-family:inherit;white-space:nowrap}
   .btn:active{transform:scale(.97)}
@@ -188,7 +157,6 @@
   nav.tabs button:hover{color:#1e3a8a;background:#eff6ff}
   nav.tabs button.active{color:#1e3a8a;border-bottom-color:#1e3a8a}
   
-  /* ⭐ MAIN - Diperlebar dari 1600px ke 1800px */
   main{padding:20px 24px 60px;max-width:1800px;margin:0 auto}
   .tab-panel{display:none;animation:fade .2s}
   .tab-panel.active{display:block}
@@ -707,9 +675,9 @@
       <input type="text" id="accUsername" placeholder="huruf kecil, tanpa spasi (contoh: rita)" autocomplete="off">
       <div class="hint">Username ini yang dipakai guru untuk login. <b>Tidak bisa diubah setelah dibuat.</b></div>
       
-      <label>Password <span style="color:var(--red)">*</span></label>
-      <input type="text" id="accPassword" placeholder="minimal 6 karakter (contoh: rita2024)" autocomplete="off">
-      <div class="hint">Password awal akun. (Hanya bisa diisi saat pembuatan akun baru).</div>
+      <label>UID Firebase (Teacher ID) <span style="color:var(--red)">*</span></label>
+      <input type="text" id="accTeacherId" placeholder="Paste UID dari Firebase Auth (contoh: 125CuH...)" autocomplete="off">
+      <div class="hint">Buka Firebase Console -> Authentication -> Copy UID user.</div>
       
       <label>Nama Lengkap &amp; Gelar <span style="color:var(--red)">*</span></label>
       <input type="text" id="accNama" placeholder="Rita Ernawati, S.Pd.I" autocomplete="off">
@@ -2424,8 +2392,7 @@ function openAccountModal(){
   $('#accountModalTitle').textContent = '➕ Tambah Akun Guru';
   $('#accUsername').value = '';
   $('#accUsername').disabled = false;
-  $('#accPassword').value = '';
-  $('#accPassword').disabled = false; // Password hanya bisa diisi saat buat baru
+  $('#accTeacherId').value = '';
   $('#accNama').value = '';
   $('#accNip').value = '';
   $('#accountModal').classList.add('show');
@@ -2441,8 +2408,7 @@ function editAccount(username){
   $('#accountModalTitle').textContent = '✎ Edit Akun: ' + username;
   $('#accUsername').value = username;
   $('#accUsername').disabled = true;
-  $('#accPassword').value = '********';
-  $('#accPassword').disabled = true; // Password tidak bisa diubah dari sini
+  $('#accTeacherId').value = data.uid || data.teacherId || '';
   $('#accNama').value = data.nama || '';
   $('#accNip').value = data.nip || '';
   $('#accountModal').classList.add('show');
@@ -2450,63 +2416,42 @@ function editAccount(username){
 
 async function saveAccount(){
   const username = $('#accUsername').value.trim().toLowerCase();
-  const password = $('#accPassword').value.trim();
+  const teacherId = $('#accTeacherId').value.trim();
   const nama = $('#accNama').value.trim();
   const nip = $('#accNip').value.trim();
 
   if(!username){ toast('⚠️ Username wajib diisi', 'err'); return; }
+  if(!teacherId){ toast('⚠️ UID Firebase wajib diisi', 'err'); return; }
   if(!nama){ toast('⚠️ Nama wajib diisi', 'err'); return; }
-  
-  if(!_editingUsername) {
-    if(!password || password.length < 6){ toast('⚠️ Password minimal 6 karakter', 'err'); return; }
-    if(ALL_USERS[username]){ toast('⚠️ Username "' + username + '" sudah dipakai!', 'err'); return; }
+
+  if(!_editingUsername && ALL_USERS[username]){
+    toast('⚠️ Username "' + username + '" sudah dipakai!', 'err');
+    return;
   }
+
+  const existingWithSameId = Object.entries(ALL_USERS).find(
+    ([u, d]) => (d.uid === teacherId || d.teacherId === teacherId) && u !== username
+  );
+  if(existingWithSameId){
+    toast('⚠️ UID "' + teacherId + '" sudah dipakai oleh akun "' + existingWithSameId[0] + '"!', 'err');
+    return;
+  }
+
+  const payload = {
+    role: 'guru',
+    teacherId: teacherId,
+    uid: teacherId,
+    nama: nama,
+    nip: nip || '-',
+    updatedAt: Date.now()
+  };
+  
+  if(!_editingUsername) payload.createdAt = Date.now();
 
   try {
     $('#accSaveBtn').textContent = '⏳ Menyimpan...';
     $('#accSaveBtn').disabled = true;
     
-    let teacherId = '';
-
-    if(!_editingUsername) {
-      // 1. DAFTARKAN KE FIREBASE AUTHENTICATION
-      const email = username + '@jabalrahmah.local';
-      const authRes = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + FB_API_KEY, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ email, password, returnSecureToken: true })
-      });
-      const authData = await authRes.json();
-      
-      if(!authRes.ok) {
-        const errCode = authData?.error?.message || 'AUTH_ERROR';
-        if(errCode === 'EMAIL_EXISTS') throw new Error('Username ini sudah terdaftar di sistem Auth.');
-        throw new Error('Gagal buat Auth: ' + errCode);
-      }
-      
-      teacherId = authData.localId; // UID Asli dari Firebase Auth
-    } else {
-      // Jika Edit, ambil teacherId lama
-      const oldData = ALL_USERS[_editingUsername];
-      teacherId = oldData.teacherId || oldData.uid;
-      if(!teacherId) throw new Error('Data UID lama tidak ditemukan.');
-    }
-
-    // 2. SIMPAN PROFIL KE REALTIME DATABASE
-    const payload = {
-      role: 'guru',
-      teacherId: teacherId,
-      uid: teacherId, // Penting: pastikan UID sinkron
-      nama: nama,
-      nip: nip || '-',
-      updatedAt: Date.now()
-    };
-    
-    if(!_editingUsername) {
-      payload.password = password; // Disimpan untuk referensi admin
-      payload.createdAt = Date.now();
-    }
-
     const res = await authFetch('/instrumen/users/' + encodeURIComponent(username) + '.json', {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
@@ -2515,9 +2460,10 @@ async function saveAccount(){
     
     if(!res.ok) throw new Error('HTTP ' + res.status);
     
-    toast('✓ Akun "' + username + '" berhasil dibuat & terhubung ke Auth.', 'ok');
+    toast('✓ Akun "' + username + '" berhasil ditautkan.', 'ok');
     closeAccountModal();
     await reloadAccounts();
+    await reloadAll();
   } catch(err){
     console.error(err);
     toast('✗ Gagal menyimpan: ' + err.message, 'err');
