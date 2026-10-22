@@ -1353,9 +1353,35 @@ async function ensureValidToken(){
   // 4) Lolos verifikasi
   window.__TEACHER_SESSION__ = { ...sess, uid: authSess.uid };
   window.__AUTH__ = authSess;
+
+  // JIKA NAMA KOSONG, AMBIL DARI FIREBASE
+  if (!window.__TEACHER_SESSION__.nama) {
+    try {
+      const fbBase = (master.fbUrl || DEFAULT_FB_URL).replace(/\/+$/,'');
+      const resName = await fetch(fbBase + '/instrumen/teachers/' + encodeURIComponent(authSess.uid) + '/nama.json?auth=' + authSess.idToken);
+      if (resName.ok) {
+        const name = await resName.json();
+        if (name) {
+          window.__TEACHER_SESSION__.nama = name;
+          // Simpan ke session storage agar tidak fetch berulang kali
+          if (localStorage.getItem(LS_SESSION)) {
+              const s = JSON.parse(localStorage.getItem(LS_SESSION));
+              s.nama = name;
+              localStorage.setItem(LS_SESSION, JSON.stringify(s));
+          }
+          if (sessionStorage.getItem(LS_SESSION)) {
+              const s = JSON.parse(sessionStorage.getItem(LS_SESSION));
+              s.nama = name;
+              sessionStorage.setItem(LS_SESSION, JSON.stringify(s));
+          }
+        }
+      }
+    } catch (e) { console.warn('Gagal ambil nama dari Firebase:', e); }
+  }
+
   document.addEventListener('DOMContentLoaded', ()=>{
     const el = document.getElementById('greetingName');
-    if(el) el.textContent = sess.nama || 'Guru';
+    if(el) el.textContent = window.__TEACHER_SESSION__.nama || 'Guru';
   });
 })();
 
@@ -2275,12 +2301,21 @@ function getUHSource(siswa, k, cls){
    ============================================================ */
 function autoFillFromSession(){
   const sess = window.__TEACHER_SESSION__ || {};
-  if(!sess.nama) return;
+  
+  // Ambil nama dari session. Jika kosong, coba ambil dari data kelas (state)
+  let namaGuru = sess.nama;
+  if (!namaGuru && state && state.identitas && state.identitas.guru) {
+      namaGuru = state.identitas.guru;
+  }
+  
+  if(!namaGuru) return; // Jika benar-benar tidak ada nama, hentikan proses
+
   const el = document.getElementById('greetingName');
-  if(el) el.textContent = sess.nama;
+  if(el) el.textContent = namaGuru;
+  
   Object.values(master.classes).forEach(cls=>{
     if(!cls.identitas) return;
-    cls.identitas.guru = sess.nama;
+    cls.identitas.guru = namaGuru; // Gunakan namaGuru yang sudah divalidasi
     const nipFromSess = sess.nipGuru || sess.nip || sess.username;
     if(nipFromSess) cls.identitas.nipGuru = nipFromSess;
     const kls = cls.identitas.kelas;
