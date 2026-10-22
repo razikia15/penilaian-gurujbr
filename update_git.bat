@@ -7,6 +7,21 @@ cd /d "%~dp0"
 set GITHUB_URL=https://github.com/razikia15/penilaian-gurujbr.git
 set BRANCH=main
 
+:: --- CEK GIT INSTALL ---
+git --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [ERROR] Git tidak terinstall atau tidak dikenali di PATH.
+    pause & exit /b 1
+)
+
+:: --- CEK KONFIGURASI GIT ---
+git config user.name >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [INFO] Mengatur nama Git...
+    git config --global user.name "razikia15"
+    git config --global user.email "razikia15@users.noreply.github.com"
+)
+
 :MENU
 cls
 echo ==========================================================
@@ -81,7 +96,7 @@ echo [INFO] File yang berubah:
 git diff --stat HEAD
 echo.
 
-set /p "CHANGELOG_MSG=Changelog (pisahkan dengan ^| ): "
+set /p "CHANGELOG_MSG=Changelog (pisahkan dengan koma): "
 if "!CHANGELOG_MSG!"=="" goto :MENU
 
 set /p "USER_VER=Versi baru (X.Y.Z) [kosongkan untuk auto-patch]: "
@@ -98,6 +113,10 @@ goto :EXECUTE
 :: EKSEKUSI (SHARED)
 :: ============================================================
 :EXECUTE
+:: Bersihkan karakter yang bisa merusak perintah Git
+set "CHANGELOG_MSG=!CHANGELOG_MSG:"=!"
+if "!CHANGELOG_MSG!"=="" set "CHANGELOG_MSG=Update files"
+
 echo.
 echo ----------------------------------------------------------
 echo   [1/4] Update versi...
@@ -112,7 +131,7 @@ if "!BUMP_TYPE!"=="set" (
 if "!BUMP_RESULT!"=="" (
     echo.
     echo [ERROR] GAGAL UPDATE VERSI!
-    echo Pastikan file version.js TIDAK SEDANG DIBUKA di Notepad/VS Code.
+    echo Pastikan file version.js TIDAK SEDANG DIBUKA di editor.
     pause & goto :MENU
 )
 echo       !BUMP_RESULT!
@@ -136,7 +155,12 @@ echo ----------------------------------------------------------
 git pull origin !BRANCH! --no-rebase --no-edit
 if !errorlevel! neq 0 (
     echo.
-    echo [ERROR] Gagal Pull. Kemungkinan ada bentrok file di GitHub.
+    echo ==========================================================
+    echo    [ERROR] GAGAL PULL (KONFLIK)!
+    echo    Kemungkinan ada file yang bentrok antara lokal dan GitHub.
+    echo    Selesaikan konflik secara manual atau pastikan tidak ada
+    echo    file yang sedang terbuka/dikunci.
+    echo ==========================================================
     pause & goto :MENU
 )
 
@@ -144,7 +168,7 @@ echo.
 echo ----------------------------------------------------------
 echo   [4/4] Push ke GitHub...
 echo ----------------------------------------------------------
-git push -u origin !BRANCH!
+git push origin !BRANCH!
 if !errorlevel! neq 0 (
     echo.
     echo ==========================================================
@@ -158,4 +182,5 @@ echo.
 echo ==========================================================
 echo    BERHASIL TERUPLOAD! Versi baru: !BUMP_RESULT:BUMPED:=!
 echo ==========================================================
-pause
+timeout /t 3 >nul
+exit /b 0

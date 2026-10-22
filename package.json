@@ -1,0 +1,21 @@
+{
+  "name": "update-1.9",
+  "version": "1.0.0",
+  "description": "",
+  "main": "set-admin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/razikia15/penilaian-gurujbr.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/razikia15/penilaian-gurujbr/issues"
+  },
+  "homepage": "https://github.com/razikia15/penilaian-gurujbr#readme"
+}

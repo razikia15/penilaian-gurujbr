@@ -1215,6 +1215,44 @@ const LS_BACKUP = 'jabalRahmah_master_v10_backup';
 /* ============================================================
    AUTH — helper sesi, refresh, logout paksa
    ============================================================ */
+
+/* ============================================================
+   ENCODER KEY FIREBASE (Mencegah Error HTTP 400)
+   ============================================================ */
+function encodeFirebaseKeys(obj) {
+  if (Array.isArray(obj)) return obj.map(encodeFirebaseKeys);
+  if (obj !== null && typeof obj === 'object') {
+    const res = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        const safeKey = String(key).replace(/[.#$\[\]/]/g, (match) => {
+          const map = {'.': '_dot_', '#': '_hash_', '$': '_dollar_', '[': '_lb_', ']': '_rb_', '/': '_slash_'};
+          return map[match];
+        });
+        if (safeKey === '') continue; // Buang key kosong
+        res[safeKey] = encodeFirebaseKeys(obj[key]);
+      }
+    }
+    return res;
+  }
+  return obj;
+}
+
+function decodeFirebaseKeys(obj) {
+  if (Array.isArray(obj)) return obj.map(decodeFirebaseKeys);
+  if (obj !== null && typeof obj === 'object') {
+    const res = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        const originalKey = String(key).replace(/_dot_/g, '.').replace(/_hash_/g, '#').replace(/_dollar_/g, '$').replace(/_lb_/g, '[').replace(/_rb_/g, ']').replace(/_slash_/g, '/');
+        res[originalKey] = decodeFirebaseKeys(obj[key]);
+      }
+    }
+    return res;
+  }
+  return obj;
+}
+
 function readAuthSession(){
   try{
     return JSON.parse(localStorage.getItem(LS_AUTH) || sessionStorage.getItem(LS_AUTH) || 'null');
@@ -2297,11 +2335,14 @@ async function firebaseSave(silent = false){
     return;
   }
   try{
+        const safePayload = encodeFirebaseKeys(payload); // <-- Tambahkan baris ini
+    
     const res1 = await authFetch('/instrumen/personal/' + teacherId + '.json', {
-      method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(safePayload)
     });
     if(!res1.ok){ const txt = await res1.text().catch(()=>''); throw new Error('Personal HTTP ' + res1.status + ' ' + txt.slice(0,120)); }
-    const teacherPayload = { nama: teacherName, nip: sess.nipGuru || '-', teacherId, uid: teacherId, lastUpdate: payload.lastUpdate, master: payload };
+    
+    const teacherPayload = { nama: teacherName, nip: sess.nipGuru || '-', teacherId, uid: teacherId, lastUpdate: payload.lastUpdate, master: safePayload };
     const res2 = await authFetch('/instrumen/teachers/' + teacherId + '.json', {
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(teacherPayload)
     });
@@ -2329,7 +2370,11 @@ async function firebaseLoad(){
   try{
     const res = await authFetch('/instrumen/personal/' + teacherId + '.json', { cache:'no-store' });
     if(!res.ok) throw new Error('HTTP ' + res.status);
-    const loaded = await res.json();
+    
+    // PERBAIKAN DI SINI: Gunakan loadedRaw lalu decode
+    const loadedRaw = await res.json();
+    const loaded = decodeFirebaseKeys(loadedRaw);
+
     if(!loaded || !loaded.classes) throw new Error('Data tidak ditemukan untuk akun ini');
     loaded.classes = loaded.classes || {};
     CLASSES.forEach(c=>{
@@ -2427,7 +2472,11 @@ async function autoLoadFromFirebase(){
   try{
     const res = await authFetch('/instrumen/personal/' + teacherId + '.json', { cache:'no-store' });
     if(!res.ok) return;
-    const data = await res.json();
+    
+    // PERBAIKAN DI SINI: Gunakan dataRaw lalu decode
+    const dataRaw = await res.json();
+    const data = decodeFirebaseKeys(dataRaw);
+
     if(!data || !data.classes) return;
     data.classes = data.classes || {};
     CLASSES.forEach(c=>{

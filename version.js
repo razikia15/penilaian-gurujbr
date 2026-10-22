@@ -5,15 +5,33 @@
    ============================================================ */
 
 window.APP_INFO = {
-  version: '1.1.9',
-  buildDate: '2026-10-21',
+  version: '1.1.11',
+  buildDate: '2026-10-22',
 
   changelog: [
+    {
+      version: 'v1.1.11',
+      date: '2026-10-22',
+      highlights: [
+        'Update file: admin.html, guru.html, update_git.bat'
+      ]
+    },
+    {
+      version: 'v1.1.10',
+      date: '2026-10-21',
+      highlights: [
+        'Update file: Untitled-1.jpg, admin.html, ai-changelog.ps1, guru.html, index.html, migrate.js, package.json, service-account.json, set-admin.js, set-admin.mjs'
+      ]
+    },
     {
       version: 'v1.1.9',
       date: '2026-10-21',
       highlights: [
+<<<<<<< HEAD
+        'Update file: Untitled-1.jpg, admin.html, ai-changelog.ps1, guru.html, index.html, migrate.js, package.json, service-account.json, set-admin.js, set-admin.mjs'
+=======
         'Update file: admin.html, guru.html, index.html'
+>>>>>>> 12ad34937895458f439cab8a20ca00bf1da64c49
       ]
     },
     {

@@ -666,7 +666,7 @@
 <section class="tab-panel" id="tab-akun">
   <div class="info" style="background:#eff6ff;border-left-color:#3b82f6;color:#1e3a8a">
     <b>🔑 Kelola Akun Guru</b> — Tambah, edit, atau hapus akun guru yang bisa login ke sistem.
-    <br><small>⚠️ Setiap guru harus punya <b>username</b> dan <b>teacherId</b> yang unik.</small>
+    <br><small>⚠️ Sistem akan otomatis membuatkan UID Auth saat Anda menyimpan akun baru.</small>
   </div>
   <div class="toolbar no-print">
     <button class="btn btn-primary btn-sm" onclick="openAccountModal()">➕ Tambah Akun Guru</button>
@@ -685,7 +685,7 @@
         <thead>
           <tr>
             <th style="width:45px">No</th><th>Username</th><th>Nama</th>
-            <th>NIP</th><th>Role</th><th>Teacher ID</th>
+            <th>NIP</th><th>Role</th><th>UID Firebase</th>
             <th>Status Data</th><th style="width:140px">Aksi</th>
           </tr>
         </thead>
@@ -706,16 +706,17 @@
       <label>Username <span style="color:var(--red)">*</span></label>
       <input type="text" id="accUsername" placeholder="huruf kecil, tanpa spasi (contoh: rita)" autocomplete="off">
       <div class="hint">Username ini yang dipakai guru untuk login. <b>Tidak bisa diubah setelah dibuat.</b></div>
+      
       <label>Password <span style="color:var(--red)">*</span></label>
       <input type="text" id="accPassword" placeholder="minimal 6 karakter (contoh: rita2024)" autocomplete="off">
-      <div class="hint">Password awal. Guru bisa ganti sendiri lewat Firebase Console.</div>
+      <div class="hint">Password awal akun. (Hanya bisa diisi saat pembuatan akun baru).</div>
+      
       <label>Nama Lengkap &amp; Gelar <span style="color:var(--red)">*</span></label>
       <input type="text" id="accNama" placeholder="Rita Ernawati, S.Pd.I" autocomplete="off">
+      
       <label>NIP / NUPTK</label>
       <input type="text" id="accNip" placeholder="121212" autocomplete="off">
-      <label>Teacher ID <span style="color:var(--red)">*</span></label>
-      <input type="text" id="accTeacherId" placeholder="guru_121212" autocomplete="off">
-      <div class="hint">ID unik guru di Firebase. Gunakan format <code>guru_&lt;NIP&gt;</code> agar mudah.</div>
+      
       <label>Role</label>
       <input type="text" id="accRole" value="guru" readonly style="background:var(--gray-100);color:var(--gray-600)">
     </div>
@@ -2395,7 +2396,7 @@ function renderAccounts(){
     const roleBadge = isAdmin
       ? '<span class="badge-info" style="background:#dbeafe;color:#1e40af">ADMIN</span>'
       : '<span class="badge-tuntas">GURU</span>';
-    const teacherData = ALL_TEACHERS[data.teacherId];
+    const teacherData = ALL_TEACHERS[data.uid || data.teacherId];
     const statusData = teacherData
       ? `<span class="badge-tuntas" title="${timeAgo(teacherData.lastUpdate)}">✓ Ada</span>`
       : '<span class="badge-belum">Belum sync</span>';
@@ -2406,7 +2407,7 @@ function renderAccounts(){
       <td style="text-align:left">${esc(data.nama || '-')}</td>
       <td>${esc(data.nip || '-')}</td>
       <td>${roleBadge}</td>
-      <td><code style="font-size:11px;background:var(--gray-100);padding:2px 6px;border-radius:4px">${esc(data.teacherId || '-')}</code></td>
+      <td><code style="font-size:11px;background:var(--gray-100);padding:2px 6px;border-radius:4px">${esc(data.uid || data.teacherId || '-')}</code></td>
       <td>${isAdmin ? '—' : statusData}</td>
       <td>
         <button class="btn btn-blue btn-sm" onclick="editAccount('${esc(username)}')" style="padding:4px 10px;font-size:11px">✎ Edit</button>
@@ -2424,9 +2425,9 @@ function openAccountModal(){
   $('#accUsername').value = '';
   $('#accUsername').disabled = false;
   $('#accPassword').value = '';
+  $('#accPassword').disabled = false; // Password hanya bisa diisi saat buat baru
   $('#accNama').value = '';
   $('#accNip').value = '';
-  $('#accTeacherId').value = '';
   $('#accountModal').classList.add('show');
   setTimeout(() => $('#accUsername').focus(), 100);
 }
@@ -2440,10 +2441,10 @@ function editAccount(username){
   $('#accountModalTitle').textContent = '✎ Edit Akun: ' + username;
   $('#accUsername').value = username;
   $('#accUsername').disabled = true;
-  $('#accPassword').value = data.password || '';
+  $('#accPassword').value = '********';
+  $('#accPassword').disabled = true; // Password tidak bisa diubah dari sini
   $('#accNama').value = data.nama || '';
   $('#accNip').value = data.nip || '';
-  $('#accTeacherId').value = data.teacherId || '';
   $('#accountModal').classList.add('show');
 }
 
@@ -2452,44 +2453,73 @@ async function saveAccount(){
   const password = $('#accPassword').value.trim();
   const nama = $('#accNama').value.trim();
   const nip = $('#accNip').value.trim();
-  const teacherId = $('#accTeacherId').value.trim();
 
   if(!username){ toast('⚠️ Username wajib diisi', 'err'); return; }
-  if(!password || password.length < 6){ toast('⚠️ Password minimal 6 karakter', 'err'); return; }
   if(!nama){ toast('⚠️ Nama wajib diisi', 'err'); return; }
-  if(!teacherId){ toast('⚠️ Teacher ID wajib diisi', 'err'); return; }
-
-  if(!_editingUsername && ALL_USERS[username]){
-    toast('⚠️ Username "' + username + '" sudah dipakai!', 'err');
-    return;
+  
+  if(!_editingUsername) {
+    if(!password || password.length < 6){ toast('⚠️ Password minimal 6 karakter', 'err'); return; }
+    if(ALL_USERS[username]){ toast('⚠️ Username "' + username + '" sudah dipakai!', 'err'); return; }
   }
-
-  const existingWithSameId = Object.entries(ALL_USERS).find(
-    ([u, d]) => d.teacherId === teacherId && u !== username
-  );
-  if(existingWithSameId){
-    toast('⚠️ Teacher ID "' + teacherId + '" sudah dipakai oleh "' + existingWithSameId[0] + '"!', 'err');
-    return;
-  }
-
-  const payload = {
-    password, role: 'guru', teacherId, nama, nip: nip || '-', updatedAt: Date.now()
-  };
-  if(!_editingUsername) payload.createdAt = Date.now();
 
   try {
     $('#accSaveBtn').textContent = '⏳ Menyimpan...';
     $('#accSaveBtn').disabled = true;
+    
+    let teacherId = '';
+
+    if(!_editingUsername) {
+      // 1. DAFTARKAN KE FIREBASE AUTHENTICATION
+      const email = username + '@jabalrahmah.local';
+      const authRes = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + FB_API_KEY, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ email, password, returnSecureToken: true })
+      });
+      const authData = await authRes.json();
+      
+      if(!authRes.ok) {
+        const errCode = authData?.error?.message || 'AUTH_ERROR';
+        if(errCode === 'EMAIL_EXISTS') throw new Error('Username ini sudah terdaftar di sistem Auth.');
+        throw new Error('Gagal buat Auth: ' + errCode);
+      }
+      
+      teacherId = authData.localId; // UID Asli dari Firebase Auth
+    } else {
+      // Jika Edit, ambil teacherId lama
+      const oldData = ALL_USERS[_editingUsername];
+      teacherId = oldData.teacherId || oldData.uid;
+      if(!teacherId) throw new Error('Data UID lama tidak ditemukan.');
+    }
+
+    // 2. SIMPAN PROFIL KE REALTIME DATABASE
+    const payload = {
+      role: 'guru',
+      teacherId: teacherId,
+      uid: teacherId, // Penting: pastikan UID sinkron
+      nama: nama,
+      nip: nip || '-',
+      updatedAt: Date.now()
+    };
+    
+    if(!_editingUsername) {
+      payload.password = password; // Disimpan untuk referensi admin
+      payload.createdAt = Date.now();
+    }
+
     const res = await authFetch('/instrumen/users/' + encodeURIComponent(username) + '.json', {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
+    
     if(!res.ok) throw new Error('HTTP ' + res.status);
-    toast('✓ Akun "' + username + '" tersimpan. Guru bisa login sekarang.', 'ok');
+    
+    toast('✓ Akun "' + username + '" berhasil dibuat & terhubung ke Auth.', 'ok');
     closeAccountModal();
     await reloadAccounts();
   } catch(err){
+    console.error(err);
     toast('✗ Gagal menyimpan: ' + err.message, 'err');
   } finally {
     $('#accSaveBtn').textContent = '💾 Simpan Akun';
@@ -2508,7 +2538,7 @@ async function deleteAccount(username){
     'Hapus akun guru ini?\n\n' +
     '👤 Username: ' + username + '\n' +
     '👤 Nama: ' + (data.nama || '-') + '\n' +
-    '🔑 Teacher ID: ' + (data.teacherId || '-') + '\n\n' +
+    '🔑 UID Firebase: ' + (data.uid || data.teacherId || '-') + '\n\n' +
     '⚠️ Akun login akan dihapus.\n' +
     'Data nilai (di /teachers/) tetap tersimpan.\n' +
     'Guru tidak akan bisa login lagi.\n\n' +
