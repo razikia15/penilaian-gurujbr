@@ -10,14 +10,6 @@
         crossorigin="anonymous"
         integrity=""
         onerror="window.__CHARTJS_FAILED__=true"></script>
-<!--
-  SheetJS sekarang dimuat LAZY saat Ekspor/Impor Excel (lihat loadSheetJS() di bawah).
-  Untuk mengaktifkan SRI (Subresource Integrity) sebelum deploy produksi:
-    1. Unduh file:  curl -s -o xlsx.js https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js
-    2. Hitung hash: openssl dgst -sha384 -binary xlsx.js | openssl base64 -A
-    3. Isi CDN_CONFIG.SHEETJS_SRI (dan CHARTJS_SRI di tag ini) dengan "sha384-<hasil>".
-  Selama integrity="" (kosong), SRI TIDAK diterapkan — aplikasi tetap berjalan.
--->
 
 <style>
   :root{
@@ -32,40 +24,18 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--gray-50);color:var(--gray-800);font-size:14px;line-height:1.5}
 
-  /* ===== SVG ICON FIX ===== */
   svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
   .kpi .ico svg { width: 22px; height: 22px; }
   .todo .t-ico svg { width: 18px; height: 18px; }
 
-  /* ===== APP HEADER ===== */
   .app-header{position:relative;background:#fff}
-  .top-bar{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:10px 24px;background:#fff;
-    border-bottom:1px solid var(--gray-200);
-    box-shadow:0 2px 10px rgba(0,0,0,.02);
-    gap:14px;flex-wrap:wrap;
-  }
-  .breadcrumb{
-    font-size:13px;color:var(--gray-600);font-weight:600;
-    display:flex;align-items:center;gap:10px;
-  }
+  .top-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 24px;background:#fff;border-bottom:1px solid var(--gray-200);box-shadow:0 2px 10px rgba(0,0,0,.02);gap:14px;flex-wrap:wrap;}
+  .breadcrumb{font-size:13px;color:var(--gray-600);font-weight:600;display:flex;align-items:center;gap:10px;}
   .breadcrumb img{width:42px;height:42px;object-fit:contain;border-radius:6px}
-  .top-actions{
-    display:flex;align-items:center;gap:8px;
-    flex-wrap:wrap;margin-left:auto;
-  }
+  .top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto;}
 
-  /* Status Badges */
-  .status-badge{
-    display:inline-flex;align-items:center;gap:6px;
-    padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;
-    transition:all .25s ease;border:1px solid transparent;
-  }
-  .status-badge .dot{
-    width:8px;height:8px;border-radius:50%;flex-shrink:0;
-    display:inline-block;
-  }
+  .status-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;transition:all .25s ease;border:1px solid transparent;}
+  .status-badge .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
   .status-badge.online{background:#d1fae5;color:#065f46;border-color:#a7f3d0}
   .status-badge.online .dot{background:#059669;box-shadow:0 0 0 3px rgba(5,150,105,.2)}
   .status-badge.offline{background:#fef3c7;color:#78350f;border-color:#fde68a}
@@ -76,71 +46,26 @@
   .status-badge.pending{background:#fef3c7;color:#78350f;border-color:#fde68a}
   .status-badge svg{width:14px;height:14px;flex-shrink:0}
 
-  /* Version Chip */
-  .version-chip{
-    display:inline-flex;align-items:center;gap:5px;
-    padding:6px 12px;border-radius:20px;
-    background:#f1f5f9;color:#475569;
-    font-size:12px;font-weight:700;
-    border:1px solid var(--gray-200);
-    cursor:pointer;transition:.15s;font-family:inherit;
-  }
+  .version-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;background:#f1f5f9;color:#475569;font-size:12px;font-weight:700;border:1px solid var(--gray-200);cursor:pointer;transition:.15s;font-family:inherit;}
   .version-chip:hover{background:#e2e8f0;color:#1e3a8a}
 
-  /* Icon Buttons */
-  .icon-btn{
-    width:38px;height:38px;
-    display:inline-flex;align-items:center;justify-content:center;
-    border-radius:10px;background:#f8fafc;color:#475569;
-    border:1px solid var(--gray-200);
-    cursor:pointer;transition:.15s;font-family:inherit;
-    font-size:16px;flex-shrink:0;
-  }
+  .icon-btn{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;background:#f8fafc;color:#475569;border:1px solid var(--gray-200);cursor:pointer;transition:.15s;font-family:inherit;font-size:16px;flex-shrink:0;}
   .icon-btn:hover{background:#eff6ff;color:#1e3a8a;border-color:#bfdbfe;transform:translateY(-1px)}
   .icon-btn:active{transform:scale(.95)}
   .icon-btn.danger:hover{background:#fee2e2;color:#991b1b;border-color:#fecaca}
   .icon-btn svg{width:18px;height:18px}
 
-  /* Dropdown Menu */
   .dropdown-wrap{position:relative}
-  .dropdown-menu{
-    position:absolute;top:calc(100% + 8px);right:0;
-    min-width:200px;background:#fff;
-    border:1px solid var(--gray-200);border-radius:12px;
-    box-shadow:0 10px 40px rgba(0,0,0,.15);
-    padding:6px;z-index:1000;
-    opacity:0;visibility:hidden;transform:translateY(-6px);
-    transition:.18s ease;
-  }
+  .dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:200px;background:#fff;border:1px solid var(--gray-200);border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.15);padding:6px;z-index:1000;opacity:0;visibility:hidden;transform:translateY(-6px);transition:.18s ease;}
   .dropdown-menu.open{opacity:1;visibility:visible;transform:translateY(0)}
-  .dropdown-item{
-    display:flex;align-items:center;gap:10px;
-    padding:10px 12px;border-radius:8px;
-    font-size:13px;font-weight:600;color:#334155;
-    cursor:pointer;transition:.12s;border:none;background:none;
-    width:100%;text-align:left;font-family:inherit;
-  }
+  .dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;font-weight:600;color:#334155;cursor:pointer;transition:.12s;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
   .dropdown-item:hover{background:#eff6ff;color:#1e3a8a}
   .dropdown-item.danger:hover{background:#fee2e2;color:#991b1b}
   .dropdown-item svg{width:16px;height:16px;flex-shrink:0}
   .dropdown-divider{height:1px;background:var(--gray-200);margin:4px 8px}
 
-  /* ===== HERO SECTION ===== */
-  .hero-section{
-    position:relative;min-height:200px;
-    display:flex;align-items:center;
-    padding:25px 20px;
-    background-image:url('foto1.jpg');
-    background-size:cover;background-position:center;
-    border-radius:0 0 24px 24px;
-    margin:0 16px;
-    box-shadow:0 4px 12px rgba(0,0,0,.15);
-  }
-  .hero-overlay{
-    position:absolute;inset:0;
-    background:linear-gradient(90deg,rgba(13,92,46,.95) 0%,rgba(13,92,46,.65) 50%,rgba(0,0,0,.1) 100%);
-    border-radius:0 0 24px 24px;
-  }
+  .hero-section{position:relative;min-height:200px;display:flex;align-items:center;padding:25px 20px;background-image:url('foto1.jpg');background-size:cover;background-position:center;border-radius:0 0 24px 24px;margin:0 16px;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+  .hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,92,46,.95) 0%,rgba(13,92,46,.65) 50%,rgba(0,0,0,.1) 100%);border-radius:0 0 24px 24px;}
   .hero-content{position:relative;z-index:1;max-width:800px;color:#fff;animation:fadeIn .6s ease-out}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   .hero-content h1{font-size:32px;font-weight:800;margin-bottom:4px;text-shadow:0 2px 4px rgba(0,0,0,.3);letter-spacing:-.5px}
@@ -148,63 +73,26 @@
   .hero-content p{font-size:14px;opacity:.9;margin-bottom:24px;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.4)}
   .hero-actions{display:flex;gap:10px;flex-wrap:wrap}
 
-  /* ===== TABS NAVIGATION ===== */
-  nav.tabs{
-    background:#fff; border-bottom:1px solid var(--gray-200);
-    display:flex; align-items:center; justify-content:space-between;
-    flex-wrap: nowrap; /* ⭐ PENTING: Mencegah menu turun ke bawah */
-    padding:0; 
-    position:sticky; top:0; z-index:99;
-    box-shadow:0 4px 12px rgba(0,0,0,.05);
-    /* overflow: hidden;  <--- HAPUS ATAU JADIKAN KOMENTAR */
-  }
-
-  .tabs-scroll {
-    display: flex;
-    gap: 2px;
-    padding-left: 16px;
-    overflow-x: auto; /* ⭐ Mengaktifkan scroll kiri-kanan */
-    flex: 1;
-    white-space: nowrap;
-  }
-
-  /* ⭐ Memunculkan dan mempercantik scrollbar agar terlihat */
-  .tabs-scroll::-webkit-scrollbar {
-    height: 5px; 
-  }
-  .tabs-scroll::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  .tabs-scroll::-webkit-scrollbar-thumb {
-    background: var(--gray-400);
-    border-radius: 10px;
-  }
-  .tabs-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--green-500);
-  }
-  
-  .tabs-scroll button{
-    background:none;border:none;padding:14px 16px;
-    font-size:12.5px;font-weight:600;color:var(--gray-600);
-    cursor:pointer;border-bottom:3px solid transparent;
-    transition:.15s;white-space:nowrap;font-family:inherit;
-    display:flex;align-items:center;gap:5px;
-    flex-shrink: 0; /* ⭐ PENTING: Mencegah teks tombol terlipat/gepeng */
-  }
+  nav.tabs{background:#fff; border-bottom:1px solid var(--gray-200);display:flex; align-items:center; justify-content:space-between;flex-wrap: nowrap;padding:0; position:sticky; top:0; z-index:99;box-shadow:0 4px 12px rgba(0,0,0,.05);}
+  .tabs-scroll {display: flex;gap: 2px;padding-left: 16px;overflow-x: auto;flex: 1;white-space: nowrap;}
+  .tabs-scroll::-webkit-scrollbar {height: 5px;}
+  .tabs-scroll::-webkit-scrollbar-track {background: #f1f1f1;}
+  .tabs-scroll::-webkit-scrollbar-thumb {background: var(--gray-400);border-radius: 10px;}
+  .tabs-scroll::-webkit-scrollbar-thumb:hover {background: var(--green-500);}
+  .tabs-scroll button{background:none;border:none;padding:14px 16px;font-size:12.5px;font-weight:600;color:var(--gray-600);cursor:pointer;border-bottom:3px solid transparent;transition:.15s;white-space:nowrap;font-family:inherit;display:flex;align-items:center;gap:5px;flex-shrink: 0;}
   .tabs-scroll button:hover{color:var(--green-700);background:var(--green-50)}
   .tabs-scroll button.active{color:var(--green-700);border-bottom-color:var(--green-700)}
 
   main{padding:24px;max-width:100%;margin:0}
-  
+
   .tab-panel{display:none;animation:fade .2s}
   .tab-panel.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-  
+
   .card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:18px;border:1px solid var(--gray-200)}
   .card-title{font-size:14.5px;font-weight:700;color:var(--green-900);margin-bottom:16px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:2px solid var(--green-100)}
   .card-title .badge{font-size:10.5px;font-weight:600;background:var(--green-100);color:var(--green-900);padding:3px 9px;border-radius:20px;margin-left:auto}
 
-  /* ===== DASHBOARD SPECIFIC STYLES ===== */
   .grid-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
   .grid-2{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;margin-bottom:24px}
 
@@ -218,7 +106,7 @@
   .kpi .lbl{font-size:12px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px}
   .kpi .val{font-size:28px;font-weight:800;color:var(--green-900);line-height:1.1}
   .kpi .trend{font-size:12px;font-weight:600;margin-top:2px}
-  
+
   .kpi-details{background:var(--gray-50);border-radius:8px;padding:10px;margin-top:auto;border:1px dashed var(--gray-200)}
   .kpi-details-title{font-size:10.5px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
   .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -248,13 +136,13 @@
   .todo .t-body b{display:block;font-size:13.5px;color:var(--gray-800)}
   .todo .t-body span{font-size:12px;color:var(--gray-600)}
   .todo .go{color:var(--gray-400)}
-  
+
   .chart-wrap{width:100%}
   .chart-wrap svg{width:100%;height:auto;display:block}
   .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--gray-600);margin-top:12px;justify-content:center}
   .legend span{display:inline-flex;align-items:center;gap:6px}
   .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
-  
+
   .donut-box{display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center;height:100%}
   .donut{position:relative;width:160px;height:160px}
   .donut svg{width:100%;height:100%;transform:rotate(-90deg)}
@@ -265,7 +153,6 @@
   .donut-legend div{display:flex;align-items:center;gap:8px}
   .donut-legend i{width:14px;height:14px;border-radius:4px}
   .donut-legend b{margin-left:auto;padding-left:20px;font-size:14px}
-  /* ============================================================ */
 
   .grid-2-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
   .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
@@ -383,7 +270,7 @@
   #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green-900);color:#fff;padding:12px 22px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:.3s;z-index:9999;opacity:0;pointer-events:none;max-width:90%}
   #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   #toast.err{background:var(--red)}
-  
+
   @media(max-width:1100px){
     .grid-kpi{grid-template-columns:repeat(2,1fr)}
     .grid-2{grid-template-columns:1fr}
@@ -411,7 +298,6 @@
     body{background:#fff}
   }
 
-  /* Changelog Modal */
   .changelog-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
   .changelog-modal.show{display:flex}
   .changelog-box{background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:changelogFade .25s ease}
@@ -429,131 +315,38 @@
   .changelog-item ul li{margin-bottom:3px}
   .changelog-badge{font-size:9.5px;background:#dbeafe;color:#1e40af;padding:2px 7px;border-radius:10px;font-weight:700}
   .changelog-empty{text-align:center;padding:24px;color:#9ca3af;font-size:12.5px}
-  
-  /* ===== CLASS SWITCHER STYLES (LEBIH RAMPING) ===== */
-  .class-switcher-wrap {
-    position: relative;
-    padding-right: 16px;
-    padding-left: 10px;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0; /* ⭐ Memastikan tombol kelas tetap di kanan */
-    z-index: 100;
-  }
 
-  .cs-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Dikurangi dari 10px */
-    background: var(--green-50);
-    border: 1.5px solid var(--green-300); /* Lebih tipis */
-    border-radius: 20px;
-    padding: 4px 10px 4px 4px; /* Padding dikurangi */
-    cursor: pointer;
-    transition: .2s;
-    font-family: inherit;
-  }
+  .class-switcher-wrap {position: relative;padding-right: 16px;padding-left: 10px;background: #fff;display: flex;align-items: center;flex-shrink: 0;z-index: 100;}
+  .cs-btn {display: flex;align-items: center;gap: 8px;background: var(--green-50);border: 1.5px solid var(--green-300);border-radius: 20px;padding: 4px 10px 4px 4px;cursor: pointer;transition: .2s;font-family: inherit;}
   .cs-btn:hover { background: #fff; border-color: var(--green-500); }
-
-  .cs-badge {
-    background: var(--green-700);
-    color: #fff;
-    font-weight: 800;
-    font-size: 12px; /* Dikecilkan */
-    padding: 4px 10px; /* Dikecilkan */
-    border-radius: 14px;
-    letter-spacing: 0.5px;
-  }
-
+  .cs-badge {background: var(--green-700);color: #fff;font-weight: 800;font-size: 12px;padding: 4px 10px;border-radius: 14px;letter-spacing: 0.5px;}
   .cs-info { text-align: left; line-height: 1.2; }
   .cs-mapel { font-size: 11.5px; font-weight: 800; color: var(--green-900); }
   .cs-semester { font-size: 9.5px; font-weight: 600; color: var(--gray-600); }
-  
   .cs-arrow { font-size: 8px; color: var(--green-700); margin-left: 2px; transition: transform 0.2s; }
   .cs-btn.open .cs-arrow { transform: rotate(180deg); }
-
-  .cs-dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    right: 15px;
-    width: 200px; /* Lebar dikurangi dari 260px */
-    background: #fff;
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.12);
-    padding: 6px; /* Padding dikecilkan */
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-6px);
-    transition: .2s;
-    z-index: 999;
-  }
-  .cs-dropdown.open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-
-  .cs-dropdown-header {
-    font-size: 9.5px;
-    font-weight: 800;
-    color: var(--gray-400);
-    padding: 6px 8px;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--gray-100);
-    margin-bottom: 2px;
-  }
-
+  .cs-dropdown {position: absolute;top: calc(100% + 6px);right: 15px;width: 200px;background: #fff;border: 1px solid var(--gray-200);border-radius: 10px;box-shadow: 0 8px 24px rgba(0,0,0,.12);padding: 6px;opacity: 0;visibility: hidden;transform: translateY(-6px);transition: .2s;z-index: 999;}
+  .cs-dropdown.open {opacity: 1;visibility: visible;transform: translateY(0);}
+  .cs-dropdown-header {font-size: 9.5px;font-weight: 800;color: var(--gray-400);padding: 6px 8px;letter-spacing: 0.5px;border-bottom: 1px solid var(--gray-100);margin-bottom: 2px;}
   .cs-list { display: flex; flex-direction: column; gap: 2px; max-height: 250px; overflow-y: auto; }
-  
-  .cs-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 7px 10px; /* Dikecilkan */
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px; /* Dikecilkan */
-    font-weight: 600;
-    color: var(--gray-800);
-    transition: .15s;
-  }
+  .cs-item {display: flex;justify-content: space-between;align-items: center;padding: 7px 10px;border-radius: 6px;cursor: pointer;font-size: 12px;font-weight: 600;color: var(--gray-800);transition: .15s;}
   .cs-item:hover { background: var(--gray-50); }
   .cs-item.active { background: var(--green-100); color: var(--green-900); }
   .cs-item .cs-count { font-size: 10.5px; color: var(--gray-400); font-weight: 500; }
   .cs-item.active .cs-count { color: var(--green-700); font-weight: 700; }
 
-/* Responsif untuk layar kecil / split screen */
-
-@media (max-width: 1300px) { /* Dinaikkan ke 1300px agar aman untuk layar lebar yang di-split */
-  .cs-info { display: none; } 
-  .cs-arrow { display: none; } 
-  .cs-btn { 
-    padding: 0; 
-    border: none; 
-    background: transparent;
-    gap: 0;
-  }
+@media (max-width: 1300px) {
+  .cs-info { display: none; }
+  .cs-arrow { display: none; }
+  .cs-btn { padding: 0; border: none; background: transparent; gap: 0; }
   .cs-btn:hover { background: transparent; }
-  .cs-badge {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%; /* Membuat badge menjadi bulat sempurna */
-    font-size: 13px;
-    padding: 0;
-    border: 2px solid var(--green-500); /* Tambahan border agar terlihat seperti tombol */
-  }
+  .cs-badge {width: 36px;height: 36px;display: flex;align-items: center;justify-content: center;border-radius: 50%;font-size: 13px;padding: 0;border: 2px solid var(--green-500);}
 }
 
 </style>
 </head>
 <body>
 
-<!-- SVG Sprite -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
@@ -566,7 +359,6 @@
 </svg>
 
 <div class="app-header">
-  <!-- Top Bar -->
   <div class="top-bar">
     <div class="breadcrumb">
       <img src="logo1.png" alt="Logo Jabal Rahmah">
@@ -581,7 +373,7 @@
       <button class="version-chip" onclick="showChangelog()" title="Riwayat update"><span id="appVersion">v1.1.1</span></button>
       <button class="icon-btn" onclick="firebaseLoad()" title="Muat ulang data dari Firebase"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
       <button class="icon-btn danger" onclick="logoutGuru()" title="Logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
-      
+
       <div class="dropdown-wrap">
         <button class="icon-btn" onclick="toggleDropdown(event)" title="Menu lainnya" id="moreBtn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
         <div class="dropdown-menu" id="moreMenu">
@@ -598,7 +390,6 @@
     </div>
   </div>
 
-  <!-- Hero Section -->
   <div class="hero-section">
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -611,9 +402,7 @@
     </div>
   </div>
 
-  <!-- Navigation Tabs -->
   <nav class="tabs">
-    <!-- Bungkus tombol tab dengan div scroll -->
     <div class="tabs-scroll">
       <button class="active" data-tab="dashboard">🏠 Dashboard</button>
       <button data-tab="identitas">📋 Identitas &amp; Siswa</button>
@@ -626,7 +415,6 @@
       <button data-tab="akhir">🏆 Nilai Akhir</button>
     </div>
 
-    <!-- Class Switcher (Sekarang berada di luar area scroll) -->
     <div class="class-switcher-wrap" id="classSwitcherWrap">
       <button class="cs-btn" id="csBtn" onclick="toggleClassSwitcher(event)">
         <div class="cs-badge" id="csBadge">X</div>
@@ -636,7 +424,7 @@
         </div>
         <div class="cs-arrow">▼</div>
       </button>
-      
+
       <div class="cs-dropdown" id="csDropdown">
         <div class="cs-dropdown-header">PILIH KELAS</div>
         <div class="cs-list" id="csList"></div>
@@ -649,7 +437,6 @@
 
 <main>
 
-<!-- ============ TAB: DASHBOARD ============ -->
 <section class="tab-panel active" id="tab-dashboard">
   <div id="dashContent">
     <section class="grid-kpi" id="dashKpiContainer"></section>
@@ -681,7 +468,7 @@
       </div>
     </section>
 
-        <section class="card">
+    <section class="card">
       <div class="card-h" style="border:none;padding:0;margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
         <div style="display:flex; align-items:center; gap:8px;">
           <h2 style="font-size:15px;font-weight:800;color:var(--green-900)">Rekap nilai siswa</h2>
@@ -694,11 +481,11 @@
       <div class="tbl-wrap">
         <table>
           <thead><tr>
-			<th style="width: 50px;">No</th>
-			<th style="min-width: 180px;">Nama Siswa</th>
-			<th>Kelas</th>
-			<th>Sikap</th><th>S1</th><th>S2</th><th>S3</th><th>UTS</th><th>UAS</th><th>Nilai Akhir</th><th>Peringkat</th><th>Status</th>
-			</tr></thead>
+            <th style="width: 50px;">No</th>
+            <th style="min-width: 180px;">Nama Siswa</th>
+            <th>Kelas</th>
+            <th>Sikap</th><th>S1</th><th>S2</th><th>S3</th><th>UTS</th><th>UAS</th><th>Nilai Akhir</th><th>Peringkat</th><th>Status</th>
+          </tr></thead>
           <tbody id="dashRekapBody"></tbody>
         </table>
       </div>
@@ -706,7 +493,6 @@
   </div>
 </section>
 
-<!-- ============ TAB: IDENTITAS & SISWA ============ -->
 <section class="tab-panel" id="tab-identitas">
   <div class="grid-2-form">
     <div class="card">
@@ -797,7 +583,6 @@
   </div>
 </section>
 
-<!-- ============ TAB: SUMATIF ============ -->
 <section class="tab-panel" id="tab-sumatif">
   <div class="toolbar no-print">
     <label>Pilih Sumatif:</label>
@@ -853,7 +638,6 @@
   </div>
 </section>
 
-<!-- ============ TAB: ANALISIS UH ============ -->
 <section class="tab-panel" id="tab-uh">
   <div class="toolbar no-print">
     <label>Pilih UH:</label>
@@ -914,7 +698,6 @@
   </div>
 </section>
 
-<!-- ============ TAB: UH MANUAL ============ -->
 <section class="tab-panel" id="tab-uhmanual">
   <div class="info">
     <b>Input UH Manual</b> — masukkan nilai UH (0–100) langsung per siswa. Nilai ini akan <b>menggantikan</b> nilai dari Analisis UH.
@@ -933,7 +716,6 @@
   </div>
 </section>
 
-<!-- ============ TAB: REMEDIAL ============ -->
 <section class="tab-panel" id="tab-remedial">
   <div class="toolbar no-print">
     <label>Pilih Sumber Remedial (UH):</label>
@@ -973,7 +755,6 @@
   </div>
 </section>
 
-<!-- ============ TAB: UTS ============ -->
 <section class="tab-panel" id="tab-uts">
   <div class="info">
     <b>Nilai Akhir UTS:</b> Jika perbaikan &gt; KKM → dibatasi KKM. Jika perbaikan ≤ KKM → ambil tertinggi antara nilai awal &amp; perbaikan.
@@ -1005,7 +786,6 @@
   </div>
 </section>
 
-<!-- ============ TAB: UAS ============ -->
 <section class="tab-panel" id="tab-uas">
   <div class="info">
     <b>Nilai Akhir UAS:</b> Jika perbaikan &gt; KKM → dibatasi KKM. Jika perbaikan ≤ KKM → ambil tertinggi antara nilai awal &amp; perbaikan.
@@ -1037,7 +817,6 @@
   </div>
 </section>
 
-<!-- ============ TAB: NILAI AKHIR ============ -->
 <section class="tab-panel" id="tab-akhir">
   <div class="toolbar no-print">
     <button class="btn btn-primary btn-sm" id="btnToggleAkhirCfg">⚙️ Kelola Bobot Nilai Akhir</button>
@@ -1093,7 +872,6 @@
 
 </main>
 
-<!-- MODAL SYNC -->
 <div class="modal-overlay" id="syncModal">
   <div class="modal">
     <div class="modal-header">
@@ -1122,7 +900,6 @@
   </div>
 </div>
 
-<!-- MODAL CHANGELOG -->
 <div class="changelog-modal" id="changelogModal" onclick="if(event.target===this)closeChangelog()">
   <div class="changelog-box">
     <div class="changelog-header">
@@ -1133,7 +910,6 @@
   </div>
 </div>
 
-<!-- MODAL KONFLIK CLOUD vs LOKAL -->
 <div class="modal-overlay" id="cloudConflictModal">
   <div class="modal" style="max-width:480px">
     <div class="modal-header">
@@ -1173,6 +949,7 @@ const LS_MADRASAH = 'jabalMadrasahList';
 const LS_KEPALA_LIST = 'jabalKepalaList';
 const LS_WALI_LIST = 'jabalWaliList';
 const LS_KEPALA_NIP_MAP = 'jabalKepalaNipMap';
+const LS_DIRTY = 'jabal_dirty';
 const DEFAULT_FB_URL = 'https://instrumen-jabal-default-rtdb.asia-southeast1.firebasedatabase.app';
 const DEFAULT_MADRASAH_LIST = ['MAS Jabal Rahmah', 'MTs Jabal Rahmah'];
 const DEFAULT_KEPALA_LIST = ['Yusmawati, S.Ag', 'Rita Ernawati, S.Pd.I'];
@@ -1197,27 +974,17 @@ const DEFAULT_KEPALA_NIP_MAP = {
   'Rita Ernawati, S.Pd.I': ''
 };
 
-/* ============================================================
-   CDN CONFIG (SRI opsional)
-   ============================================================ */
 const CDN_CONFIG = {
   CHARTJS_URL: 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
-  CHARTJS_SRI: '', // sha384-... (isi untuk mengaktifkan SRI pada tag eager)
+  CHARTJS_SRI: '',
   SHEETJS_URL: 'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js',
-  SHEETJS_SRI: ''  // sha384-... (isi untuk mengaktifkan SRI pada lazy load)
+  SHEETJS_SRI: ''
 };
 
 const LS_BACKUP = 'jabalRahmah_master_v10_backup';
 
 /* ============================================================
-   SESSION CHECK
-   ============================================================ */
-/* ============================================================
-   AUTH — helper sesi, refresh, logout paksa
-   ============================================================ */
-
-/* ============================================================
-   ENCODER KEY FIREBASE (Mencegah Error HTTP 400)
+   ENCODER KEY FIREBASE
    ============================================================ */
 function encodeFirebaseKeys(obj) {
   if (Array.isArray(obj)) return obj.map(encodeFirebaseKeys);
@@ -1229,7 +996,7 @@ function encodeFirebaseKeys(obj) {
           const map = {'.': '_dot_', '#': '_hash_', '$': '_dollar_', '[': '_lb_', ']': '_rb_', '/': '_slash_'};
           return map[match];
         });
-        if (safeKey === '') continue; // Buang key kosong
+        if (safeKey === '') continue;
         res[safeKey] = encodeFirebaseKeys(obj[key]);
       }
     }
@@ -1253,6 +1020,9 @@ function decodeFirebaseKeys(obj) {
   return obj;
 }
 
+/* ============================================================
+   AUTH — helper sesi, refresh, logout paksa
+   ============================================================ */
 function readAuthSession(){
   try{
     return JSON.parse(localStorage.getItem(LS_AUTH) || sessionStorage.getItem(LS_AUTH) || 'null');
@@ -1306,83 +1076,68 @@ async function ensureValidToken(){
 }
 
 /* ============================================================
-   SESSION CHECK — verifikasi token, wajib uid == teacherId
+   SESSION CHECK — verifikasi token ke Firebase
    ============================================================ */
-/* ============================================================
-   SESSION CHECK — Verifikasi Token ke Firebase (Anti Palsu)
-   ============================================================ */
-(async function checkSessionVerified(){
+window.__SESSION_READY__ = (async function checkSessionVerified(){
+  document.body.style.display = 'none';   // ⭐ sembunyikan segera, hindari kedip
+
   const authSess = readAuthSession();
   const sess = (() => {
     try{ return JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null'); }
     catch(e){ return null; }
   })();
 
-  // 1) Pastikan ada file sesi
-  if(!authSess || !sess || sess.role !== 'guru'){
-    document.body.style.display = 'none';
-    setTimeout(()=>{ alert('Anda harus login sebagai Guru terlebih dahulu.'); window.location.href = 'index.html'; }, 100);
-    return;
-  }
-
-  // 2) Pastikan UID sama
-  if(!authSess.uid || sess.teacherId !== authSess.uid){
+  function fail(msg){
     clearAllSessions();
     document.body.style.display = 'none';
-    setTimeout(()=>{ alert('Sesi lama terdeteksi. Silakan login ulang.'); window.location.href = 'index.html'; }, 100);
-    return;
+    setTimeout(()=>{ alert(msg); window.location.href = 'index.html'; }, 100);
+    return false;
   }
 
-  // 3) VERIFIKASI KE FIREBASE: Apakah token ini valid/aktif?
+  if(!authSess || !sess || sess.role !== 'guru') return fail('Anda harus login sebagai Guru terlebih dahulu.');
+  if(!authSess.uid || sess.teacherId !== authSess.uid) return fail('Sesi lama terdeteksi. Silakan login ulang.');
+
+  // ⭐ REFRESH dulu, baru verifikasi. Jangan pakai idToken lama.
   try {
-    const tokenToTest = authSess.idToken;
-    const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAFbIJl8K24gXB3E5VLTWE-LJeXGou8zx8', {
+    const tk = await ensureValidToken();
+    if(!tk) return false;   // forceLogout sudah alert + redirect
+  }
+  catch(e){ return fail('Sesi kedaluwarsa. Silakan login ulang.'); }
+
+  const freshAuth = readAuthSession();
+  if(!freshAuth || !freshAuth.idToken) return false;
+
+  try {
+    const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + FB_API_KEY, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ idToken: tokenToTest })
+      body: JSON.stringify({ idToken: freshAuth.idToken })
     });
-    if(!res.ok) throw new Error('Token kedaluwarsa atau tidak valid');
-  } catch (err) {
-    console.warn('Verifikasi token gagal:', err);
-    clearAllSessions();
-    document.body.style.display = 'none';
-    setTimeout(()=>{ alert('Sesi tidak valid atau kedaluwarsa. Silakan login ulang.'); window.location.href = 'index.html'; }, 100);
-    return;
+    if(!res.ok) throw new Error('invalid');
+  } catch(err){
+    return fail('Sesi tidak valid atau kedaluwarsa. Silakan login ulang.');
   }
 
-  // 4) Lolos verifikasi
-  window.__TEACHER_SESSION__ = { ...sess, uid: authSess.uid };
-  window.__AUTH__ = authSess;
+  window.__TEACHER_SESSION__ = { ...sess, uid: freshAuth.uid };
+  window.__AUTH__ = freshAuth;
 
-  // JIKA NAMA KOSONG, AMBIL DARI FIREBASE
   if (!window.__TEACHER_SESSION__.nama) {
     try {
       const fbBase = (master.fbUrl || DEFAULT_FB_URL).replace(/\/+$/,'');
-      const resName = await fetch(fbBase + '/instrumen/teachers/' + encodeURIComponent(authSess.uid) + '/nama.json?auth=' + authSess.idToken);
+      const resName = await fetch(fbBase + '/instrumen/teachers/' + encodeURIComponent(freshAuth.uid) + '/nama.json?auth=' + freshAuth.idToken);
       if (resName.ok) {
         const name = await resName.json();
         if (name) {
           window.__TEACHER_SESSION__.nama = name;
-          // Simpan ke session storage agar tidak fetch berulang kali
-          if (localStorage.getItem(LS_SESSION)) {
-              const s = JSON.parse(localStorage.getItem(LS_SESSION));
-              s.nama = name;
-              localStorage.setItem(LS_SESSION, JSON.stringify(s));
-          }
-          if (sessionStorage.getItem(LS_SESSION)) {
-              const s = JSON.parse(sessionStorage.getItem(LS_SESSION));
-              s.nama = name;
-              sessionStorage.setItem(LS_SESSION, JSON.stringify(s));
-          }
+          ['localStorage','sessionStorage'].forEach(st => {
+            const s = JSON.parse(window[st].getItem(LS_SESSION) || 'null');
+            if (s) { s.nama = name; window[st].setItem(LS_SESSION, JSON.stringify(s)); }
+          });
         }
       }
     } catch (e) { console.warn('Gagal ambil nama dari Firebase:', e); }
   }
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    const el = document.getElementById('greetingName');
-    if(el) el.textContent = window.__TEACHER_SESSION__.nama || 'Guru';
-  });
+  return true;
 })();
 
 function logoutGuru(){
@@ -1398,17 +1153,23 @@ async function authFetch(path, options = {}){
   const base = (master.fbUrl || DEFAULT_FB_URL).replace(/\/+$/,'');
   const sess = readAuthSession();
   if(!sess) throw new Error('NO_SESSION');
+
   let token = sess.idToken;
   const buildUrl = (tk) => base + path + (path.includes('?') ? '&' : '?') + 'auth=' + tk;
   let res = await fetch(buildUrl(token), options);
+
   if(res.status === 401 || res.status === 403){
-    try{ token = await refreshIdToken(); }
-    catch(e){ forceLogout('Sesi kedaluwarsa. Silakan login ulang.'); throw e; }
+    try { token = await refreshIdToken(); }
+    catch(e){
+      forceLogout('Sesi kedaluwarsa. Silakan login ulang.');
+      throw e;
+    }
     res = await fetch(buildUrl(token), options);
-  }
-  if(res.status === 401 || res.status === 403){
-    forceLogout('Akses ditolak (401/403). Periksa Rules atau login ulang.');
-    throw new Error('HTTP ' + res.status);
+
+    // Kalau SETELAH refresh masih 401/403 → hampir pasti Rules, JANGAN logout
+    if(res.status === 401 || res.status === 403){
+      throw new Error('Akses ditolak (' + res.status + '). Periksa Firebase Rules — bukan sesi.');
+    }
   }
   return res;
 }
@@ -1441,7 +1202,7 @@ function defaultClassState(kelas){
 
 let master = loadMaster();
 let state = master.classes[master.currentClass];
-let dashFilterKelas = 'all'; // <--- TAMBAHKAN BARIS INI
+let dashFilterKelas = 'all';
 let uidCounter = 0;
 
 let isInitialized = false;
@@ -1486,10 +1247,9 @@ function updateSyncBadge(status){
 }
 
 /* ============================================================
-   INJEKSI DATA CONTOH DARI EXCEL
+   INJEKSI DATA CONTOH
    ============================================================ */
 function injectSampleData(m) {
-  // --- KELAS X ---
   const kX = 'X';
   m.classes[kX].identitas = {
     madrasah:'MAS Jabal Rahmah', tahun:'2026/2027', kepala:'Rita Ernawati, S.Pd.I', nipKepala:'',
@@ -1536,7 +1296,6 @@ function injectSampleData(m) {
     m.classes[kX].uhManual[2][s.id] = sum2X[i].uh;
   });
 
-  // --- KELAS XII ---
   const kXII = 'XII';
   m.classes[kXII].identitas = {
     madrasah:'MAS Jabal Rahmah', tahun:'2026/2027', kepala:'Rita Ernawati, S.Pd.I', nipKepala:'',
@@ -1609,7 +1368,7 @@ function loadMaster(){
 
 function normalizeClass(c, kelasKey){
   if(!c || typeof c !== 'object') c = defaultClassState(kelasKey || 'XII');
-  
+
   if(!c.sumatif || typeof c.sumatif !== 'object') c.sumatif = {};
   if(!c.uh || typeof c.uh !== 'object') c.uh = {};
   if(!c.uhManual || typeof c.uhManual !== 'object') c.uhManual = {};
@@ -1625,7 +1384,7 @@ function normalizeClass(c, kelasKey){
   if(!c.config.bobotSumatif || typeof c.config.bobotSumatif !== 'object') c.config.bobotSumatif = { sikap:10, uh:50, tugas:40 };
   if(!c.config.bobotAkhir || typeof c.config.bobotAkhir !== 'object') c.config.bobotAkhir = { sumatif:30, uts:30, uas:40 };
   if(!c.config.uhConfig || typeof c.config.uhConfig !== 'object') c.config.uhConfig = {};
-  
+
   const kls = c.identitas.kelas || kelasKey;
   if(!c.identitas.wali && kls && WALI_KELAS_MAP[kls]) c.identitas.wali = WALI_KELAS_MAP[kls];
 
@@ -1703,16 +1462,20 @@ function saveLocalNow(){
   }
 }
 
-// Nama lama dipertahankan: tulis lokal segera (dipakai sebelum kirim ke Firebase)
 function saveLocalOnly(){ saveLocalNow(); }
 
-// Flush paksa — dipanggil sebelum tab ditutup/disembunyikan
 function flushLocalSave(){
   if(localSaveTimer){ clearTimeout(localSaveTimer); localSaveTimer = null; }
   saveLocalNow();
 }
 
+let __lastSerialized = JSON.stringify(master);
 function saveState(){
+  try {
+    const cur = JSON.stringify(master);
+    if(cur === __lastSerialized) return;   // ⭐ tidak ada perubahan nyata
+    __lastSerialized = cur;
+  } catch(e){}
   scheduleLocalSave();
   if(isInitialized){
     markUnsaved();
@@ -1734,27 +1497,25 @@ function uid(){ return 's' + (++uidCounter) + '_' + Date.now().toString(36); }
 
 function switchClass(kelas){
   if(kelas === master.currentClass || !CLASSES.includes(kelas)) return;
-  
+
   try {
     master.currentClass = kelas;
     state = master.classes[kelas];
-    
-    // PENGAMAN 1: Jika data kelas kosong/belum terbentuk, buat baru
+
     if (!state) {
       state = defaultClassState(kelas);
       master.classes[kelas] = state;
     } else {
-      // PENGAMAN 2: Validasi struktur data kelas agar tidak error (reading '1')
-      normalizeClass(state, kelas); 
+      normalizeClass(state, kelas);
     }
-    
+
     state.identitas.kelas = kelas;
     if(!state.identitas.wali && WALI_KELAS_MAP[kelas]) state.identitas.wali = WALI_KELAS_MAP[kelas];
-    
+
     saveState();
     bindIdentitasValues();
     refreshAll();
-    
+
     updateHeroInfo();
     updateClassSwitcherUI();
     toast('✓ Beralih ke kelas ' + kelas);
@@ -1765,15 +1526,14 @@ function switchClass(kelas){
 }
 
 /* ============================================================
-   CLASS SWITCHER (POPUP GANTI KELAS)
+   CLASS SWITCHER
    ============================================================ */
 function updateClassSwitcherUI() {
-  // PENGAMAN: Hentikan fungsi jika data state belum siap
   if (!state || !state.identitas) return;
 
   document.getElementById('csBadge').textContent = master.currentClass;
   document.getElementById('csMapel').textContent = state.identitas.mapel || 'Mata Pelajaran';
-  
+
   const sem = state.identitas.semester || 'Ganjil';
   const thn = state.identitas.tahun || '2026/2027';
   document.getElementById('csSemester').textContent = `${sem} • ${thn}`;
@@ -1781,23 +1541,23 @@ function updateClassSwitcherUI() {
   const listEl = document.getElementById('csList');
   if (!listEl) return;
   listEl.innerHTML = '';
-  
+
   CLASSES.forEach(k => {
     const cls = master.classes[k];
     const count = cls && cls.siswa ? cls.siswa.length : 0;
-    
+
     const item = document.createElement('div');
     item.className = 'cs-item' + (k === master.currentClass ? ' active' : '');
     item.innerHTML = `
       <span>Kelas ${k}</span>
       <span class="cs-count">${count} siswa</span>
     `;
-    
+
     item.addEventListener('click', () => {
-      switchClass(k); 
+      switchClass(k);
       closeClassSwitcher();
     });
-    
+
     listEl.appendChild(item);
   });
 }
@@ -1806,15 +1566,14 @@ function toggleClassSwitcher(e) {
   if (e) e.stopPropagation();
   const btn = document.getElementById('csBtn');
   const dd = document.getElementById('csDropdown');
-  
+
   const isOpen = dd.classList.contains('open');
   if (isOpen) {
     closeClassSwitcher();
   } else {
     btn.classList.add('open');
     dd.classList.add('open');
-    // Refresh list setiap kali dibuka untuk update jumlah siswa terbaru
-    updateClassSwitcherUI(); 
+    updateClassSwitcherUI();
   }
 }
 
@@ -1823,7 +1582,6 @@ function closeClassSwitcher() {
   document.getElementById('csDropdown')?.classList.remove('open');
 }
 
-// Klik di luar untuk menutup
 document.addEventListener('click', (e) => {
   const wrap = document.getElementById('classSwitcherWrap');
   if (wrap && !wrap.contains(e.target)) {
@@ -1894,11 +1652,6 @@ function showChartFallback(canvasId){
   if(!wrap || wrap.querySelector('.chart-fallback')) return;
   wrap.innerHTML = '<div class="chart-fallback" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:180px;color:var(--gray-400);font-size:12px;text-align:center;padding:20px;line-height:1.7;gap:4px">📊<br><b style="color:var(--gray-600)">Grafik tidak tersedia</b><br><span style="font-size:11px">Chart.js gagal dimuat (offline?). Periksa koneksi lalu muat ulang halaman.</span></div>';
 }
-
-/* ============================================================
-   MADRASAH LIST
-   ============================================================ */
-/* (kosong — fungsi getMadrasahList/saveMadrasahList ada di blok REFS di bawah) */
 
 /* ============================================================
    REFS: Daftar madrasah/kepala/wali/NIP — tersimpan di master.refs
@@ -1988,20 +1741,19 @@ function renderMadrasahDropdown(){
       });
       item.appendChild(del);
     }
-        item.addEventListener('click', ()=>{
+    item.addEventListener('click', ()=>{
       state.identitas.madrasah = name;
       const mappedKepala = MADRASAH_KEPALA_MAP[name];
       if(mappedKepala){
         state.identitas.kepala = mappedKepala;
-        // ... (kode bawaan biarkan saja) ...
       }
       saveState();
       renderMadrasahDropdown(); renderKepalaDropdown(); closeMadrasahDropdown();
       const elNip = $('#inp-nipKepala'); if(elNip) elNip.value = state.identitas.nipKepala ?? '';
-      
-      initDashFilter(); // <--- TAMBAHKAN INI
-      renderDashboard(); // <--- TAMBAHKAN INI
-      
+
+      initDashFilter();
+      renderDashboard();
+
       if(mappedKepala) toast('✓ Kepala Madrasah otomatis: ' + mappedKepala);
       else toast('ℹ️ Madrasah diganti. Silakan pilih kepala madrasah manual.');
     });
@@ -2045,10 +1797,6 @@ function initDashFilter() {
   }
   sel.value = dashFilterKelas;
 }
-
-/* ============================================================
-   KEPALA MADRASAH
-   ============================================================ */
 
 function renderKepalaDropdown(){
   const list = getKepalaList();
@@ -2128,10 +1876,6 @@ function renderKepalaDropdown(){
 function openKepalaDropdown(){ $('#kepalaBtn')?.classList.add('open'); $('#kepalaList')?.classList.add('open'); }
 function closeKepalaDropdown(){ $('#kepalaBtn')?.classList.remove('open'); $('#kepalaList')?.classList.remove('open'); }
 function toggleKepalaDropdown(){ $('#kepalaList')?.classList.contains('open') ? closeKepalaDropdown() : openKepalaDropdown(); }
-
-/* ============================================================
-   WALI KELAS
-   ============================================================ */
 
 function renderWaliDropdown(){
   const list = getWaliList();
@@ -2236,7 +1980,6 @@ function hitungNilaiAkhirUjian(d, KKM){
   const hasAwal = isFilled(d?.awal);
   const hasPerbaikan = isFilled(d?.perbaikan);
   if(!hasAwal && !hasPerbaikan) return 0;
-  // Jika awal sudah tuntas, perbaikan diabaikan
   if(hasAwal && awal >= KKM) return awal;
   if(hasPerbaikan){
     if(perbaikan > KKM) return KKM;
@@ -2296,26 +2039,22 @@ function getUHSource(siswa, k, cls){
   return 'kosong';
 }
 
-/* ============================================================
-   AUTO-FILL SESSION
-   ============================================================ */
 function autoFillFromSession(){
   const sess = window.__TEACHER_SESSION__ || {};
-  
-  // Ambil nama dari session. Jika kosong, coba ambil dari data kelas (state)
+
   let namaGuru = sess.nama;
   if (!namaGuru && state && state.identitas && state.identitas.guru) {
       namaGuru = state.identitas.guru;
   }
-  
-  if(!namaGuru) return; // Jika benar-benar tidak ada nama, hentikan proses
+
+  if(!namaGuru) return;
 
   const el = document.getElementById('greetingName');
   if(el) el.textContent = namaGuru;
-  
+
   Object.values(master.classes).forEach(cls=>{
     if(!cls.identitas) return;
-    cls.identitas.guru = namaGuru; // Gunakan namaGuru yang sudah divalidasi
+    cls.identitas.guru = namaGuru;
     const nipFromSess = sess.nipGuru || sess.nip || sess.username;
     if(nipFromSess) cls.identitas.nipGuru = nipFromSess;
     const kls = cls.identitas.kelas;
@@ -2344,18 +2083,18 @@ async function firebaseSave(silent = false){
   const sess = window.__TEACHER_SESSION__ || {};
   const teacherId = sess.uid;
   if(!teacherId || !sess.teacherId || sess.teacherId !== teacherId){
-    console.warn('[firebaseSave] UID sesi tidak konsisten — sinkronisasi dihentikan.', {teacherId, sessionTeacherId:sess.teacherId});
     updateSyncBadge('error');
-    if(!silent) toast('✗ UID akun tidak konsisten. Logout lalu login ulang dengan akun Firebase yang benar.', true);
+    if(!silent) toast('✗ UID akun tidak konsisten. Logout lalu login ulang.', true);
     return;
   }
-  window.__IS_SYNCING__ = true;
   if(!master.fbUrl){
     if(!silent) toast('⚠️ Isi URL Firebase dulu', true);
-    window.__IS_SYNCING__ = false; return;
+    return;
   }
-  const teacherName = sess.nama || 'Guru';
+
+  window.__IS_SYNCING__ = true;
   updateSyncBadge('syncing');
+
   let payload;
   try{
     payload = JSON.parse(JSON.stringify(master));
@@ -2364,36 +2103,43 @@ async function firebaseSave(silent = false){
     saveLocalOnly();
   }catch(err){
     console.error('Serialisasi gagal:', err);
-    if(!silent) toast('✗ Data tidak bisa diserialisasi: ' + err.message, true);
     updateSyncBadge('error');
     window.__IS_SYNCING__ = false;
+    if(!silent) toast('✗ Data tidak bisa diserialisasi: ' + err.message, true);
     return;
   }
+
   try{
-        const safePayload = encodeFirebaseKeys(payload); // <-- Tambahkan baris ini
-    
-    const res1 = await authFetch('/instrumen/personal/' + encodeURIComponent(teacherId) + '.json', {
-      method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(safePayload)
-    });
-    if(!res1.ok){ const txt = await res1.text().catch(()=>''); throw new Error('Personal HTTP ' + res1.status + ' ' + txt.slice(0,120)); }
-    
-    const profileUrl = '/instrumen/teachers/' + encodeURIComponent(teacherId) + '.json';
-    const oldProfileRes = await authFetch(profileUrl, {cache:'no-store'});
-    if(!oldProfileRes.ok) throw new Error('Gagal membaca profil guru (HTTP ' + oldProfileRes.status + ')');
-    const oldProfile = await oldProfileRes.json() || {};
-    // Metadata profil yang dikelola admin dipertahankan agar sesi guru yang masih lama
-    // tidak menimpa nama/NIP terbaru. UID selalu berasal dari Firebase Authentication.
-    const teacherPayload = {
-      ...oldProfile,
-      nama: oldProfile.nama || teacherName,
-      nip: oldProfile.nip || sess.nipGuru || sess.nip || '-',
-      teacherId, uid: teacherId, lastUpdate: payload.lastUpdate, master: safePayload
+    const safePayload = encodeFirebaseKeys(payload);
+    const teacherName = sess.nama || 'Guru';
+    const nip = sess.nipGuru || sess.nip || '-';
+
+    const updateBody = {
+      ['personal/' + teacherId]: safePayload,
+      ['teachers/' + teacherId + '/master']: safePayload,
+      ['teachers/' + teacherId + '/lastUpdate']: { '.sv': 'timestamp' },
+      ['teachers/' + teacherId + '/uid']: teacherId,
+      ['teachers/' + teacherId + '/teacherId']: teacherId,
+      ['teachers/' + teacherId + '/nama']: teacherName,
+      ['teachers/' + teacherId + '/nip']: nip
     };
-    const res2 = await authFetch(profileUrl, {
-      method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(teacherPayload)
+
+    const res = await authFetch('/instrumen.json', {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(updateBody)
     });
-    if(!res2.ok){ const txt = await res2.text().catch(()=>''); throw new Error('Teachers HTTP ' + res2.status + ' ' + txt.slice(0,120)); }
-    clearUnsaved();
+    if(!res.ok){
+      const txt = await res.text().catch(()=> '');
+      throw new Error('HTTP ' + res.status + ' ' + txt.slice(0, 120));
+    }
+
+    // ⭐ Jangan hapus flag dirty kalau masih ada perubahan yang tertunda
+    if(!pendingSave){
+      clearUnsaved();
+    } else {
+      updateSyncBadge('pending');
+    }
     if(!silent){ toast('✓ Terkirim sebagai ' + teacherName); closeSyncModal(); }
   }catch(err){
     console.error('Firebase save error:', err);
@@ -2416,8 +2162,7 @@ async function firebaseLoad(){
   try{
     const res = await authFetch('/instrumen/personal/' + encodeURIComponent(teacherId) + '.json', { cache:'no-store' });
     if(!res.ok) throw new Error('HTTP ' + res.status);
-    
-    // PERBAIKAN DI SINI: Gunakan loadedRaw lalu decode
+
     const loadedRaw = await res.json();
     const loaded = decodeFirebaseKeys(loadedRaw);
 
@@ -2447,9 +2192,6 @@ async function firebaseLoad(){
   }
 }
 
-/* ============================================================
-   BACKUP + KONFLIK CLOUD/LOCAL
-   ============================================================ */
 function backupMasterBeforeOverwrite(){
   try{
     localStorage.setItem(LS_BACKUP, JSON.stringify(master));
@@ -2511,15 +2253,24 @@ function resolveCloudConflict(choice){
   }
 }
 
+/* ============================================================
+   AUTO LOAD FROM FIREBASE
+   ============================================================ */
 async function autoLoadFromFirebase(){
   const sess = window.__TEACHER_SESSION__ || {};
   const teacherId = sess.uid;
   if(!teacherId || !master.fbUrl) return;
+
+  // ⭐ Kalau masih ada perubahan lokal, PUSH dulu — jangan tarik cloud
+  if(localStorage.getItem(LS_DIRTY) === '1'){
+    firebaseSave(true);
+    return;
+  }
+
   try{
     const res = await authFetch('/instrumen/personal/' + encodeURIComponent(teacherId) + '.json', { cache:'no-store' });
     if(!res.ok) return;
-    
-    // PERBAIKAN DI SINI: Gunakan dataRaw lalu decode
+
     const dataRaw = await res.json();
     const data = decodeFirebaseKeys(dataRaw);
 
@@ -2559,9 +2310,9 @@ $$('.tabs-scroll button').forEach(btn=>{
     btn.classList.add('active');
     $('#tab-'+btn.dataset.tab).classList.add('active');
     const t = btn.dataset.tab;
-    
+
     if(t === 'dashboard') renderDashboard();
-    
+
     if(t === 'remedial') renderRemedial();
     if(t === 'uhmanual') renderUHManual();
     if(t === 'akhir') renderAkhir();
@@ -2576,7 +2327,7 @@ function pindahTab(tabName) {
 }
 
 /* ============================================================
-   TAB DASHBOARD (Fungsi Utama)
+   TAB DASHBOARD
    ============================================================ */
 function renderDashboard() {
   const d = new Date();
@@ -2616,7 +2367,6 @@ function renderDashboard() {
     getActiveSumatifIdx(cls).forEach(idx => activeSumatifIndices.add(idx));
     let sumNilai = 0, tuntas = 0, remedial = 0, countedN = 0;
 
-    // Kumpulkan data per kelas untuk peringkat per kelas
     const classRows = [];
     cls.siswa.forEach(s => {
       const h = hitungNilaiAkhir(s, cls);
@@ -2651,7 +2401,6 @@ function renderDashboard() {
       if (h.hasUas) sumFilled.uas = (sumFilled.uas || 0) + 1;
     });
 
-    // Peringkat per kelas
     const sorted = [...classRows].filter(r => r.dinilai).sort((a,b) => b.h.nilaiAkhir - a.h.nilaiAkhir);
     let lastVal = null, lastRank = 0;
     const rankMap = new Map();
@@ -2680,7 +2429,6 @@ function renderDashboard() {
     totalRemedial += remedial;
     totalCountedN += countedN;
 
-    // PENGUMPULAN TINDAKAN SPESIFIK
     cls.siswa.forEach(s => {
       const h = hitungNilaiAkhirUjian(cls.uts?.[s.id], KKM);
       if (h > 0 && h < KKM) utsIssues.push({ kelas: k, text: `${s.nama} (${fmt(h)})` });
@@ -2806,7 +2554,6 @@ function renderDashboard() {
     </div>
   `;
 
-  // Tindakan spesifik
 let todos = [];
 if (utsIssues.length > 0) {
   const text = utsIssues.slice(0, 3).map(i => `Kls ${i.kelas}: ${i.text}`).join(' • ') + (utsIssues.length > 3 ? ' • ...' : '');
@@ -2863,7 +2610,6 @@ if (todos.length === 0) {
 
   drawDashCharts(allStudentScores, totalTuntas, totalRemedial, kkmRef);
 
-  // Rekap: urutkan berdasarkan akhir desc, tampilkan top 15
   allStudentsFlat.sort((a, b) => b.akhir - a.akhir);
   const displayData = allStudentsFlat.slice(0, 15);
   document.getElementById('dashRekapTag').textContent = `${displayData.length} dari ${totalCountedN} siswa dinilai`;
@@ -2953,14 +2699,14 @@ function bindIdentitas(){
   Object.entries(map).forEach(([id,key])=>{
     const el = $('#'+id); if(!el) return;
     el.value = state.identitas[key] ?? '';
-        el.addEventListener('input', ()=>{
+    el.addEventListener('input', ()=>{
       state.identitas[key] = (key==='kkm'||key==='kkt') ? num(el.value) : el.value;
       saveState();
       updateUHCalculations();
       renderSumatif(); renderUTS(); renderUAS();
       renderDeskripsi('uts'); renderDeskripsi('uas');
       renderAkhir(); renderRemedial();
-      
+
       updateHeroInfo();
     });
   });
@@ -3079,7 +2825,7 @@ function initSumatif(){
   });
   renderSumatifToggleList();
   updateBobotSumatifInfo();
-  syncSumatifFromUH(); // ⭐ ADD THIS LINE
+  syncSumatifFromUH();
 }
 function refreshSumatifDropdown(){
   const sel = $('#selSumatif'); const cur = sel.value; sel.innerHTML = '';
@@ -3153,14 +2899,12 @@ function hitungSumatif(siswa, sData, cls){
   const sikap = (num(siswa.absen)+num(siswa.pengamatan))/2;
   const uh = num(sData?.uh);
   const tugasArr = Array.isArray(sData?.tugas) ? sData.tugas : [];
-  // Hanya tugas yang terisi (termasuk 0 yang sah) yang dihitung
   const tugasFilled = tugasArr.filter(isFilled);
   const totalTugas = tugasFilled.length ? tugasFilled.reduce((a,b)=>a+num(b),0)/tugasFilled.length : 0;
   const rata = (sikap*num(b.sikap) + uh*num(b.uh) + totalTugas*num(b.tugas)) / totalBobot;
   return { sikap, uh, totalTugas, rata };
 }
 function syncSumatifFromUH(){
-  // Hanya tulis bila Auto UH aktif
   const cb = $('#autoUH');
   if(!cb || !cb.checked) return;
   getActiveSumatifIdx().forEach(i=>{
@@ -3265,7 +3009,6 @@ function renderSumatif(){
       tds[tds.length-1].textContent = fmt(h.rata);
       saveState();
 
-      // Recompute semua baris (absen/pengamatan tidak berubah tapi tetap konsisten)
       let sa=0, sp=0, ss=0, su=0, st=0, sr=0, c=0;
       state.siswa.forEach(sw => {
         const hh = hitungSumatif(sw, S.data[sw.id] || {});
@@ -3456,7 +3199,7 @@ function renderUH(){
     let d = U.data[s.id];
     if (!Array.isArray(d)) {
       d = Array(nSoal).fill('');
-      U.data[s.id] = d; // Simpan kembali sebagai array agar tidak error
+      U.data[s.id] = d;
     }
     while(d.length < nSoal) d.push('');
     while(d.length > nSoal) d.pop();
@@ -3499,7 +3242,7 @@ function updateUHCalculations(){
   let jmlSkorAll=0, nilaiAll=[], tuntas=0, ikut=0;
   state.siswa.forEach((s,i)=>{
     const rawData = U.data[s.id] || [];
-    const d = Array.isArray(rawData) ? rawData : []; // Fix bug
+    const d = Array.isArray(rawData) ? rawData : [];
     const jml = d.reduce((a,b)=>a+num(b),0);
     const nilai = max > 0 ? jml/max*100 : 0;
     const isTuntas = nilai >= KKM;
@@ -3698,11 +3441,10 @@ function renderRemedial(){
   const store = getRemedialStore(jenis);
   let no = 1, count = 0;
   state.siswa.forEach(s=>{
-    // Cek terisi (bukan nilai > 0) — UH=0 yang diisi tetap masuk remedial
     if(uhIdx && !isUHFilled(s, uhIdx)) return;
     const nilaiAwal = getNilaiAwalForRemedial(s, jenis);
     if(uhIdx && !isUHFilled(s, uhIdx)) return;
-    if(nilaiAwal >= KKM) return; // sudah tuntas, tidak perlu remedial
+    if(nilaiAwal >= KKM) return;
     const R = store[s.id] || (store[s.id] = {r1:'', r2:''});
     const na = applyRemedialRule(nilaiAwal, R, KKM);
     const tuntas = na >= KKM;
@@ -3768,7 +3510,6 @@ function updateRemedialSummary(jenis, KKM){
   const pairsAwalAkhir = [];
   let count = 0;
   state.siswa.forEach(s=>{
-    // Cek terisi (bukan > 0) — UH=0 yang diisi tetap dihitung
     if(uhIdx && !isUHFilled(s, uhIdx)) return;
     const nilaiAwal = getNilaiAwalForRemedial(s, jenis);
     const R = store[s.id] || {r1:'', r2:''};
@@ -4004,7 +3745,6 @@ function hitungNilaiAkhir(siswa, cls){
   const hasUts = isFilled(utsData.awal) || isFilled(utsData.perbaikan);
   const hasUas = isFilled(uasData.awal) || isFilled(uasData.perbaikan);
 
-  // Bobot hanya untuk komponen yang ada nilainya (partial-component)
   const bobotSum = hasSum ? num(b.sumatif) : 0;
   const bobotUts = hasUts ? num(b.uts) : 0;
   const bobotUas = hasUas ? num(b.uas) : 0;
@@ -4183,7 +3923,7 @@ function refreshAll(){
   refreshSumatifDropdown();
   renderSumatifToggleList();
   updateBobotSumatifInfo();
-  syncSumatifFromUH(); // Ensure sync on refresh
+  syncSumatifFromUH();
   renderSumatif();
   refreshUHDropdown();
   renderUHToggleList();
@@ -4216,7 +3956,7 @@ function loadSheetJS(){
     if(CDN_CONFIG.SHEETJS_SRI) s.integrity = CDN_CONFIG.SHEETJS_SRI;
     s.onload = ()=> resolve(window.XLSX);
     s.onerror = ()=>{
-      __SHEETJS_PROMISE__ = null; // izinkan retry
+      __SHEETJS_PROMISE__ = null;
       reject(new Error('SheetJS gagal dimuat (periksa koneksi internet)'));
     };
     document.head.appendChild(s);
@@ -4663,7 +4403,6 @@ function loadDemoData(){
     'Kelas VII, VIII, IX, dan XI tidak terpengaruh.\n\n' +
     'Lanjutkan?'
   )) return;
-  // Reset kelas X & XII dulu supaya demo bersifat idempoten (tidak duplikasi)
   master.classes['X'] = defaultClassState('X');
   master.classes['XII'] = defaultClassState('XII');
   injectSampleData(master);
@@ -4674,11 +4413,11 @@ function loadDemoData(){
 }
 
 /* ============================================================
-   UPDATE INFO KELAS AKTIF DI HERO SECTION
+   UPDATE HERO INFO
    ============================================================ */
 function updateHeroInfo() {
   if(!state || !state.identitas) return;
-  
+
   const clsName = master.currentClass;
   const mapel = state.identitas.mapel || '-';
   const jmlSiswa = state.siswa ? state.siswa.length : 0;
@@ -4692,13 +4431,46 @@ function updateHeroInfo() {
 }
 
 /* ============================================================
+   FLUSH on pagehide
+   ============================================================ */
+window.addEventListener('pagehide', () => {
+  if(!window.__UNSAVED__) return;
+  try{
+    flushLocalSave();
+    const sess = window.__TEACHER_SESSION__ || {};
+    if(sess.uid && master.fbUrl){
+      const payload = JSON.parse(JSON.stringify(master));
+      payload.lastUpdate = Date.now();
+      const safe = encodeFirebaseKeys(payload);
+      const url = master.fbUrl.replace(/\/+$/,'') +
+        '/instrumen/personal/' + encodeURIComponent(sess.uid) + '.json?auth=' +
+        (readAuthSession()?.idToken || '');
+      fetch(url, {
+        method: 'PUT',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(safe),
+        keepalive: true
+      }).catch(()=>{});
+    }
+  }catch(e){ console.warn('[pagehide flush]', e); }
+});
+
+/* ============================================================
    INIT
    ============================================================ */
 async function init(){
-  document.body.style.display = 'none';
+  if(!(await window.__SESSION_READY__)) return;
+  // Body sudah hidden oleh session IIFE
+
   const token = await ensureValidToken();
-  if(!token) return;
+  if(!token) return;   // forceLogout sudah alert + redirect
   document.body.style.display = '';
+
+  if(localStorage.getItem(LS_DIRTY) === '1'){
+    window.__UNSAVED__ = true;
+    updateSyncBadge('pending');
+  }
+
   ensureRefs();
   migrateLegacyLists(master);
   state.identitas.kelas = master.currentClass;
@@ -4712,20 +4484,25 @@ async function init(){
   initRemedial();
   initAkhir();
   initDashFilter();
-    // Tambahkan event listener ini
+
   document.getElementById('dashFilterKelas')?.addEventListener('change', (e) => {
     dashFilterKelas = e.target.value;
     renderDashboard();
   });
-  // ---------------------
 
   refreshAll();
   isInitialized = true;
-  autoLoadFromFirebase().catch(e => console.warn('Background sync failed:', e));
+
+  // Kalau ada perubahan lokal yang belum terkirim, PUSH dulu
+  if(window.__UNSAVED__){
+    firebaseSave(true);
+  } else {
+    autoLoadFromFirebase().catch(e => console.warn('Background sync failed:', e));
+  }
 }
 
 /* ============================================================
-   VALIDASI ANGKA: CLAMP 0..MAX SAAT BLUR
+   VALIDASI ANGKA
    ============================================================ */
 (function initNumericValidation(){
   const scoreTables = ['tblSiswa','tblSumatif','tblUH','tblUHManual','tblRemedial','tblUTS','tblUAS'];
@@ -4824,17 +4601,19 @@ window.__UNSAVED__ = false;
 function markUnsaved(){
   if(window.__UNSAVED__) return;
   window.__UNSAVED__ = true;
+  try { localStorage.setItem(LS_DIRTY, '1'); } catch(e){}
   updateSyncBadge('pending');
 }
 function clearUnsaved(){
   window.__UNSAVED__ = false;
+  try { localStorage.removeItem(LS_DIRTY); } catch(e){}
   updateSyncBadge('saved');
 }
 document.addEventListener('input', markUnsaved, true);
 document.addEventListener('change', markUnsaved, true);
 
 /* ============================================================
-   FLUSH PENYIMPANAN LOKAL SAAT TAB DITUTUP/DISEMBUNYIKAN
+   FLUSH PENYIMPANAN LOKAL
    ============================================================ */
 window.addEventListener('beforeunload', flushLocalSave);
 window.addEventListener('pagehide', flushLocalSave);

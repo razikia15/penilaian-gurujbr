@@ -818,43 +818,39 @@ const LS_SESSION = 'jabalSession_v1';
 const CLASSES = ['VII','VIII','IX','X','XI','XII'];
 const DEFAULT_FB_URL = 'https://instrumen-jabal-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-(async function checkAdminSessionVerified(){
+window.__ADMIN_SESSION_READY__ = (async function checkAdminSessionVerified(){
+  document.body.style.display = 'none';   // ⭐ sembunyikan segera
   const authSess = readAuthSession();
   const sess = (() => {
     try{ return JSON.parse(localStorage.getItem(LS_SESSION) || sessionStorage.getItem(LS_SESSION) || 'null'); }
     catch(e){ return null; }
   })();
 
-  if(!authSess || !sess || sess.role !== 'admin'){
+  function fail(msg){
     document.body.style.display = 'none';
-    setTimeout(() => {
-      alert('Halaman ini hanya untuk Admin.\nSilakan login terlebih dahulu.');
-      window.location.href = 'index.html';
-    }, 100);
-    return;
+    setTimeout(()=>{ alert(msg); window.location.href = 'index.html'; }, 100);
+    return false;
   }
+
+  if(!authSess || !sess || sess.role !== 'admin') return fail('Halaman ini hanya untuk Admin.');
+
+  try { await refreshIdToken(); } catch(e){ return fail('Sesi kedaluwarsa. Login ulang.'); }
+  const freshAuth = readAuthSession();
+  if(!freshAuth || !freshAuth.idToken) return fail('Sesi tidak valid. Login ulang.');
 
   try {
     const res = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + FB_API_KEY, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ idToken: authSess.idToken })
+      body: JSON.stringify({ idToken: freshAuth.idToken })
     });
-    if(!res.ok) throw new Error('Token tidak valid');
+    if(!res.ok) throw new Error('invalid');
   } catch (err) {
-    localStorage.removeItem(LS_AUTH);
-    sessionStorage.removeItem(LS_AUTH);
-    localStorage.removeItem(LS_SESSION);
-    sessionStorage.removeItem(LS_SESSION);
-    document.body.style.display = 'none';
-    setTimeout(() => {
-      alert('Sesi tidak valid atau kedaluwarsa. Silakan login ulang.');
-      window.location.href = 'index.html';
-    }, 100);
-    return;
+    return fail('Sesi tidak valid atau kedaluwarsa. Silakan login ulang.');
   }
 
   window.__ADMIN_SESSION__ = sess;
+  return true;
 })();
 
 function logoutAdmin(){
@@ -2288,7 +2284,9 @@ function exportAllExcel(){
   toast('✓ Berhasil ekspor ' + (no-1) + ' kelas', 'ok');
 }
 
-function init(){
+async function init(){
+  if(!(await window.__ADMIN_SESSION_READY__)) return;   // ⭐ tunggu sesi
+  document.body.style.display = '';                     // ⭐ tampilkan setelah valid
   if(cfg.pin && !cfg.unlocked){
     $('#pinModal').classList.add('show');
     return;
@@ -2311,10 +2309,20 @@ async function reloadAccounts(showNotice = true){
   try {
     if(showNotice) toast('⏳ Memuat akun...');
     const res = await authFetch('/instrumen/users.json');
-    ALL_USERS = (await res.json()) || {};
+    
+    // ⭐ Tambahan: Cek jika HTTP error (401/403)
+    if (!res.ok) throw new Error('HTTP ' + res.status + ' — Periksa Firebase Rules Anda.');
+    
+    const data = await res.json();
+    
+    // ⭐ Tambahan: Cek jika Firebase mengembalikan pesan error
+    if(data && data.error) throw new Error('Firebase: ' + data.error);
+
+    ALL_USERS = data || {};
     renderAccounts();
     if(showNotice) toast('✓ ' + Object.keys(ALL_USERS).length + ' akun dimuat', 'ok');
   } catch(err){
+    console.error(err);
     if(showNotice) toast('✗ Gagal memuat akun: ' + err.message, 'err');
   }
 }
@@ -2322,6 +2330,10 @@ async function reloadAccounts(showNotice = true){
 function renderAccounts(){
   const q = ($('#searchAkun')?.value || '').toLowerCase().trim();
   let entries = Object.entries(ALL_USERS);
+  
+  // ⭐ Saring agar data sampah (string/error) tidak tampil
+  entries = entries.filter(([u, d]) => d && typeof d === 'object' && d.role);
+
   if(q){
     entries = entries.filter(([u, d]) =>
       u.toLowerCase().includes(q) || (d.nama || '').toLowerCase().includes(q) || (d.nip || '').includes(q)
@@ -2479,6 +2491,18 @@ async function deleteAccount(username){
 }
 
 $('#searchAkun')?.addEventListener('input', renderAccounts);
+
+async function deleteOrphanTeacher(tid) {
+  if(!confirm('Hapus profil guru ini dari database? Data nilai yang sudah diinput akan hilang permanen.\n\nGuru: ' + (ALL_TEACHERS[tid]?.nama || tid))) return;
+  try {
+    const res = await authFetch('/instrumen/teachers/' + encodeURIComponent(tid) + '.json', { method: 'DELETE' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    toast('✓ Profil guru berhasil dihapus', 'ok');
+    await reloadAll(false);
+  } catch(err) {
+    toast('✗ Gagal menghapus: ' + err.message, 'err');
+  }
+}
 
 /* ============================================================
    VERSION DISPLAY + CHANGELOG
