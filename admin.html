@@ -867,26 +867,31 @@
     <div class="modal-body">
       <label>Username <span style="color:var(--red)">*</span></label>
       <input type="text" id="accUsername" placeholder="huruf kecil, tanpa spasi (contoh: rita)" autocomplete="off">
-      <div class="hint">Label pemetaan akun di database aplikasi, bukan akun Firebase Authentication. Tidak bisa diubah setelah dibuat.</div>
+      <div class="hint">Label pemetaan akun di database aplikasi. Tidak bisa diubah setelah dibuat.</div>
       
-      <label>UID Firebase (Teacher ID) <span style="color:var(--red)">*</span></label>
-      <input type="text" id="accTeacherId" placeholder="Paste UID dari Firebase Auth (contoh: 125CuH...)" autocomplete="off">
-      <div class="hint">Buka Firebase Console → Authentication → Users, salin UID akun guru yang sudah ada. UID harus persis sama dengan UID saat guru login.</div>
+      <!-- ID ini disembunyikan, sistem akan mengisinya otomatis dengan UID dari Firebase Auth -->
+      <input type="hidden" id="accTeacherId" value="">
+      
+      <div id="accPwdWrap">
+        <label>Password Awal <span style="color:var(--red)">*</span></label>
+        <input type="password" id="accPassword" placeholder="Minimal 6 karakter" autocomplete="new-password">
+        <div class="hint">Wajib diisi untuk akun baru. Guru bisa mengganti sandi sendiri lewat menu Akun Saya.</div>
+      </div>
       
       <label>Nama Lengkap &amp; Gelar <span style="color:var(--red)">*</span></label>
       <input type="text" id="accNama" placeholder="Rita Ernawati, S.Pd.I" autocomplete="off">
       
       <label>NIP / NUPTK</label>
       <input type="text" id="accNip" placeholder="121212" autocomplete="off">
-	  
-	  <label>Mata Pelajaran Default (Pisahkan dengan koma jika lebih dari 1)</label>
+      
+      <label>Mata Pelajaran Default (Pisahkan dengan koma jika lebih dari 1)</label>
       <input type="text" id="accMapel" placeholder="Contoh: Bahasa Arab, IPS" autocomplete="off">
       <div class="hint">Mapel ini akan otomatis muncul di aplikasi guru saat mereka login.</div>
       
-	  <label>Email (untuk reset sandi) <span style="color:var(--red)">*</span></label>
-	  <input type="email" id="accEmail" placeholder="guru@jabalrahmah.sch.id" autocomplete="off">
-	  <div class="hint">Wajib email asli & aktif — dipakai untuk mengirim link reset password.</div>
-	  
+      <label>Email (Opsional)</label>
+      <input type="email" id="accEmail" placeholder="guru@gmail.com" autocomplete="off">
+      <div class="hint">Jika dikosongkan, sistem otomatis membuat email <code>username@jabalrahmah.local</code>.</div>
+      
       <label>Role</label>
       <input type="text" id="accRole" value="guru" readonly style="background:var(--gray-100);color:var(--gray-600)">
     </div>
@@ -3296,9 +3301,189 @@ async function init(){
     $('#dashNotConfigured').style.display = 'block';
     updateSyncBadge('error');
   } else {
-    reloadAll();
+    reloadAll().then(() => {
+      startTeacherStream();   // ← TAMBAHKAN
+    });
+    setTimeout(() => reloadAccounts(false), 800);   // ← TAMBAHKAN
   }
 }
+
+/* ============================================================
+   REAL-TIME STREAMING — Ganti Polling
+   ============================================================ */
+let _streamCtrl = null;
+let _streamReconnectTimer = null;
+let _streamRetry = 0;
+let _streamStopped = false;
+
+async function startTeacherStream(){
+  if(_streamCtrl) return;            // sudah jalan
+  if(_streamStopped) return;         // sengaja di-stop
+  if(!navigator.onLine) { 
+    setTimeout(startTeacherStream, 3000); 
+    return; 
+  }
+  if(!cfg.fbUrl) return;
+
+  const sess = readAuthSession();
+  if(!sess || !sess.idToken){
+    console.warn('[Stream] Sesi tidak ada, skip');
+    return;
+  }
+
+  const base = cfg.fbUrl.replace(/\/+$/,'');
+  const url = base + '/' + cfg.path + '.json?auth=' + sess.idToken;
+
+  _streamCtrl = new AbortController();
+  updateSyncBadge('syncing');
+  console.log('[Stream] Connecting to', cfg.path);
+
+  try {
+    const res = await fetch(url, {
+      headers: { 'Accept': 'text/event-stream' },
+      signal: _streamCtrl.signal,
+      cache: 'no-store'
+    });
+
+    if(!res.ok){
+      // Token expired? → refresh lalu retry
+      if(res.status === 401 || res.status === 403){
+        try { await refreshIdToken(); } catch(e){ forceLogoutAdmin(); }
+      }
+      throw new Error('HTTP ' + res.status);
+    }
+
+    _streamRetry = 0;
+    console.log('[Stream] Connected ✓');
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while(true){
+      const { done, value } = await reader.read();
+      if(done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      // SSE frame dipisah "\n\n"
+      let idx;
+      while((idx = buffer.indexOf('\n\n')) !== -1){
+        const frame = buffer.slice(0, idx);
+        buffer = buffer.slice(idx + 2);
+        handleStreamFrame(frame);
+      }
+    }
+  } catch(err){
+    if(err.name === 'AbortError'){
+      console.log('[Stream] Stopped by user');
+      return;
+    }
+    console.error('[Stream] Error:', err.message);
+    updateSyncBadge('error');
+    _streamCtrl = null;
+
+    // Exponential backoff: 2s, 4s, 8s, 16s, 30s (max)
+    _streamRetry = Math.min(_streamRetry + 1, 5);
+    const delay = Math.min(2000 * Math.pow(2, _streamRetry - 1), 30000);
+    console.log('[Stream] Reconnect in', delay + 'ms');
+    _streamReconnectTimer = setTimeout(startTeacherStream, delay);
+  }
+}
+
+function handleStreamFrame(frame){
+  const lines = frame.split('\n');
+  let eventType = 'message';
+  let dataStr = '';
+
+  for(const line of lines){
+    if(line.startsWith('event: '))      eventType = line.slice(7).trim();
+    else if(line.startsWith('data: '))  dataStr += line.slice(6);
+  }
+
+  if(eventType === 'keep-alive') return;
+
+  // Token dicabut → refresh & reconnect
+  if(eventType === 'cancel' || eventType === 'auth_revoked'){
+    console.warn('[Stream] Auth revoked — refresh token');
+    refreshIdToken().then(() => {
+      stopTeacherStream();
+      _streamStopped = false;
+      startTeacherStream();
+    }).catch(() => forceLogoutAdmin());
+    return;
+  }
+
+  if(!dataStr) return;
+  let payload;
+  try { payload = JSON.parse(dataStr); } catch(e){ return; }
+
+  if(eventType === 'put'){
+    // Full snapshot
+    ALL_RAW = payload.data || {};
+    ALL_TEACHERS = dedupeTeachers(ALL_RAW);
+    updateSyncBadge('saved');
+    rerenderActiveTab();
+    console.log('[Stream] PUT received —', Object.keys(ALL_TEACHERS).length, 'guru');
+  }
+  else if(eventType === 'patch'){
+    // Delta update
+    applyStreamPatch(payload.path || '/', payload.data);
+    ALL_TEACHERS = dedupeTeachers(ALL_RAW);
+    updateSyncBadge('saved');
+    rerenderActiveTab();
+    console.log('[Stream] PATCH at', payload.path);
+  }
+}
+
+function applyStreamPatch(path, data){
+  const parts = path.split('/').filter(Boolean);
+  if(parts.length === 0){
+    // Patch di root
+    Object.keys(data).forEach(k => {
+      if(data[k] === null) delete ALL_RAW[k];
+      else ALL_RAW[k] = data[k];
+    });
+    return;
+  }
+  let node = ALL_RAW;
+  for(let i = 0; i < parts.length - 1; i++){
+    if(!node[parts[i]]) node[parts[i]] = {};
+    node = node[parts[i]];
+  }
+  const last = parts[parts.length - 1];
+  if(data === null) delete node[last];
+  else node[last] = data;
+}
+
+function rerenderActiveTab(){
+  const active = document.querySelector('nav.tabs button.active')?.dataset.tab;
+  if(active === 'dashboard') renderDashboard();
+  else if(active === 'guru') renderGuruList();
+  else if(active === 'rekap') renderRekap();
+  else if(active === 'rapor') renderRapor();
+  else if(active === 'akun' && typeof renderAccounts === 'function') renderAccounts();
+}
+
+function stopTeacherStream(){
+  _streamStopped = true;
+  if(_streamCtrl){ _streamCtrl.abort(); _streamCtrl = null; }
+  if(_streamReconnectTimer){ clearTimeout(_streamReconnectTimer); _streamReconnectTimer = null; }
+}
+
+function forceLogoutAdmin(){
+  try{
+    localStorage.removeItem(LS_AUTH);
+    sessionStorage.removeItem(LS_AUTH);
+    localStorage.removeItem(LS_SESSION);
+    sessionStorage.removeItem(LS_SESSION);
+  }catch(e){}
+  alert('Sesi berakhir. Silakan login ulang.');
+  window.location.href = 'index.html';
+}
+
+// Cleanup saat tab ditutup
+window.addEventListener('beforeunload', stopTeacherStream);
+window.addEventListener('pagehide', stopTeacherStream);
 
 /* ============================================================
    KELOLA AKUN GURU
@@ -3533,6 +3718,8 @@ function openAccountModal(){
   $('#accNip').value = '';
   $('#accMapel').value = '';
   $('#accEmail').value = '';
+  $('#accPassword').value = '';
+  $('#accPwdWrap').style.display = 'block'; // Tampilkan input password
   $('#accountModal').classList.add('show');
   setTimeout(() => $('#accUsername').focus(), 100);
 }
@@ -3551,70 +3738,102 @@ function editAccount(username){
   $('#accNip').value = data.nip || '';
   $('#accMapel').value = data.mapelDefault || '';
   $('#accEmail').value = data.email || '';
+  $('#accPassword').value = '';
+  $('#accPwdWrap').style.display = 'none'; // Sembunyikan input password saat edit
   $('#accountModal').classList.add('show');
 }
 
 async function saveAccount(){
   const username = $('#accUsername').value.trim().toLowerCase();
-  const teacherId = $('#accTeacherId').value.trim();
   const nama = $('#accNama').value.trim();
   const nip = $('#accNip').value.trim() || '-';
   const mapelDefault = $('#accMapel').value.trim();
-  const email = $('#accEmail').value.trim();
-  
-  if(!email || !email.includes('@')){ 
-	toast('Email wajib diisi (untuk reset sandi).', 'err'); return; 
-  }
+  let email = $('#accEmail').value.trim().toLowerCase();
+  const password = $('#accPassword').value;
+  let teacherId = $('#accTeacherId').value.trim();
+
+  // Validasi Dasar
   if(!/^[a-z0-9._-]{2,60}$/.test(username)){
     toast('Username wajib 2–60 karakter: huruf kecil, angka, titik, _ atau -.', 'err'); return;
-  }
-  if(!teacherId || /[.#$\[\]\/]/.test(teacherId)){
-    toast('UID Firebase wajib diisi dengan UID asli dari Authentication.', 'err'); return;
   }
   if(!nama){ toast('Nama lengkap wajib diisi.', 'err'); return; }
   if(!_editingUsername && ALL_USERS[username]){
     toast('Username "' + username + '" sudah dipakai.', 'err'); return;
   }
-  const existingWithSameId = Object.entries(ALL_USERS).find(([u,d]) => (d.uid || d.teacherId) === teacherId && u !== username);
-  if(existingWithSameId){ toast('UID ini sudah ditautkan ke "' + existingWithSameId[0] + '".', 'err'); return; }
 
-  const previous = ALL_USERS[username] || {};
-  const now = Date.now();
-  const accountPayload = {
-	role: 'guru', username, uid: teacherId, teacherId,
-	nama, nip, email,
-	mapelDefault: mapelDefault,
-	createdAt: previous.createdAt || now, updatedAt: now
-  };
+  // Logika Penentuan Email (jika kosong otomatis pakai @jabalrahmah.local)
+  let finalEmail = email;
+  if(!finalEmail) {
+    finalEmail = username + '@jabalrahmah.local';
+  } else if(!finalEmail.includes('@')) {
+    finalEmail = finalEmail + '@jabalrahmah.local';
+  }
+
   try {
     $('#accSaveBtn').textContent = '⏳ Menyimpan...';
     $('#accSaveBtn').disabled = true;
 
-    // Simpan pemetaan username -> UID Authentication.
+    if(!_editingUsername) {
+      // --- BUAT AKUN BARU DI FIREBASE AUTH ---
+      if(!password || password.length < 6) throw new Error('Password minimal 6 karakter untuk akun baru.');
+      
+      const resAuth = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FB_API_KEY}`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ email: finalEmail, password, returnSecureToken: false })
+      });
+      const dataAuth = await resAuth.json();
+      
+      if(!resAuth.ok) {
+        const msg = dataAuth.error?.message || 'Gagal membuat Auth';
+        if(msg === 'EMAIL_EXISTS') throw new Error('Email/Username ini sudah terdaftar di Firebase Auth.');
+        throw new Error(msg);
+      }
+      
+      // Berhasil dibuat, ambil UID otomatis dari Firebase
+      teacherId = dataAuth.localId;
+    } else {
+      if(!teacherId) throw new Error('UID akun tidak ditemukan.');
+    }
+
+    // Cek apakah UID sudah dipakai akun lain
+    const existingWithSameId = Object.entries(ALL_USERS).find(([u,d]) => (d.uid || d.teacherId) === teacherId && u !== username);
+    if(existingWithSameId){ throw new Error('UID ini sudah ditautkan ke "' + existingWithSameId[0] + '".'); }
+
+    const previous = ALL_USERS[username] || {};
+    const now = Date.now();
+    const accountPayload = {
+      role: 'guru', username, uid: teacherId, teacherId,
+      nama, nip, email: finalEmail,
+      mapelDefault: mapelDefault,
+      createdAt: previous.createdAt || now, updatedAt: now
+    };
+
+    // 1. Simpan ke /instrumen/users/
     let res = await authFetch('/instrumen/users/' + encodeURIComponent(username) + '.json', {
       method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(accountPayload)
     });
     if(!res.ok) throw new Error('Pemetaan akun gagal (HTTP ' + res.status + ')');
 
-    // Perbarui metadata profil pada UID yang sama, tanpa menimpa master/nilai yang sudah ada.
+    // 2. Simpan/Update ke /instrumen/teachers/
     const profileRes = await authFetch('/instrumen/teachers/' + encodeURIComponent(teacherId) + '.json', {cache:'no-store'});
-    if(!profileRes.ok) throw new Error('Gagal membaca profil guru (HTTP ' + profileRes.status + ')');
-    const oldProfile = await profileRes.json() || {};
+    const oldProfile = profileRes.ok ? (await profileRes.json() || {}) : {};
     const profilePayload = {
       ...oldProfile, uid: teacherId, teacherId, nama, nip,
       lastUpdate: Number(oldProfile.lastUpdate || now), profileUpdatedAt: now
     };
+    
     res = await authFetch('/instrumen/teachers/' + encodeURIComponent(teacherId) + '.json', {
       method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(profilePayload)
     });
     if(!res.ok) throw new Error('Profil guru gagal disimpan (HTTP ' + res.status + ')');
 
-    toast('✓ Akun berhasil ditautkan dan profil guru disimpan.', 'ok');
+    toast('✓ Akun berhasil didaftarkan.', 'ok');
     closeAccountModal();
     await Promise.all([reloadAccounts(false), reloadAll(false)]);
   } catch(err){
     console.error(err);
-    toast('✗ Gagal menyimpan: ' + err.message + '. Periksa UID, token admin, dan Firebase Rules.', 'err');
+    toast('✗ Gagal menyimpan: ' + err.message, 'err');
   } finally {
     $('#accSaveBtn').textContent = '💾 Simpan Akun';
     $('#accSaveBtn').disabled = false;
@@ -3788,22 +4007,6 @@ function closeChangelog(){
 
 init();
 
-// Sinkronisasi dashboard lintas perangkat: polling ringan setiap 15 detik.
-// Tidak menampilkan toast setiap putaran agar tidak mengganggu pengguna.
-let _adminRefreshBusy = false;
-async function refreshAdminViews(){
-  if(_adminRefreshBusy || !navigator.onLine || document.hidden || !cfg.fbUrl) return;
-  _adminRefreshBusy = true;
-  try {
-    await reloadAll(false);
-    await reloadAccounts(false);
-  } catch(e) { console.warn('Refresh otomatis admin:', e); }
-  finally { _adminRefreshBusy = false; }
-}
-setTimeout(() => { if(cfg.fbUrl) reloadAccounts(false); }, 500);
-setInterval(refreshAdminViews, 15000);
-window.addEventListener('focus', refreshAdminViews);
-document.addEventListener('visibilitychange', () => { if(!document.hidden) refreshAdminViews(); });
 </script>
 </body>
 </html>

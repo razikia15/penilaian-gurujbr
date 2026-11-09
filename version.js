@@ -5,10 +5,26 @@
    ============================================================ */
 
 window.APP_INFO = {
-  version: '1.3.0',
+  version: '1.3.1',
   buildDate: '2026-11-09',
 
   changelog: [
+    {
+      version: 'v1.3.1',
+      date: '2026-11-09',
+      highlights: [
+        '<b>⚡ Sinkronisasi Real-time</b>',
+        'Ganti polling ke streaming (hemat kuota 99%)',
+        'Update instan dashboard admin dan guru',
+        '<b>🔐 Manajemen Akun Cerdas</b>',
+        'Auto-create Firebase Auth saat tambah guru',
+        'UID terisi otomatis (tanpa input manual)',
+        'Email opsional (default @jabalrahmah.local)',
+        '<b>🛡️ Perbaikan Bug &amp; Keamanan</b>',
+        'Filter data sampah (key invalid) di dashboard admin',
+        'Auto-reconnect stream saat koneksi terputus'
+      ]
+    },
     {
       version: 'v1.3.0',
       date: '2026-11-09',
