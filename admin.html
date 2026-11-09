@@ -337,6 +337,157 @@
     .rapor-card-body{padding:16px}.rapor-card-header{padding:16px}
   }
   @media print{header,nav.tabs,.toolbar,.header-actions,.no-print,.app-header{display:none!important}.tab-panel{display:block!important;page-break-after:always}.card{box-shadow:none;border:1px solid #ccc}body{background:#fff}}
+  
+  /* ===== CETAK RAPOR ===== */
+.rapor-sheet{
+  background:#fff;padding:22px 26px;margin:16px auto;max-width:820px;
+  box-shadow:0 4px 20px rgba(0,0,0,.08);border-radius:10px;
+  font-size:12px;color:#111;font-family:'Segoe UI',Arial,sans-serif;
+}
+.rapor-sheet .rapor-header{text-align:center;margin-bottom:8px}
+.rapor-sheet .rapor-header h1{font-size:13px;font-weight:700;letter-spacing:.3px;margin:0}
+.rapor-sheet .rapor-header h2{font-size:15px;font-weight:800;margin:2px 0 6px 0}
+.rapor-sheet .rapor-info-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px}
+.rapor-sheet .rapor-info-table td{padding:2px 4px;vertical-align:top;border:none}
+.rapor-sheet .rapor-tbl{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10.5px;
+  table-layout: fixed; /* Memaksa lebar tabel patuh pada persen */
+}
+.rapor-sheet .rapor-tbl th, 
+.rapor-sheet .rapor-tbl td{
+  border: 1px solid #333; 
+  padding: 3px 5px; 
+  vertical-align: middle;
+  white-space: normal !important; /* Memaksa teks bisa turun baris */
+  word-wrap: break-word;
+}
+.rapor-sheet .rapor-tbl th{
+  background:#f0f0f0;text-align:center;font-weight:700;font-size:10px;
+  text-transform:uppercase;letter-spacing:.2px;
+}
+.rapor-sheet .rapor-tbl td{vertical-align:middle}
+.rapor-sheet .rapor-section td{
+  background:#e8eef7;font-weight:700;text-align:left;font-size:11px;
+}
+
+/* Print: HANYA saat mencetak rapor, override print biasa */
+@media print{
+  body.printing-rapor .tab-panel:not(#tab-cetakrapor){display:none!important}
+  body.printing-rapor #tab-cetakrapor{display:block!important}
+  body.printing-rapor #tab-cetakrapor>.toolbar,
+  body.printing-rapor #tab-cetakrapor>.info{display:none!important}
+  body.printing-rapor #raporPrintArea .empty-state{display:none!important}
+  
+  /* Kompres ukuran agar muat 1 halaman A4 */
+  body.printing-rapor #raporPrintArea .rapor-sheet{
+    box-shadow:none!important;
+    border-radius:0!important;
+    margin:0!important;
+    padding:0!important;
+    page-break-after:avoid;
+    page-break-inside:avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body.printing-rapor .rapor-header h1 { font-size:12px !important; margin:0 !important; }
+  body.printing-rapor .rapor-header h2 { font-size:14px !important; margin:2px 0 6px 0 !important; }
+  body.printing-rapor .rapor-info-table td { padding:1px 2px !important; font-size:10px !important; }
+  body.printing-rapor .rapor-tbl th { font-size:9px !important; padding:2px 3px !important; }
+  body.printing-rapor .rapor-tbl td { font-size:9.5px !important; padding:2px 4px !important; line-height:1.2 !important; }
+  
+  @page{size:A4 portrait;margin:10mm 12mm}
+}
+
+  /* ===== LAYOUT UTAMA ===== */
+  .rapor-layout-container { 
+    position: relative; 
+    width: 100%; 
+    display: flex; 
+    justify-content: center; 
+  }
+  .rapor-main-area { 
+    flex: 1; 
+    min-width: 0; 
+    max-width: 820px; 
+  }
+
+  /* ===== 1. DESKTOP: PANEL SLIDE DARI KANAN ===== */
+  .edit-panel-container {
+    position: fixed; 
+    top: 0; 
+    right: 0; 
+    width: 400px; 
+    height: 100vh;
+    background: #fff; 
+    z-index: 10000; 
+    box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+    transform: translateX(100%); /* Sembunyi di kanan luar layar */
+    transition: transform 0.3s ease; 
+    display: flex; 
+    flex-direction: column;
+  }
+  .edit-panel-container.open { 
+    transform: translateX(0); /* Meluncur masuk */
+  }
+
+  /* ===== 2. MOBILE (HP): PANEL JADI POPUP DI TENGAH ===== */
+  @media (max-width: 768px) {
+    .edit-panel-container {
+      width: 100%; 
+      height: 100%;
+      background: rgba(0,0,0,0.6); /* Latar belakang gelap */
+      box-shadow: none;
+      transform: none; /* Hilangkan efek slide */
+      display: none;  /* Sembunyikan total */
+      align-items: center; 
+      justify-content: center;
+      padding: 15px;
+    }
+    .edit-panel-container.open { 
+      display: flex; /* Munculkan sebagai popup */
+    }
+    
+    /* Kotak Putih Popup di HP */
+    .edit-panel-content-wrapper {
+      background: #fff; 
+      width: 100%; 
+      max-width: 500px; 
+      max-height: 90vh; 
+      border-radius: 12px; 
+      display: flex; 
+      flex-direction: column; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+  }
+
+  /* ===== TOMBOL EDIT MELAYANG ===== */
+  .btn-toggle-edit {
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    z-index: 9999;
+    padding: 12px 24px; 
+    border-radius: 50px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    font-size: 14px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    border: none; 
+    background: var(--green-700); 
+    color: white;
+    display: flex; 
+    align-items: center; 
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-toggle-edit:hover { background: var(--green-900); transform: translateY(-2px); }
+
+  @media (max-width: 768px) {
+    .btn-toggle-edit { bottom: 20px; right: 20px; padding: 10px 18px; font-size: 13px; }
+  }
+  
 </style>
 </head>
 <body>
@@ -402,6 +553,13 @@
             </svg>
             <span>Konfigurasi</span>
           </button>
+		  <button class="dropdown-item" onclick="publishRoster();closeDropdown()">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M9 11l3 3L22 4"/>
+				<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+			</svg>
+			<span>Terbitkan Daftar Siswa</span>
+		  </button>
           <button class="dropdown-item" onclick="exportAllExcel();closeDropdown()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -440,6 +598,7 @@
     <button data-tab="detail">🔍 Detail Guru</button>
     <button data-tab="rekap">📈 Rekap &amp; Analisis</button>
     <button data-tab="rapor">📋 Nilai Rapor</button>
+	<button data-tab="cetakrapor">🖨️ Cetak Rapor</button>
     <button data-tab="akun">🔑 Kelola Akun</button>
   </nav>
 </div>
@@ -630,6 +789,41 @@
   </div>
 </section>
 
+<!-- ============ TAB: CETAK RAPOR ============ -->
+<section class="tab-panel" id="tab-cetakrapor">
+  <div class="info">
+    <b>🖨️ Cetak Rapor ATS / Semester</b> — Pilih kelas, siswa, dan jenis rapor. Data nilai akan diambil otomatis dari semua guru yang mengajar kelas tersebut.
+  </div>
+  <div class="toolbar no-print">
+    <label>Kelas:</label>
+    <select id="rpKelas" style="padding:7px 12px;border-radius:8px;border:1.5px solid var(--gray-200);font-family:inherit;font-weight:600">
+      <option value="">— Pilih Kelas —</option>
+    </select>
+    <label>Siswa:</label>
+    <select id="rpSiswa" style="padding:7px 12px;border-radius:8px;border:1.5px solid var(--gray-200);font-family:inherit;min-width:200px">
+      <option value="">— Pilih Kelas Dulu —</option>
+    </select>
+    <label>Jenis:</label>
+    <select id="rpJenis" style="padding:7px 12px;border-radius:8px;border:1.5px solid var(--gray-200);font-family:inherit;font-weight:600">
+      <option value="ats">ATS (Tengah Semester)</option>
+      <option value="semester">Rapor Semester</option>
+    </select>
+    <div class="sep"></div>
+    <label>NISN:</label>
+    <input id="rpNisn" placeholder="0123456789 / 12345" style="padding:6px 10px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:12px;width:170px;font-family:inherit">
+    <div class="sep"></div>
+    <button class="btn btn-primary btn-sm" onclick="buildRaporPrint()">📄 Generate</button>
+    <button class="btn btn-outline btn-sm" onclick="printRapor()">🖨️ Cetak / PDF</button>
+  </div>
+  <div id="raporPrintArea">
+    <div class="empty-state">
+      <div class="icon">🖨️</div>
+      <h3>Belum Ada Rapor</h3>
+      <p>Pilih kelas, siswa, dan jenis rapor di atas, lalu klik <b>📄 Generate</b>.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ============ TAB: KELOLA AKUN ============ -->
 <section class="tab-panel" id="tab-akun">
   <div class="info" style="background:#eff6ff;border-left-color:#3b82f6;color:#1e3a8a">
@@ -684,7 +878,15 @@
       
       <label>NIP / NUPTK</label>
       <input type="text" id="accNip" placeholder="121212" autocomplete="off">
+	  
+	  <label>Mata Pelajaran Default (Pisahkan dengan koma jika lebih dari 1)</label>
+      <input type="text" id="accMapel" placeholder="Contoh: Bahasa Arab, IPS" autocomplete="off">
+      <div class="hint">Mapel ini akan otomatis muncul di aplikasi guru saat mereka login.</div>
       
+	  <label>Email (untuk reset sandi) <span style="color:var(--red)">*</span></label>
+	  <input type="email" id="accEmail" placeholder="guru@jabalrahmah.sch.id" autocomplete="off">
+	  <div class="hint">Wajib email asli & aktif — dipakai untuk mengirim link reset password.</div>
+	  
       <label>Role</label>
       <input type="text" id="accRole" value="guru" readonly style="background:var(--gray-100);color:var(--gray-600)">
     </div>
@@ -747,7 +949,78 @@
   </div>
 </div>
 
+<!-- ============ MODAL EDIT RAPOR ============ -->
+<div class="modal-overlay" id="raporEditModal">
+  <div class="modal" style="max-width:450px">
+    <div class="modal-header" style="background:#1e3a8a">
+      <h3>✏️ Edit Data Rapor</h3>
+      <button class="modal-close" onclick="closeRaporEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editRaporKey">
+      <label>Nilai Asesmen</label>
+      <input type="text" id="editRaporNilai" style="margin-bottom:10px">
+      
+      <label>Capaian Kompetensi</label>
+      <textarea id="editRaporCapaian" rows="3" style="margin-bottom:10px"></textarea>
+      
+      <label>Keterangan</label>
+      <input type="text" id="editRaporKet" style="margin-bottom:10px" placeholder="Tuntas / Tidak Tuntas">
+      
+      <label>Sikap</label>
+      <input type="text" id="editRaporSikap">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeRaporEditModal()">Batal</button>
+      <button class="btn btn-primary btn-sm" onclick="saveRaporEdit()">💾 Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
+
+<!-- ============ MODAL EDIT NASEHAT ============ -->
+<div class="modal-overlay" id="nasehatEditModal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header" style="background:#1e3a8a">
+      <h3>✏️ Edit Nasehat / Motivasi Walikelas</h3>
+      <button class="modal-close" onclick="closeNasehatModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>Pilih Template Cepat (Opsional)</label>
+      <select id="selTemplateNasehat" style="width:100%;padding:8px;margin-bottom:14px;border-radius:6px;border:1px solid #ccc;font-family:inherit" onchange="applyTemplateNasehat(this.value)">
+        <option value="">— Pilih Template —</option>
+        <optgroup label="🌟 Sangat Baik / Juara">
+          <option value="cat1_0">Prestasi luar biasa di semester ini!...</option>
+          <option value="cat1_1">Selamat atas hasil rapor yang sangat memuaskan...</option>
+          <option value="cat1_2">Nilai yang luar biasa! Ini adalah bukti...</option>
+        </optgroup>
+        <optgroup label="📈 Bagus / Stabil">
+          <option value="cat2_0">Hasil yang cukup baik di semester ini...</option>
+          <option value="cat2_1">Usaha yang bagus! Nilaimu sudah stabil...</option>
+          <option value="cat2_2">Terima kasih atas kerja kerasmu semester ini...</option>
+        </optgroup>
+        <optgroup label="📉 Perlu Peningkatan">
+          <option value="cat3_0">Nilaimu semester ini cukup, namun...</option>
+          <option value="cat3_1">Ada beberapa mata pelajaran yang nilainya menurun...</option>
+          <option value="cat3_2">Belajar adalah sebuah proses. Jangan menyerah...</option>
+        </optgroup>
+        <optgroup label="🎯 Fokus Karakter">
+          <option value="cat4_0">Kamu adalah anak yang sopan dan memiliki sikap...</option>
+          <option value="cat4_1">Kemampuan non-akademikmu sudah sangat bagus...</option>
+          <option value="cat4_2">Ibu/Bapak percaya setiap anak memiliki bakatnya...</option>
+        </optgroup>
+      </select>
+
+      <label>Teks Nasehat / Saran</label>
+      <textarea id="txtNasehat" rows="5" style="width:100%;padding:10px;border-radius:6px;border:1px solid #ccc;font-family:inherit;line-height:1.5;margin-bottom:14px" placeholder="Tulis nasehat untuk siswa di sini..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeNasehatModal()">Batal</button>
+      <button class="btn btn-primary btn-sm" onclick="saveNasehat()">💾 Simpan Nasehat</button>
+    </div>
+  </div>
+</div>
 
 <script>
 
@@ -971,6 +1244,7 @@ const num = v => { const n = parseFloat(String(v).replace(',','.')); return isNa
 const fmt = (n,d=2)=> (n===null||n===undefined||isNaN(n))?'':Number(n).toFixed(d).replace('.',',');
 const fmtInt = n => (n===null||n===undefined||isNaN(n))?'':Math.round(n);
 const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isFilled = v => v !== '' && v !== null && v !== undefined;
 
 function toast(msg, type){
   const t = $('#toast'); t.textContent = msg;
@@ -1086,6 +1360,7 @@ $$('nav.tabs button').forEach(btn=>{
     if(t === 'guru') renderGuruList();
     if(t === 'rekap') renderRekap();
     if(t === 'rapor') renderRapor();
+	if(t === 'cetakrapor') initRaporPrint();
     if(t === 'akun') reloadAccounts();
   });
 });
@@ -2284,6 +2559,732 @@ function exportAllExcel(){
   toast('✓ Berhasil ekspor ' + (no-1) + ' kelas', 'ok');
 }
 
+async function publishRoster(){
+  const ids = Object.keys(ALL_TEACHERS).filter(id => ALL_TEACHERS[id]?.master?.classes);
+  if(!ids.length){ toast('Belum ada data guru', 'err'); return; }
+  const pick = prompt('Ambil daftar siswa dari guru nomor berapa?\n' +
+    ids.map((id,i) => (i+1) + '. ' + (ALL_TEACHERS[id].nama || id)).join('\n'));
+  const tid = ids[parseInt(pick, 10) - 1];
+  if(!tid) return;
+
+  const classes = ALL_TEACHERS[tid].master.classes;
+  const roster = {};
+  CLASSES.forEach(k => {
+    const names = (classes[k]?.siswa || []).map(s => String(s.nama || '').trim()).filter(Boolean);
+    if(names.length) roster[k] = names;
+  });
+  const ringkas = Object.entries(roster).map(([k,v]) => k + ': ' + v.length + ' siswa').join('\n');
+  if(!confirm('Terbitkan daftar nama ini?\n\n' + ringkas)) return;
+
+  try{
+    const res = await authFetch('/instrumen/roster.json', {
+      method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(roster)
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    toast('✓ Daftar siswa diterbitkan', 'ok');
+  }catch(err){ toast('✗ ' + err.message, 'err'); }
+}
+
+/* ============================================================
+   CETAK RAPOR ATS / SEMESTER
+   ============================================================ */
+const RAPOR_SUBJECTS = [
+  { type:'section', label:'A. Kelompok Umum' },
+  { type:'parent', nomor:'1', label:'Pendidikan Agama Islam' },
+  { type:'child',  key:'quran_hadis',   label:"a. Al-Qur'an Hadis" },
+  { type:'child',  key:'akidah_akhlak', label:'b. Akidah Akhlak' },
+  { type:'child',  key:'fiqih',         label:'c. Fiqih' },
+  { type:'child',  key:'ski',           label:'d. Sejarah Kebudayaan Islam (SKI)' },
+  { type:'item', nomor:'2',  key:'pkn',       label:'Pendidikan Pancasila' },
+  { type:'item', nomor:'3',  key:'bindo',     label:'Bahasa Indonesia' },
+  { type:'item', nomor:'4',  key:'barab',     label:'Bahasa Arab' },
+  { type:'item', nomor:'5',  key:'mtk',       label:'Matematika' },
+  { type:'item', nomor:'6',  key:'sejindo',   label:'Sejarah Indonesia' },
+  { type:'item', nomor:'7',  key:'bing',      label:'Bahasa Inggris' },
+  { type:'item', nomor:'8',  key:'infor',     label:'Informatika' },
+  { type:'item', nomor:'9',  key:'pjok',      label:'Pendidikan Jasmani, Olahraga dan Kesehatan (PJOK)' },
+  { type:'item', nomor:'10', key:'sbk',       label:'Seni Budaya dan Keterampilan (SBK)' },
+  { type:'item', nomor:'11', key:'sosiologi', label:'Sosiologi' },
+  { type:'item', nomor:'12', key:'tafsir',    label:'Ilmu Tafsir' },
+  { type:'item', nomor:'13', key:'hadits',    label:'Ilmu Hadits' },
+  { type:'item', nomor:'14', key:'ushul',     label:'Ushul Fiqih' },
+  { type:'item', nomor:'15', key:'akhlak',    label:'Akhlak Tasawuf' },
+  { type:'section', label:'B. Muatan Lokal' },
+  { type:'item', nomor:'16', key:'tahfiz', label:'Tahfiz' },
+  { type:'item', nomor:'17', key:'bk',     label:'Bimbingan Konseling (BK)' },
+];
+
+const RAPOR_SUBJECTS_MTS = [
+  { type:'section', label:'A. Kelompok Umum' },
+  { type:'parent', nomor:'1', label:'Pendidikan Agama Islam' },
+  { type:'child',  key:'quran_hadis',   label:"a. Al-Qur'an Hadis" },
+  { type:'child',  key:'akidah_akhlak', label:'b. Akidah Akhlak' },
+  { type:'child',  key:'fiqih',         label:'c. Fiqih' },
+  { type:'child',  key:'ski',           label:'d. Sejarah Kebudayaan Islam (SKI)' },
+  { type:'item', nomor:'2',  key:'pkn',       label:'Pendidikan Pancasila' },
+  { type:'item', nomor:'3',  key:'bindo',     label:'Bahasa Indonesia' },
+  { type:'item', nomor:'4',  key:'barab',     label:'Bahasa Arab' },
+  { type:'item', nomor:'5',  key:'mtk',       label:'Matematika' },
+  { type:'item', nomor:'6',  key:'ipa',       label:'Ilmu Pengetahuan Alam (IPA)' },
+  { type:'item', nomor:'7',  key:'ips',       label:'Ilmu Pengetahuan Sosial (IPS)' },
+  { type:'item', nomor:'8',  key:'bing',      label:'Bahasa Inggris' },
+  { type:'item', nomor:'9',  key:'pjok',      label:'Pendidikan Jasmani, Olahraga dan Kesehatan (PJOK)' },
+  { type:'item', nomor:'10', key:'infor',     label:'Informatika' },
+  { type:'item', nomor:'11', key:'sbk',       label:'Seni Budaya dan Keterampilan (SBK)' },
+  { type:'section', label:'B. Muatan Lokal' },
+  { type:'item', nomor:'12', key:'qawaid',    label:"Qawa'id" },
+  { type:'item', nomor:'13', key:'tahfiz',    label:'Tahfiz' },
+  { type:'item', nomor:'14', key:'bk',        label:'Bimbingan Konseling (BK)' },
+];
+
+const RAPOR_ALIAS = {
+  quran_hadis:   ['quran hadis', "al-qur'an hadis", 'quran hadits', 'al-quran hadis', "qur'an hadis", 'al-qur’an hadis'],
+  akidah_akhlak: ['akidah akhlak', 'aqidah akhlak', 'akidah ahlak', 'aqidah ahlak'],
+  fiqih:         ['fiqih', 'fiqh', 'fikih'],
+  ski:           ['ski', 'sejarah kebudayaan islam', 'sejarah kebudayaan islam (ski)'],
+  pkn:           ['pkn', 'ppkn', 'pendidikan pancasila', 'pancasila', 'pendidikan kewarganegaraan'],
+  bindo:         ['bahasa indonesia', 'b. indo', 'b. indonesia', 'bindo', 'b indo'],
+  barab:         ['bahasa arab', 'b. arab', 'b.arab', 'barab', 'b arab'],
+  mtk:           ['matematika', 'mtk', 'mat'],
+  sejindo:       ['sejarah indonesia', 'sej. indo', 'sej indo', 'sejarah indo'],
+  bing:          ['bahasa inggris', 'b. inggris', 'b.inggris', 'bing', 'b. ingg'],
+  infor:         ['informatika', 'infor', 'tik'],
+  pjok:          ['pjok', 'pendidikan jasmani', 'penjas', 'penjaskes', 'penjasorkes', 'pendidikan jasmani, olahraga dan kesehatan (pjok)'],
+  sbk:           ['sbk', 'seni budaya', 'seni budaya dan keterampilan', 'seni budaya dan keterampilan (sbk)', 'seni budaya dan prakarya'],
+  sosiologi:     ['sosiologi', 'sosio'],
+  tafsir:        ['ilmu tafsir', 'tafsir', 'i. tafs', 'i tafsir'],
+  hadits:        ['ilmu hadits', 'ilmu hadis', 'hadits', 'hadis', 'i. hadts'],
+  ushul:         ['ushul fiqih', 'ushul fiqh', 'usul fiqih', 'ushul fiq'],
+  akhlak:        ['akhlak tasawuf', 'akhlak tas', 'tasawuf', 'akhlak'],
+  tahfiz:        ['tahfiz', 'tahfidz', 'tahfizh', 'tahfidz quran'],
+  bk:            ['bimbingan konseling', 'bk', 'bimbingan konseling (bk)', 'bimbingan dan konseling'],
+  ipa:           ['ipa', 'ilmu pengetahuan alam', 'sains'],
+  qawaid:        ['qawaid', "qawa'id", 'qowaid', "qowa'id", 'nahwu', 'sharaf'],
+  ips:           ['ips', 'ilmu pengetahuan sosial']
+};
+
+function matchSubjectKey(mapelRaw) {
+  if (!mapelRaw) return null;
+  const norm = String(mapelRaw).trim().toLowerCase().replace(/\s+/g, ' ');
+  for (const [key, aliases] of Object.entries(RAPOR_ALIAS)) {
+    if (aliases.includes(norm)) return key;
+  }
+  for (const [key, aliases] of Object.entries(RAPOR_ALIAS)) {
+    if (aliases.some(a => norm.includes(a) || a.includes(norm))) return key;
+  }
+  return null;
+}
+
+function sikapPredikat(n) {
+  if (!isFilled(n)) return '';
+  const v = num(n);
+  if (v <= 0) return '';
+  if (v >= 90) return 'A';
+  if (v >= 80) return 'B';
+  if (v >= 70) return 'C';
+  if (v >= 60) return 'D';
+  return 'E';
+}
+
+function generateCapaian(nilai, KKM, namaMapel, materiList) {
+  if (!isFilled(nilai)) return '';
+  const n = num(nilai);
+  if (n <= 0) return '';
+  if (n >= 90) return 'Menunjukkan penguasaan materi dengan sangat baik.';
+  if (n >= KKM) return 'Menunjukkan penguasaan materi dengan baik.';
+  
+  const safeMapel = esc(namaMapel);
+  if (materiList && materiList.length > 0) {
+     // Beri spasi ganda biasa, jangan pakai &nbsp; agar tidak rusak saat di-esc
+     const formattedMateri = materiList.map((m, i) => `Materi ${i+1}:  ${esc(m)}`).join(' dan ');
+     return `Tidak menguasai materi ${formattedMateri} dengan baik.`;
+  }
+  return `Tidak menguasai materi ${safeMapel} dengan baik.`;
+}
+
+function initRaporPrint() {
+  const selKelas = $('#rpKelas');
+  if (!selKelas) return;
+  const kelasSet = new Set();
+  for (const t of Object.values(ALL_TEACHERS)) {
+    const classes = t.master?.classes || {};
+    for (const k of CLASSES) {
+      if (classes[k]?.siswa?.length) kelasSet.add(k);
+    }
+  }
+  const opts = CLASSES.filter(k => kelasSet.has(k));
+  const current = selKelas.value;
+  selKelas.innerHTML = '<option value="">— Pilih Kelas —</option>' +
+    opts.map(k => `<option value="${k}">Kelas ${k}</option>`).join('');
+  if (current && opts.includes(current)) selKelas.value = current;
+  else if (opts.length === 1) selKelas.value = opts[0];
+
+  selKelas.onchange = populateRaporSiswa;
+  populateRaporSiswa();
+}
+
+function populateRaporSiswa() {
+  const kelas = $('#rpKelas').value;
+  const selSiswa = $('#rpSiswa');
+  if (!kelas) { selSiswa.innerHTML = '<option value="">— Pilih Kelas Dulu —</option>'; return; }
+  const namaSet = new Set();
+  for (const t of Object.values(ALL_TEACHERS)) {
+    const cls = t.master?.classes?.[kelas];
+    if (!cls || !Array.isArray(cls.siswa)) continue;
+    cls.siswa.forEach(s => {
+      const nm = String(s.nama || '').trim();
+      if (nm) namaSet.add(nm);
+    });
+  }
+  const arr = [...namaSet].sort((a,b) => a.localeCompare(b, 'id'));
+  selSiswa.innerHTML = '<option value="">— Pilih Siswa —</option>' +
+    arr.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+}
+
+function terbilang(n) {
+  n = num(n);
+  if (n === 0) return '';
+  let parts = n.toFixed(2).split('.');
+  let bulat = parseInt(parts[0], 10);
+  let desimal = parts[1];
+  
+  const angka = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+  
+  function bilang(num) {
+    if (num < 12) return angka[num];
+    if (num < 20) return bilang(num - 10) + " Belas";
+    if (num < 100) return bilang(Math.floor(num / 10)) + " Puluh " + bilang(num % 10);
+    if (num < 200) return "Seratus " + bilang(num - 100);
+    if (num < 1000) return bilang(Math.floor(num / 100)) + " Ratus " + bilang(num % 100);
+    return "";
+  }
+  
+  let res = bilang(bulat).trim().replace(/\s+/g, ' ');
+  if (desimal && parseInt(desimal, 10) > 0) {
+    res += " Koma";
+    for (let d of desimal) {
+      res += " " + angka[parseInt(d, 10)];
+    }
+  }
+  return res;
+}
+
+  const NASEHAT_TEMPLATES = {
+  cat1: [ // Nilai Sangat Baik
+    "Prestasi luar biasa di semester ini! Pertahankan kerja kerasmu dan tetaplah rendah hati. Ibu/Bapak bangga dengan dedikasi serta kedisiplinanmu dalam belajar. Teruslah menjadi inspirasi bagi teman-temanmu!",
+    "Selamat atas hasil rapor yang sangat memuaskan ini! Jangan cepat puas, teruslah mengeksplorasi potensimu. Pertahankan semangat belajar yang luar biasa ini di semester depan!",
+    "Nilai yang luar biasa! Ini adalah bukti dari kerja keras dan fokusmu selama ini. Tetap konsisten dan tingkatkan terus prestasimu. Pintu kesuksesan terbuka lebar untukmu."
+  ],
+  cat2: [ // Nilai Bagus / Stabil
+    "Hasil yang cukup baik di semester ini. Kamu punya potensi besar untuk meraih nilai yang lebih tinggi lagi. Tingkatkan sedikit lagi kefokusanmu dalam belajar di semester depan!",
+    "Usaha yang bagus! Nilaimu sudah stabil dan aman. Cobalah untuk lebih aktif di kelas dan tantang dirimu sendiri. Ibu/Bapak yakin kamu bisa meraih prestasi yang lebih tinggi.",
+    "Terima kasih atas kerja kerasmu semester ini. Pertahankan apa yang sudah baik dan perbaiki yang masih kurang. Selangkah lagi kamu bisa mencapai nilai maksimal!"
+  ],
+  cat3: [ // Nilai Cukup / Perlu Peningkatan
+    "Nilaimu semester ini cukup, namun Ibu/Bapak tahu kamu bisa berbuat jauh lebih baik dari ini. Kurangi bermain gadget/game dan alokasikan lebih banyak waktu untuk mengulang pelajaran di rumah.",
+    "Ada beberapa mata pelajaran yang nilainya menurun. Jadikan ini sebagai bahan evaluasi, bukan untuk berkecil hati. Tingkatkan kehadiran dan fokusmu di kelas pada semester depan, ya!",
+    "Belajar adalah sebuah proses. Jangan menyerah hanya karena hasil semester ini belum memuaskan. Mari mulai semester depan dengan semangat baru dan perencanaan belajar yang lebih matang."
+  ],
+  cat4: [ // Karakter & Motivasi
+    "Kamu adalah anak yang sopan dan memiliki sikap yang sangat baik di kelas. Jika kebaikan sikap ini dibarengi dengan ketekunan belajar, kamu akan jadi anak yang luar biasa. Semangat!",
+    "Kemampuan non-akademikmu (seni/olahraga/organisasi) sudah sangat bagus. Namun, jangan lupakan tanggung jawab utamamu pada pelajaran. Seimbangkan keduanya demi masa depanmu.",
+    "Ibu/Bapak percaya setiap anak memiliki bakatnya masing-masing. Temukan fokusmu, disiplinkan dirimu, dan buktikan bahwa kamu bisa bersinar. Semester depan harus lebih baik!"
+  ]
+};
+
+function buildRaporPrint() {
+  const kelas = $('#rpKelas').value;
+  const nama = $('#rpSiswa').value;
+  const jenis = $('#rpJenis').value;
+  const nisnInput = ($('#rpNisn')?.value || '').trim();
+  if (!kelas || !nama) { toast('Pilih kelas dan siswa dulu', 'err'); return; }
+
+  raporOverrides = {}; // Reset editan jika generate baru
+  const subjectData = {};
+  let baseIdentitas = null;
+  // 1. Ambil data nilai mapel & materi
+  for (const tid of Object.keys(ALL_TEACHERS)) {
+    const t = ALL_TEACHERS[tid];
+    const cls = t.master?.classes?.[kelas];
+    if (!cls || !Array.isArray(cls.siswa)) continue;
+    const student = cls.siswa.find(s => String(s.nama||'').trim().toLowerCase() === nama.toLowerCase());
+    if (!student) continue;
+    if (!baseIdentitas) baseIdentitas = cls.identitas || {};
+
+    const mapelRaw = (cls.identitas?.mapel || '').trim();
+    const key = matchSubjectKey(mapelRaw);
+    if (!key || subjectData[key]) continue;
+
+    const KKM = num(cls.identitas?.kkm) || 75;
+    
+    // Ambil daftar materi yang diinput guru
+    let materiList = [];
+    if (cls.sumatif) {
+      Object.values(cls.sumatif).forEach(s => {
+         // Tambahkan s && untuk mencegah crash jika data di Firebase berisi 'null'
+         if (s && s.materi && String(s.materi).trim() !== '') {
+             materiList.push(String(s.materi).trim());
+         }
+      });
+    }
+
+    let nilai = 0;
+    if (jenis === 'ats') {
+      nilai = hitungNilaiAkhirUjian(cls.uts?.[student.id], KKM);
+    } else {
+      nilai = hitungNilaiAkhir(student, cls).nilaiAkhir;
+    }
+    const sikapNum = (num(student.absen) + num(student.pengamatan)) / 2;
+    subjectData[key] = { mapel: mapelRaw, kkm: KKM, nilai, sikap: sikapNum, guru: t.nama || tid, materiList: materiList };
+  }
+
+  // 2. Hitung Peringkat
+  let allNames = new Set();
+  for (const t of Object.values(ALL_TEACHERS)) {
+    const c = t.master?.classes?.[kelas];
+    if (c && c.siswa) c.siswa.forEach(s => allNames.add(String(s.nama||'').trim()));
+  }
+  let classStudentScores = {};
+  allNames.forEach(nm => classStudentScores[nm] = { total: 0, count: 0 });
+  
+  for (const tid of Object.keys(ALL_TEACHERS)) {
+    const t = ALL_TEACHERS[tid];
+    const cls = t.master?.classes?.[kelas];
+    if (!cls || !Array.isArray(cls.siswa)) continue;
+    const mapelRaw = (cls.identitas?.mapel || '').trim();
+    const key = matchSubjectKey(mapelRaw);
+    if (!key) continue;
+    const KKM = num(cls.identitas?.kkm) || 75;
+    
+    cls.siswa.forEach(st => {
+      const nm = String(st.nama||'').trim();
+      if (!nm || !classStudentScores[nm]) return;
+      let val = 0;
+      if (jenis === 'ats') val = hitungNilaiAkhirUjian(cls.uts?.[st.id], KKM);
+      else val = hitungNilaiAkhir(st, cls).nilaiAkhir;
+      
+      if (isFilled(val) && num(val) > 0) {
+        classStudentScores[nm].total += num(val);
+        classStudentScores[nm].count++;
+      }
+    });
+  }
+  
+  let rankArray = [];
+  Object.keys(classStudentScores).forEach(nm => {
+    const data = classStudentScores[nm];
+    data.avg = data.count > 0 ? data.total / data.count : 0;
+    if (data.avg > 0) rankArray.push({ nama: nm, avg: data.avg });
+  });
+  rankArray.sort((a,b) => b.avg - a.avg);
+  
+  let currentRank = 1;
+  let lastAvg = -1;
+  let rankMap = {};
+  rankArray.forEach((s, idx) => {
+     if (s.avg !== lastAvg) {
+        currentRank = idx + 1;
+        lastAvg = s.avg;
+     }
+     rankMap[s.nama.toLowerCase()] = currentRank;
+  });
+  
+  let myRank = rankMap[nama.toLowerCase()] || '-';
+  let totalStudentsInClass = allNames.size;
+
+  // 3. Hitung total & rata-rata untuk tabel
+  let totalNilai = 0, count = 0;
+  Object.values(subjectData).forEach(d => {
+    if (isFilled(d.nilai) && num(d.nilai) > 0) { totalNilai += num(d.nilai); count++; }
+  });
+  const rataRata = count > 0 ? totalNilai / count : 0;
+
+  const ident = baseIdentitas || {};
+  const madrasah = ident.madrasah || 'MAS Jabal Rahmah Koto Baru';
+  const tahunAjaran = ident.tahun || '2026/2027';
+  const semester = ident.semester || 'Ganjil';
+  const waliKelas = ident.wali || 'Muhammad Arrazi, S. Pd., M. Pd';
+    const isMTs = ['VII', 'VIII', 'IX'].includes(kelas);
+  const institusi = isMTs ? 'MADRASAH TSANAWIYAH (MTs) JABAL RAHMAH' : 'MADRASAH ALIYAH (MAS) JABAL RAHMAH';
+  
+  const judul = jenis === 'ats'
+    ? `LAPORAN HASIL ASESMEN TENGAH SEMESTER (ATS) ${semester.toUpperCase()}`
+    : `LAPORAN HASIL BELAJAR SEMESTER ${semester.toUpperCase()}`;
+    
+  // Fase E untuk kelas X dan VII, F untuk XI dan VIII, G untuk XII dan IX
+  const fase = ['X','VII'].includes(kelas) ? 'E' : ['XI','VIII'].includes(kelas) ? 'F' : 'G';
+  const nisn = nisnInput || '0123456789 / 12345';
+  const today = new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
+
+    // --- OTOMATISASI NASEHAT BERDASARKAN NILAI ---
+  let nasehatText = "";
+  let totalSikap = 0;
+  Object.values(subjectData).forEach(d => { totalSikap += d.sikap; });
+  const avgSikap = Object.keys(subjectData).length > 0 ? (totalSikap / Object.keys(subjectData).length) : 0;
+
+  if (rataRata >= 88 || myRank === 1) {
+      nasehatText = NASEHAT_TEMPLATES.cat1[Math.floor(Math.random() * 3)];
+  } else if (rataRata >= 75) {
+      nasehatText = NASEHAT_TEMPLATES.cat2[Math.floor(Math.random() * 3)];
+  } else {
+      nasehatText = NASEHAT_TEMPLATES.cat3[Math.floor(Math.random() * 3)];
+  }
+
+  // Jika nilai akademik di bawah 75 tapi sikap (absen/pengamatan) sangat baik, beri motivasi karakter
+  if (rataRata < 75 && avgSikap >= 90) {
+      nasehatText = NASEHAT_TEMPLATES.cat4[Math.floor(Math.random() * 3)];
+  }
+
+    // Simpan data ke variabel global agar bisa diakses oleh renderRaporHTML
+  window.raporData = {
+    nama, nisn: nisnInput || '0123456789 / 12345', kelas, jenis, subjectData,
+    myRank, totalStudentsInClass, totalNilai, count, rataRata, baseIdentitas, nasehatText: nasehatText
+  };
+
+  renderRaporHTML();
+}
+
+function printRapor() {
+  const area = $('#raporPrintArea');
+  if (!area || !area.innerHTML.trim() || area.querySelector('.empty-state')) {
+    toast('Generate rapor dulu sebelum cetak', 'err');
+    return;
+  }
+  document.body.classList.add('printing-rapor');
+  const cleanup = () => {
+    document.body.classList.remove('printing-rapor');
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  setTimeout(() => window.print(), 60);
+}
+
+function renderRaporHTML() {
+  const data = window.raporData;
+  if (!data) return;
+
+  const { nama, nisn, kelas, jenis, subjectData, myRank, totalStudentsInClass, totalNilai, count, rataRata, baseIdentitas } = data;
+
+  const ident = baseIdentitas || {};
+  const madrasah = ident.madrasah || 'MAS Jabal Rahmah Koto Baru';
+  const tahunAjaran = ident.tahun || '2026/2027';
+  const semester = ident.semester || 'Ganjil';
+  const waliKelas = ident.wali || 'Muhammad Arrazi, S. Pd., M. Pd';
+  
+  const isMTs = ['VII', 'VIII', 'IX'].includes(kelas);
+  const institusi = isMTs ? 'MADRASAH TSANAWIYAH (MTs) JABAL RAHMAH' : 'MADRASAH ALIYAH (MAS) JABAL RAHMAH';
+  const judul = jenis === 'ats'
+    ? `LAPORAN HASIL ASESMEN TENGAH SEMESTER (ATS) ${semester.toUpperCase()}`
+    : `LAPORAN HASIL BELAJAR SEMESTER ${semester.toUpperCase()}`;
+  const fase = ['X','VII'].includes(kelas) ? 'E' : ['XI','VIII'].includes(kelas) ? 'F' : 'G';
+  const today = new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
+
+  const rows = [];
+  const templateMapel = isMTs ? RAPOR_SUBJECTS_MTS : RAPOR_SUBJECTS;
+
+  for (const sub of templateMapel) {
+    if (sub.type === 'section') {
+      const sectionLabel = raporOverrides.sections?.[sub.label] || sub.label;
+      rows.push(`<tr class="rapor-section" data-section="${sub.label}"><td colspan="7" style="text-align:left">${esc(sectionLabel)}</td></tr>`);
+    } else if (sub.type === 'parent') {
+      rows.push(`<tr><td style="text-align:center">${esc(sub.nomor)}</td><td colspan="6" style="text-align:left;font-weight:700">${esc(sub.label)}</td></tr>`);
+    } else {
+	
+      const d = subjectData[sub.key];
+      const ov = raporOverrides[sub.key] || {}; // Ambil data editan jika ada
+
+      const kkm = d ? d.kkm : 75;
+      const nilaiDisp = ov.nilai !== undefined ? ov.nilai : (d && isFilled(d.nilai) && num(d.nilai) > 0 ? fmt(d.nilai) : '');
+      const sikapDisp = ov.sikap !== undefined ? ov.sikap : (d ? sikapPredikat(d.sikap) : '');
+      const ket = ov.ket !== undefined ? ov.ket : (d && isFilled(d.nilai) && num(d.nilai) > 0 ? (num(d.nilai) >= kkm ? 'Tuntas' : 'Tidak Tuntas') : '');
+      const capaian = ov.capaian !== undefined ? ov.capaian : (d ? generateCapaian(d.nilai, d.kkm, d.mapel, d.materiList) : '');
+      
+      const indentStyle = sub.type === 'child' ? 'padding-left: 20px;' : 'padding-left: 8px;';
+
+      rows.push(`<tr data-key="${sub.key}">
+        <td style="text-align:center; vertical-align: middle;">${esc(sub.nomor || '')}</td>
+        <td style="text-align:left; vertical-align: middle; ${indentStyle}">${esc(sub.label)}</td>
+        <td style="text-align:center; vertical-align: middle;">${kkm}</td>
+        <td class="td-nilai" style="text-align:center; vertical-align: middle;">${nilaiDisp}</td>
+        <td class="td-capaian" style="text-align:left; vertical-align: middle; padding-left:6px; font-size:10px; white-space: pre-wrap;">${capaian}</td>
+        <td class="td-ket" style="text-align:center; vertical-align: middle;">${ket}</td>
+        <td class="td-sikap" style="text-align:center; vertical-align: middle;">${sikapDisp}</td>
+      </tr>`);
+    }
+  }
+  
+  // Baris Total & Rata-rata
+  rows.push(`<tr>
+    <td colspan="3" style="text-align:center; font-weight:700; background-color: #f8fafc;">Total Jumlah Nilai</td>
+    <td colspan="1" style="text-align:center; font-weight:700; background-color: #f8fafc;">${count ? fmt(totalNilai) : ''}</td>
+    <td colspan="1" style="text-align:center; font-weight:700; background-color: #f8fafc; font-size:10px;">${count ? terbilang(totalNilai) : ''}</td>
+    <td colspan="3" style="background-color: #f8fafc;"></td>
+  </tr>`);
+  rows.push(`<tr>
+    <td colspan="3" style="text-align:center; font-weight:700; background-color: #f8fafc;">Rata Rata Nilai</td>
+    <td colspan="1" style="text-align:center; font-weight:700; background-color: #f8fafc;">${count ? fmt(rataRata) : ''}</td>
+    <td colspan="1" style="text-align:center; font-weight:700; background-color: #f8fafc; font-size:10px;">${count ? terbilang(rataRata) : ''}</td>
+    <td colspan="3" style="background-color: #f8fafc;"></td>
+  </tr>`);
+
+  // Siapkan data ekskul (default atau yang sudah diedit)
+  const defaultEkskul = [
+    { kegiatan: 'Pramuka (Wajib)', predikat: 'Baik', keterangan: 'Aktif dan disiplin dalam kegiatan pramuka di madrasah.' },
+    { kegiatan: 'Upacara', predikat: 'Baik', keterangan: 'Disiplin dalam menjalankan upacara di madrasah.' },
+    { kegiatan: "Shalat Berjama'ah", predikat: 'Baik', keterangan: "Disiplin dalam menjalankan shalat berjama'ah di madrasah." }
+  ];
+  const ekskulData = raporOverrides.ekskul || defaultEkskul;
+
+  // Data default tanpa kata "hari"
+  const defaultKetidakhadiran = { sakit: '0', izin: '1', tanpa: '0' };
+  const rawKetidakhadiran = raporOverrides.ketidakhadiran || defaultKetidakhadiran;
+  
+  // Membersihkan input lama (jika sebelumnya tidak sengaja mengetik "2 hari", akan diubah jadi "2")
+  const ketidakhadiranData = {
+    sakit: String(rawKetidakhadiran.sakit).replace(/hari/gi, '').trim(),
+    izin: String(rawKetidakhadiran.izin).replace(/hari/gi, '').trim(),
+    tanpa: String(rawKetidakhadiran.tanpa).replace(/hari/gi, '').trim()
+  };
+
+  const html = `
+    <div class="rapor-sheet">
+      <div class="rapor-header">
+        <h1>${esc(judul)}</h1>
+        <h2>${institusi}</h2>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-top:10px; margin-bottom:10px; font-size:10.5px; width:100%;">
+        <div style="width: 48%;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="width: 35%; text-align:left; padding:2px 0;">Nama Peserta Didik</td><td style="width: 5%; text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(nama)}</td></tr>
+            <tr><td style="text-align:left; padding:2px 0;">NISN / NIS</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(nisn)}</td></tr>
+            <tr><td style="text-align:left; padding:2px 0;">Fase</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${fase}</td></tr>
+          </table>
+        </div>
+        <div style="width: 46%;">
+          <table style="width: 85%; margin-left: auto; border-collapse: collapse;">
+            <tr><td style="width: 40%; text-align:left; padding:2px 0;">Madrasah</td><td style="width: 5%; text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(madrasah)}</td></tr>
+            <tr><td style="text-align:left; padding:2px 0;">Kelas / Semester</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(kelas)} / ${esc(semester)}</td></tr>
+            <tr><td style="text-align:left; padding:2px 0;">Tahun Ajaran</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(tahunAjaran)}</td></tr>
+          </table>
+        </div>
+      </div>
+      
+      <table class="rapor-tbl">
+        <colgroup>
+          <col style="width: 5%;">
+          <col style="width: 22%;">
+          <col style="width: 7%;">
+          <col style="width: 8%;">
+          <col style="width: 40%;">
+          <col style="width: 10%;">
+          <col style="width: 8%;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th style="text-align:center;">No</th>
+            <th style="text-align:center;">Mata Pelajaran</th>
+            <th style="text-align:center;">KKTP</th>
+            <th style="text-align:center;">Nilai Asesmen</th>
+            <th style="text-align:center;">Capaian Kompetensi</th>
+            <th style="text-align:center; white-space: nowrap !important;">Keterangan</th>
+            <th style="text-align:center;">Sikap</th>
+          </tr>
+        </thead>
+        <tbody>${rows.join('')}</tbody>
+      </table>
+      
+      <!-- C. Ekskul -->
+      <table class="rapor-tbl" style="margin-top:8px">
+        <colgroup><col style="width: 6%;"><col style="width: 24%;"><col style="width: 15%;"><col style="width: 55%;"></colgroup>
+        <tr class="rapor-section"><td colspan="4" style="text-align:left">C. Kegiatan Ekstrakurikuler</td></tr>
+        <tr><th>No</th><th>Kegiatan</th><th>Predikat</th><th>Keterangan</th></tr>
+        ${ekskulData.map((ek, i) => `
+          <tr id="ekskul-row-${i}">
+            <td style="text-align:center">${i+1}.</td>
+            <td class="ekskul-kegiatan" style="text-align:center">${esc(ek.kegiatan)}</td>
+            <td class="ekskul-predikat" style="text-align:center">${esc(ek.predikat)}</td>
+            <td class="ekskul-keterangan" style="text-align:left; padding-left:6px;">${esc(ek.keterangan)}</td>
+          </tr>
+        `).join('')}
+      </table>
+
+      <!-- D. Prestasi -->
+      <table class="rapor-tbl" style="margin-top:8px">
+        <tr class="rapor-section"><td colspan="2" style="text-align:left">D. Prestasi / Peringkat Kelas</td></tr>
+        <tr><td colspan="2" style="text-align:center; padding:8px; font-size:11px; line-height:1.5;">Anak kami <b>${esc(nama)}</b> Meraih peringkat <b>${myRank}</b> dari <b>${totalStudentsInClass}</b> siswa</td></tr>
+      </table>
+
+      <!-- E. Ketidakhadiran -->
+      <table class="rapor-tbl" style="margin-top:8px">
+        <colgroup><col style="width: 25%;"><col style="width: 15%;"><col style="width: 60%;"></colgroup>
+        <tr class="rapor-section">
+          <td colspan="2" style="text-align:left">E. Ketidakhadiran</td>
+          <td style="text-align:center">Nasehat / Saran / Motivasi Walikelas</td>
+        </tr>
+        <!-- PERHATIKAN BARIS SAKIT DI BAWAH INI -->
+        <tr>
+          <td style="text-align:left; padding-left:6px;">Sakit</td>
+          <td class="td-sakit" style="text-align:center">${esc(ketidakhadiranData.sakit)} hari</td>
+          <td id="td-nasehat" rowspan="3" style="text-align:left; vertical-align:top; padding:8px; font-size:10px; line-height:1.5; white-space:pre-wrap;">
+            ${esc(data.nasehatText || '-')}
+            <div class="no-print" style="margin-top:8px">
+              <button class="btn btn-outline btn-sm" style="padding:2px 6px; font-size:10px;" onclick="openNasehatModal()">✏️ Template</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align:left; padding-left:6px;">Izin</td>
+          <td class="td-izin" style="text-align:center">${esc(ketidakhadiranData.izin)} hari</td>
+        </tr>
+        <tr>
+          <td style="text-align:left; padding-left:6px;">Tanpa Keterangan</td>
+          <td class="td-tanpa" style="text-align:center">${esc(ketidakhadiranData.tanpa)} hari</td>
+        </tr>
+      </table>
+    </div>
+  `;
+
+  // Buat HTML untuk Panel Edit
+  let editPanelInnerHtml = ``;
+
+  // 1. LOOPING MAPEL (A. Kelompok Umum, B. Muatan Lokal, & Mapel)
+  for (const sub of templateMapel) {
+    if (sub.type === 'section') {
+      // Render Judul Kelompok (A / B) yang bisa diedit
+      const sectionLabel = raporOverrides.sections?.[sub.label] || sub.label;
+      editPanelInnerHtml += `
+        <div style="margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #1e3a8a; padding-bottom: 5px;">
+          <label style="font-size: 12px; font-weight: bold; color: #1e3a8a; display: block; margin-bottom: 5px;">Judul Kelompok</label>
+          <input type="text" value="${esc(sectionLabel)}" oninput="updateSectionLabel('${sub.label}', this.value)" style="width: 100%; padding: 6px; font-size: 12px; font-weight: bold; border: 1px solid #1e3a8a; border-radius: 4px; background: #eff6ff;">
+        </div>
+      `;
+    } else if (sub.type === 'parent') {
+      // Render Nama Mapel Induk (1. Pendidikan Agama Islam)
+      editPanelInnerHtml += `
+        <div style="margin-top: 10px; margin-bottom: 8px;">
+          <h4 style="font-size: 12px; font-weight: bold; color: #333; margin: 0;">${esc(sub.nomor)}. ${esc(sub.label)}</h4>
+        </div>
+      `;
+    } else if (sub.type === 'item' || sub.type === 'child') {
+      // Render Input Nilai (a. Al-Qur'an, 2. Pancasila, dst)
+      const d = subjectData[sub.key] || {};
+      const ov = raporOverrides[sub.key] || {};
+      
+      const valNilai = ov.nilai !== undefined ? ov.nilai : (d.nilai > 0 ? fmt(d.nilai) : '');
+      const valCapaian = ov.capaian !== undefined ? ov.capaian : generateCapaian(d.nilai, d.kkm, d.mapel, d.materiList);
+      const valKet = ov.ket !== undefined ? ov.ket : (d.nilai >= (d.kkm||75) ? 'Tuntas' : (d.nilai ? 'Tidak Tuntas' : ''));
+      const valSikap = ov.sikap !== undefined ? ov.sikap : sikapPredikat(d.sikap);
+
+      // Beri jarak (indentasi) untuk sub-mapel (a, b, c, d)
+      const indentStyle = sub.type === 'child' ? 'margin-left: 15px;' : '';
+
+      editPanelInnerHtml += `
+        <div style="margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #eee; ${indentStyle}">
+          <label style="font-size: 11px; font-weight: bold; color: #333; display: block; margin-bottom: 5px;">${esc(sub.label)}</label>
+          <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+            <input type="text" placeholder="Nilai" value="${valNilai}" oninput="updateRaporCell('${sub.key}', 'nilai', this.value)" style="width: 60px; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="text" placeholder="Ket" value="${valKet}" oninput="updateRaporCell('${sub.key}', 'ket', this.value)" style="flex: 1; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px;">
+            <input type="text" placeholder="Sikap" value="${valSikap}" oninput="updateRaporCell('${sub.key}', 'sikap', this.value)" style="width: 50px; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+          <textarea placeholder="Capaian..." oninput="updateRaporCell('${sub.key}', 'capaian', this.value)" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px; height: 40px; resize: vertical;">${valCapaian}</textarea>
+        </div>
+      `;
+    }
+  }
+
+  // 2. INPUT EKSKUL (C)
+  editPanelInnerHtml += `
+    <div style="margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px;">
+      <h4 style="font-size: 13px; margin-bottom: 10px; color: #1e3a8a;">C. Kegiatan Ekstrakurikuler</h4>
+  `;
+  for (let i = 0; i < 3; i++) {
+    const ek = ekskulData[i] || { kegiatan: '', predikat: '', keterangan: '' };
+    editPanelInnerHtml += `
+      <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #eee;">
+        <label style="font-size: 11px; font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Data Ekskul ${i+1}</label>
+        <input type="text" placeholder="Nama Kegiatan" value="${esc(ek.kegiatan)}" oninput="updateEkskulCell(${i}, 'kegiatan', this.value)" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 4px;">
+        <input type="text" placeholder="Predikat (Baik/Cukup)" value="${esc(ek.predikat)}" oninput="updateEkskulCell(${i}, 'predikat', this.value)" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 4px;">
+        <textarea placeholder="Keterangan" oninput="updateEkskulCell(${i}, 'keterangan', this.value)" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px; height: 40px; resize: vertical;">${esc(ek.keterangan)}</textarea>
+      </div>
+    `;
+  }
+  editPanelInnerHtml += `</div>`;
+
+  // 3. INPUT KETIDAKHADIRAN (E)
+  editPanelInnerHtml += `
+    <div style="margin-top: 15px; margin-bottom: 15px; padding-bottom: 15px; border-top: 2px solid #eee; padding-top: 15px;">
+      <h4 style="font-size: 13px; margin-bottom: 10px; color: #1e3a8a;">E. Ketidakhadiran</h4>
+      <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+        <div style="flex: 1;">
+          <label style="font-size: 11px; font-weight: bold; color: #333; display: block; margin-bottom: 3px;">Sakit</label>
+          <input type="number" min="0" value="${esc(ketidakhadiranData.sakit)}" oninput="updateKetidakhadiran('sakit', this.value)" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div style="flex: 1;">
+          <label style="font-size: 11px; font-weight: bold; color: #333; display: block; margin-bottom: 3px;">Izin</label>
+          <input type="number" min="0" value="${esc(ketidakhadiranData.izin)}" oninput="updateKetidakhadiran('izin', this.value)" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div style="flex: 1;">
+          <label style="font-size: 11px; font-weight: bold; color: #333; display: block; margin-bottom: 3px;">Tanpa Ket.</label>
+          <input type="number" min="0" value="${esc(ketidakhadiranData.tanpa)}" oninput="updateKetidakhadiran('tanpa', this.value)" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 4. INPUT NASEHAT
+  editPanelInnerHtml += `
+      <div style="margin-top: 15px; border-top: 2px solid #eee; padding-top: 15px;">
+        <label style="font-size: 11px; font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Nasehat / Saran Wali Kelas</label>
+        <textarea oninput="updateNasehatInline(this.value)" style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px; height: 80px; resize: vertical;">${esc(data.nasehatText || '')}</textarea>
+      </div>
+  `;
+
+  // Susun layout Rapor & Panel
+  const finalHtml = `
+    <div class="rapor-layout-container">
+      <!-- Rapor (Otomatis ke Tengah) -->
+      <div class="rapor-main-area">
+        ${html}
+      </div>
+
+      <!-- Tombol Toggle Edit -->
+      <button class="btn-toggle-edit no-print" onclick="toggleEditPanel()">
+        ✏️ Edit Data
+      </button>
+
+      <!-- Panel Edit (Wadah Utama) -->
+      <div id="editPanelContainer" class="edit-panel-container no-print">
+        
+        <!-- Isi Panel -->
+        <div class="edit-panel-content-wrapper" style="display:flex; flex-direction:column; height:100%; width:100%;">
+          
+          <!-- Header Panel -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; background: #f8fafc; border-radius: 0;">
+            <h3 style="margin: 0; font-size: 15px; color: #1e3a8a;">✏️ Panel Edit Data</h3>
+            <button class="btn btn-danger btn-sm" onclick="toggleEditPanel()" style="border-radius: 20px; padding: 5px 12px; font-size: 12px;">✕ Tutup</button>
+          </div>
+          
+          <!-- Form Input (Bisa di-scroll) -->
+          <div class="edit-panel-content" style="padding: 20px; overflow-y: auto; flex: 1;">
+            ${editPanelInnerHtml}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  `;
+
+  $('#raporPrintArea').innerHTML = finalHtml;
+  toast('✓ Rapor & Panel Edit siap', 'ok');
+}
+
+// Fungsi buka/tutup panel
+function toggleEditPanel() {
+  const panel = document.getElementById('editPanelContainer');
+  if (panel) panel.classList.toggle('open');
+}
+
 async function init(){
   if(!(await window.__ADMIN_SESSION_READY__)) return;   // ⭐ tunggu sesi
   document.body.style.display = '';                     // ⭐ tampilkan setelah valid
@@ -2354,8 +3355,12 @@ function renderAccounts(){
       ? '<span class="badge-info" style="background:#dbeafe;color:#1e40af">ADMIN</span>'
       : '<span class="badge-tuntas">GURU</span>';
     const teacherData = ALL_TEACHERS[data.uid || data.teacherId];
+	const lastPwdChange = data.lastPasswordChange 
+      ? new Date(data.lastPasswordChange).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'}) 
+      : '-';
     const statusData = teacherData
-      ? `<span class="badge-tuntas" title="${timeAgo(teacherData.lastUpdate)}">✓ Ada</span>`
+      ? `<span class="badge-tuntas" title="${timeAgo(teacherData.lastUpdate)}">✓ Ada</span>
+         <br><small style="font-size:9px;color:#94a3b8" title="Terakhir ganti sandi">🔑 ${lastPwdChange}</small>`
       : '<span class="badge-belum">Belum sync</span>';
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -2366,9 +3371,16 @@ function renderAccounts(){
       <td>${roleBadge}</td>
       <td><code style="font-size:11px;background:var(--gray-100);padding:2px 6px;border-radius:4px">${esc(data.uid || data.teacherId || '-')}</code></td>
       <td>${isAdmin ? '—' : statusData}</td>
-      <td>
-        <button class="btn btn-blue btn-sm" onclick="editAccount('${esc(username)}')" style="padding:4px 10px;font-size:11px">✎ Edit</button>
-        ${!isAdmin ? `<button class="btn btn-danger btn-sm" onclick="deleteAccount('${esc(username)}')" style="padding:4px 10px;font-size:11px;margin-left:4px">✕ Hapus</button>` : ''}
+            <td>
+        <button class="btn btn-blue btn-sm" onclick="editAccount('${esc(username)}')" style="padding:4px 8px;font-size:11px">✎ Edit</button>
+        ${!isAdmin ? `
+          <button class="btn btn-outline btn-sm" onclick="resetTeacherPassword('${esc(username)}')" 
+                  style="padding:4px 8px;font-size:11px;margin-left:4px" title="Kirim link reset sandi ke email">
+            🔑 Reset
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAccount('${esc(username)}')" 
+                  style="padding:4px 8px;font-size:11px;margin-left:4px">✕</button>
+        ` : ''}
       </td>`;
     tb.appendChild(tr);
   });
@@ -2376,6 +3388,141 @@ function renderAccounts(){
 
 let _editingUsername = null;
 
+let raporOverrides = {}; // Menyimpan nilai yang diedit manual oleh admin
+
+function editRaporItem(key) {
+  $('#editRaporKey').value = key;
+  // Ambil data saat ini (bisa dari override atau data asli)
+  const currentData = raporOverrides[key] || {};
+  
+  $('#editRaporNilai').value = currentData.nilai !== undefined ? currentData.nilai : $('#raporPrintArea').querySelector(`tr[data-key="${key}"] .td-nilai`).innerText;
+  $('#editRaporCapaian').value = currentData.capaian !== undefined ? currentData.capaian : $('#raporPrintArea').querySelector(`tr[data-key="${key}"] .td-capaian`).innerText;
+  $('#editRaporKet').value = currentData.ket !== undefined ? currentData.ket : $('#raporPrintArea').querySelector(`tr[data-key="${key}"] .td-ket`).innerText;
+  $('#editRaporSikap').value = currentData.sikap !== undefined ? currentData.sikap : $('#raporPrintArea').querySelector(`tr[data-key="${key}"] .td-sikap`).innerText;
+
+  $('#raporEditModal').classList.add('show');
+}
+
+function closeRaporEditModal() {
+  $('#raporEditModal').classList.remove('show');
+}
+
+function saveRaporEdit() {
+  const key = $('#editRaporKey').value;
+  raporOverrides[key] = {
+    nilai: $('#editRaporNilai').value,
+    capaian: $('#editRaporCapaian').value,
+    ket: $('#editRaporKet').value,
+    sikap: $('#editRaporSikap').value
+  };
+  closeRaporEditModal();
+  // Render ulang HTML menggunakan data yang baru diedit
+  renderRaporHTML(); 
+  toast('✓ Data rapor berhasil diperbarui', 'ok');
+}
+
+function openNasehatModal() {
+  const currentText = window.raporData?.nasehatText || '';
+  $('#txtNasehat').value = currentText;
+  $('#selTemplateNasehat').value = ''; // Reset dropdown
+  $('#nasehatEditModal').classList.add('show');
+}
+
+function closeNasehatModal() {
+  $('#nasehatEditModal').classList.remove('show');
+}
+
+function applyTemplateNasehat(val) {
+  if (!val) return;
+  const parts = val.split('_'); // contoh: "cat1_0"
+  const cat = parts[0];
+  const idx = parseInt(parts[1], 10);
+  if (NASEHAT_TEMPLATES[cat] && NASEHAT_TEMPLATES[cat][idx]) {
+    $('#txtNasehat').value = NASEHAT_TEMPLATES[cat][idx];
+  }
+}
+
+function saveNasehat() {
+  if (!window.raporData) return;
+  const newText = $('#txtNasehat').value.trim();
+  window.raporData.nasehatText = newText;
+  closeNasehatModal();
+  renderRaporHTML(); // Render ulang tabel
+  toast('✓ Nasehat berhasil diperbarui', 'ok');
+}
+
+// Fungsi untuk meng-update tabel secara langsung saat mengetik di Panel Kanan
+function updateRaporCell(key, field, val) {
+  if (!raporOverrides[key]) raporOverrides[key] = {};
+  raporOverrides[key][field] = val;
+
+  const tr = document.querySelector(`tr[data-key="${key}"]`);
+  if (tr) {
+    if (field === 'nilai') tr.querySelector('.td-nilai').innerText = val;
+    if (field === 'capaian') tr.querySelector('.td-capaian').innerText = val;
+    if (field === 'ket') tr.querySelector('.td-ket').innerText = val;
+    if (field === 'sikap') tr.querySelector('.td-sikap').innerText = val;
+  }
+}
+
+// Fungsi untuk meng-update Nasehat di tabel secara langsung
+function updateNasehatInline(val) {
+  window.raporData.nasehatText = val;
+  const td = document.getElementById('td-nasehat');
+  if (td) {
+    td.innerHTML = esc(val) + `<div class="no-print" style="margin-top:8px"><button class="btn btn-outline btn-sm" style="padding:2px 6px; font-size:10px;" onclick="openNasehatModal()">✏️ Template</button></div>`;
+  }
+}
+
+// Fungsi untuk meng-update Judul Kelompok (A & B)
+function updateSectionLabel(originalLabel, val) {
+  if (!raporOverrides.sections) raporOverrides.sections = {};
+  raporOverrides.sections[originalLabel] = val;
+  
+  const tr = document.querySelector(`tr[data-section="${originalLabel}"]`);
+  if (tr) {
+    const td = tr.querySelector('td');
+    if (td) td.innerText = val;
+  }
+}
+
+// Fungsi untuk meng-update Ketidakhadiran secara langsung
+function updateKetidakhadiran(field, val) {
+  // Pastikan data default murni angka
+  if (!raporOverrides.ketidakhadiran) {
+    raporOverrides.ketidakhadiran = { sakit: '0', izin: '1', tanpa: '0' };
+  }
+  
+  // Bersihkan input agar hanya menyisakan angka
+  const cleanVal = String(val).replace(/[^0-9]/g, '');
+  raporOverrides.ketidakhadiran[field] = cleanVal;
+  
+  // Update tabel HTML, tambahkan teks " hari" di belakangnya secara otomatis
+  const td = document.querySelector(`.td-${field}`);
+  if (td) td.innerText = (cleanVal || '0') + ' hari';
+}
+
+// Fungsi untuk meng-update Ekskul
+function updateEkskulCell(index, field, val) {
+  if (!raporOverrides.ekskul) {
+    raporOverrides.ekskul = [
+      { kegiatan: 'Pramuka (Wajib)', predikat: 'Baik', keterangan: 'Aktif dan disiplin dalam kegiatan pramuka di madrasah.' },
+      { kegiatan: 'Upacara', predikat: 'Baik', keterangan: 'Disiplin dalam menjalankan upacara di madrasah.' },
+      { kegiatan: "Shalat Berjama'ah", predikat: 'Baik', keterangan: "Disiplin dalam menjalankan shalat berjama'ah di madrasah." }
+    ];
+  }
+  
+  // Simpan perubahan ke variabel
+  raporOverrides.ekskul[index][field] = val;
+  
+  // Update tabel secara langsung tanpa reload
+  const tr = document.getElementById(`ekskul-row-${index}`);
+  if (tr) {
+    if (field === 'kegiatan') tr.querySelector('.ekskul-kegiatan').innerText = val;
+    if (field === 'predikat') tr.querySelector('.ekskul-predikat').innerText = val;
+    if (field === 'keterangan') tr.querySelector('.ekskul-keterangan').innerText = val;
+  }
+}
 function openAccountModal(){
   _editingUsername = null;
   $('#accountModalTitle').textContent = '➕ Tambah Akun Guru';
@@ -2384,6 +3531,8 @@ function openAccountModal(){
   $('#accTeacherId').value = '';
   $('#accNama').value = '';
   $('#accNip').value = '';
+  $('#accMapel').value = '';
+  $('#accEmail').value = '';
   $('#accountModal').classList.add('show');
   setTimeout(() => $('#accUsername').focus(), 100);
 }
@@ -2400,6 +3549,8 @@ function editAccount(username){
   $('#accTeacherId').value = data.uid || data.teacherId || '';
   $('#accNama').value = data.nama || '';
   $('#accNip').value = data.nip || '';
+  $('#accMapel').value = data.mapelDefault || '';
+  $('#accEmail').value = data.email || '';
   $('#accountModal').classList.add('show');
 }
 
@@ -2408,7 +3559,12 @@ async function saveAccount(){
   const teacherId = $('#accTeacherId').value.trim();
   const nama = $('#accNama').value.trim();
   const nip = $('#accNip').value.trim() || '-';
-
+  const mapelDefault = $('#accMapel').value.trim();
+  const email = $('#accEmail').value.trim();
+  
+  if(!email || !email.includes('@')){ 
+	toast('Email wajib diisi (untuk reset sandi).', 'err'); return; 
+  }
   if(!/^[a-z0-9._-]{2,60}$/.test(username)){
     toast('Username wajib 2–60 karakter: huruf kecil, angka, titik, _ atau -.', 'err'); return;
   }
@@ -2425,8 +3581,10 @@ async function saveAccount(){
   const previous = ALL_USERS[username] || {};
   const now = Date.now();
   const accountPayload = {
-    role: 'guru', username, uid: teacherId, teacherId,
-    nama, nip, createdAt: previous.createdAt || now, updatedAt: now
+	role: 'guru', username, uid: teacherId, teacherId,
+	nama, nip, email,
+	mapelDefault: mapelDefault,
+	createdAt: previous.createdAt || now, updatedAt: now
   };
   try {
     $('#accSaveBtn').textContent = '⏳ Menyimpan...';
@@ -2487,6 +3645,45 @@ async function deleteAccount(username){
   } catch(err){
     console.error(err);
     toast('✗ Gagal menghapus: ' + err.message, 'err');
+  }
+}
+
+async function resetTeacherPassword(username){
+  const data = ALL_USERS[username];
+  if(!data) return;
+  const email = data.email;
+  
+  if(!email || !email.includes('@')){
+    toast('Email guru belum diisi. Edit akun dulu, atau gunakan Firebase Console.', 'err');
+    return;
+  }
+  
+  if(!confirm(`Kirim link reset sandi ke:\n\n${data.nama || username}\n${email}\n\nLanjutkan?`)) return;
+  
+  try {
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FB_API_KEY}`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ requestType: 'PASSWORD_RESET', email })
+    });
+    const r = await res.json();
+    
+    if(!res.ok){
+      const map = {
+        'EMAIL_NOT_FOUND': 'Email ini tidak terdaftar di Firebase Auth. Kemungkinan email guru diubah manual — gunakan Firebase Console.',
+        'INVALID_EMAIL': 'Format email salah di database.'
+      };
+      throw new Error(map[r.error?.message] || r.error?.message);
+    }
+    
+    await authFetch('/instrumen/users/' + encodeURIComponent(username) + '/lastPasswordReset.json', {
+      method: 'PUT', body: JSON.stringify({ by: 'admin', at: Date.now() })
+    }).catch(()=>{});
+    
+    toast('✓ Link reset dikirim ke ' + email + '. Beritahu guru untuk cek inbox/spam.', 'ok');
+  } catch(err){
+    console.error(err);
+    toast('✗ ' + err.message, 'err');
   }
 }
 

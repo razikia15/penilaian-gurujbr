@@ -24,32 +24,66 @@
     font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
     min-height:100vh;
     background: linear-gradient(rgba(254, 254, 254, 0.50), rgba(60, 179, 113, 0.50)), url('background-login.jpg') center/cover no-repeat fixed;
-    display:flex;align-items:center;justify-content:center;
-    padding:20px;color:var(--gray-800);
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+    gap: 20px;
+    color:var(--gray-800);
     position: relative;
   }
 
   .web-brand {
     position: absolute;
-    top: -80px;
-    left: 10px;
+    top: 25px;
+    left: 30px;
     z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
   }
   
   .web-brand .brand-logo-img {
-    width: 250px;
-    height: 250px;
+    width: clamp(35px, 4vw, 50px);
+    height: clamp(35px, 4vw, 50px);
     object-fit: contain;
-    background: transparent;
-    border: none;
-    padding: 0;
-    box-shadow: none;
-    border-radius: 0;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  }
+
+  .brand-divider {
+    width: 1.5px;
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    text-shadow: 0px 0px 5px rgba(255,255,255,0.9);
+  }
+
+  .brand-text .brand-sub {
+    font-size: clamp(8px, 0.8vw, 11px);
+    font-weight: 700;
+    color: #4b5563;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-text .brand-main {
+    font-size: clamp(10px, 1vw, 14px);
+    font-weight: 800;
+    color: var(--green-900);
+    letter-spacing: 0.5px;
   }
 
   .login-wrapper{
     width:100%;max-width:1100px;
     height: 680px;
+    margin-top: 80px;
     background: #fff;
     border-radius:20px;overflow:hidden;
     box-shadow:0 30px 90px rgba(0,0,0,.2);
@@ -287,29 +321,92 @@
   .changelog-badge{font-size:9.5px;background:#dbeafe;color:#1e40af;padding:2px 7px;border-radius:10px;font-weight:700}
   .changelog-empty{text-align:center;padding:24px;color:#9ca3af;font-size:12.5px}
 
-  @media(max-width:860px){
+  /* ===== STYLE MODAL LUPA SANDI ===== */
+  .modal-overlay {position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; z-index:9999; padding:20px;}
+  .modal-overlay.show {display:flex;}
+  .modal-box {background:#fff; border-radius:14px; max-width:420px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,.3); animation:changelogFade .25s ease; overflow:hidden;}
+  .modal-box .modal-header {background:linear-gradient(135deg,var(--green-700),var(--green-900)); color:#fff; padding:16px 20px; display:flex; justify-content:space-between; align-items:center;}
+  .modal-box .modal-header h3 {font-size:15px; font-weight:700; margin:0;}
+  .modal-box .modal-close {background:transparent; border:none; color:#fff; font-size:20px; cursor:pointer; padding:0 5px;}
+  .modal-box .modal-close:hover {opacity:.75;}
+  .modal-box .modal-body {padding:20px;}
+  .modal-box .modal-footer {padding:14px 20px; background:var(--gray-50); display:flex; justify-content:flex-end; gap:10px; border-top:1px solid var(--gray-200);}
+  .btn-modal {padding:8px 16px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; border:none; font-family:inherit; transition:.2s;}
+  .btn-modal.outline {background:#fff; color:var(--gray-600); border:1px solid var(--gray-200);}
+  .btn-modal.outline:hover {background:var(--gray-100);}
+  .btn-modal.primary {background:var(--green-700); color:#fff;}
+  .btn-modal.primary:hover {background:var(--green-900);}
+  .btn-modal:disabled {opacity:.6; cursor:not-allowed;}
+
+@media(max-width:860px){
+    body { 
+      flex-direction: column; 
+      padding: 20px; 
+      justify-content: flex-start; 
+      padding-top: 30px;
+    }
+
     .web-brand {
       position: relative;
-      top: 0; left: 0;
-      margin-bottom: 15px;
+      top: 0; 
+      left: 0;
+      margin: 0 auto 25px auto;
       width: 100%;
-      display: flex;
+      flex-direction: column;
       justify-content: center;
+      align-items: center;
+      gap: 12px; 
     }
-    .web-brand .brand-logo-img { width: 80px; height: 80px; }
+
+    .web-brand .brand-logo-img { 
+      width: 80px;
+      height: 80px; 
+    }
+
+    .brand-divider { display: none !important; }
+
+    .brand-text {
+      display: flex !important; 
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+    }
     
-    body { flex-direction: column; padding: 10px; }
-    .login-wrapper{grid-template-columns:1fr;max-width:460px; height: auto;}
+    .brand-text .brand-sub {
+      font-size: 13px; 
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .brand-text .brand-main {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--green-900);
+    }
+
+    .login-wrapper {
+      margin-top: 0; 
+      grid-template-columns:1fr;
+      max-width:460px; 
+      height: auto; 
+    }
     .login-left{padding:32px 28px; min-height: 300px;}
     .features-grid{display: none;}
     .login-right{padding:32px 28px;}
   }
+	
 </style>
 </head>
 <body>
 
 <div class="web-brand">
-  <img src="logo.png" alt="Logo Jabal Rahmah" class="brand-logo-img">
+  <img src="logo1.png" alt="Logo Jabal Rahmah" class="brand-logo-img">
+  <div class="brand-divider"></div>
+  <div class="brand-text">
+    <span class="brand-sub">YAYASAN YUSUF AL-KARIMI</span>
+    <span class="brand-main">PONDOK PESANTREN JABAL RAHMAH</span>
+  </div>
 </div>
 
 <div class="login-wrapper">
@@ -366,8 +463,8 @@
 
     <form id="loginForm" autocomplete="on">
       <div class="input-group user-group">
-        <label for="inpUsername">Username</label>
-        <input type="text" id="inpUsername" placeholder="Masukkan username" required autocomplete="username">
+        <label for="inpUsername">Username / Email</label>
+        <input type="text" id="inpUsername" placeholder="Masukkan username atau email" required autocomplete="username">
       </div>
 
       <div class="input-group pw-group">
@@ -379,12 +476,19 @@
 
       <div class="remember-row">
         <label><input type="checkbox" id="chkRemember" checked> Ingat saya</label>
-        <a href="#" onclick="showForgot();return false">Lupa password?</a>
       </div>
 
       <button type="submit" class="login-btn" id="btnLogin">
         <span id="btnLabel">Masuk</span>
       </button>
+
+      <!-- ⭐ LINK LUPA SANDI — membuka modal -->
+      <div style="text-align:center;margin-top:14px">
+        <a href="#" onclick="forgotPassword(event)" 
+           style="font-size:12.5px;color:#2563eb;font-weight:600;text-decoration:none">
+          🔑 Lupa Sandi?
+        </a>
+      </div>
     </form>
 
     <div class="footer-info">
@@ -413,9 +517,33 @@
   </div>
 </div>
 
+<!-- MODAL LUPA SANDI -->
+<div class="modal-overlay" id="forgotModal" onclick="if(event.target===this)closeForgotModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>🔑 Lupa Sandi</h3>
+      <button class="modal-close" onclick="closeForgotModal()" title="Tutup" aria-label="Tutup dialog">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:var(--gray-600); margin-bottom:16px; line-height:1.6;">
+        Masukkan email yang terdaftar di akun Anda. Kami akan mengirimkan link untuk mereset sandi.
+      </p>
+      <div class="input-group user-group" style="margin-bottom:12px;">
+        <label for="forgotEmail">Email</label>
+        <input type="email" id="forgotEmail" placeholder="contoh@jabalrahmah.sch.id" autocomplete="email">
+      </div>
+      <div id="forgotMsg" style="display:none; padding:10px; border-radius:8px; font-size:12px; font-weight:600; line-height:1.5;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal outline" onclick="closeForgotModal()">Batal</button>
+      <button class="btn-modal primary" id="btnSendReset" onclick="submitForgotPassword()">Kirim Link</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
-   KONFIGURASI FIREBASE + AUTH (TAHAP 2B)
+   KONFIGURASI FIREBASE + AUTH
    ============================================================ */
 const FB_URL = 'https://instrumen-jabal-default-rtdb.asia-southeast1.firebasedatabase.app';
 const FB_API_KEY = 'AIzaSyAFbIJl8K24gXB3E5VLTWE-LJeXGou8zx8';
@@ -445,39 +573,28 @@ function togglePw(){
   inp.type = inp.type === 'password' ? 'text' : 'password';
 }
 
-function showForgot(){
-  alert(
-    'Lupa password? Hubungi admin madrasah untuk reset password.\n\n' +
-    '📱 WhatsApp: 085212431707\n' +
-    '📧 Email: muhammadarrazi46@gmail.com\n\n' +
-    'Admin dapat mereset password Anda dari Firebase Console:\n' +
-    'Authentication → Users → pilih user → Reset password'
-  );
-}
-
 /* ============================================================
    AUTH REST API — login & refresh
    ============================================================ */
-async function authSignIn(username, password){
+async function authSignIn(email, password){
   if(!FB_API_KEY || FB_API_KEY.startsWith('GANTI_')){
     throw new Error('Firebase API Key belum diisi. Hubungi admin.');
   }
-  const email = username + EMAIL_DOMAIN;
   const res = await fetch(AUTH_BASE + '/accounts:signInWithPassword?key=' + FB_API_KEY, {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ email, password, returnSecureToken: true })
+    body: JSON.stringify({ email: email, password, returnSecureToken: true })
   });
   const data = await res.json();
   if(!res.ok){
     const code = data?.error?.message || 'AUTH_ERROR';
     const map = {
-      'EMAIL_NOT_FOUND': 'Username tidak ditemukan',
+      'EMAIL_NOT_FOUND': 'Akun tidak ditemukan',
       'INVALID_PASSWORD': 'Password salah',
       'USER_DISABLED': 'Akun dinonaktifkan',
-      'INVALID_LOGIN_CREDENTIALS': 'Username atau password salah',
+      'INVALID_LOGIN_CREDENTIALS': 'Email/Username atau password salah',
       'TOO_MANY_ATTEMPTS_TRY_LATER': 'Terlalu banyak percobaan, coba lagi nanti',
-      'INVALID_EMAIL': 'Username tidak valid'
+      'INVALID_EMAIL': 'Format email tidak valid'
     };
     throw new Error(map[code] || code);
   }
@@ -523,6 +640,84 @@ function saveAuthSession(sess, remember){
 }
 
 /* ============================================================
+   LUPA SANDI — MODAL
+   ============================================================ */
+function forgotPassword(e){
+  if(e) e.preventDefault();
+  document.getElementById('forgotEmail').value = '';
+  
+  const msgEl = document.getElementById('forgotMsg');
+  msgEl.style.display = 'none';
+  msgEl.innerHTML = '';
+  
+  const btn = document.getElementById('btnSendReset');
+  btn.textContent = 'Kirim Link';
+  btn.disabled = false;
+  btn.onclick = submitForgotPassword;
+  
+  document.getElementById('forgotModal').classList.add('show');
+  setTimeout(() => document.getElementById('forgotEmail').focus(), 120);
+}
+
+function closeForgotModal(){
+  document.getElementById('forgotModal').classList.remove('show');
+}
+
+async function submitForgotPassword(){
+  const emailInput = document.getElementById('forgotEmail').value.trim();
+  const msgEl = document.getElementById('forgotMsg');
+  const btn = document.getElementById('btnSendReset');
+
+  if(!emailInput || !emailInput.includes('@')){
+    msgEl.textContent = '⚠️ Masukkan alamat email yang valid.';
+    msgEl.style.background = '#fee2e2';
+    msgEl.style.color = '#991b1b';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Mengirim...';
+  msgEl.style.display = 'none';
+
+  try {
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FB_API_KEY}`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ requestType: 'PASSWORD_RESET', email: emailInput })
+    });
+    const data = await res.json();
+    
+    if(!res.ok){
+      const map = {
+        'EMAIL_NOT_FOUND': 'Email ini tidak terdaftar di sistem. Hubungi Admin.',
+        'INVALID_EMAIL': 'Format email salah.',
+        'TOO_MANY_ATTEMPTS_TRY_LATER': 'Terlalu banyak percobaan. Coba lagi nanti.'
+      };
+      throw new Error(map[data.error?.message] || data.error?.message || 'Gagal mengirim email.');
+    }
+    
+    msgEl.innerHTML = `✓ Berhasil! Link reset telah dikirim ke <b>${emailInput}</b>.<br>Cek inbox / folder Spam Anda. Link berlaku 1 jam.`;
+    msgEl.style.background = '#d1fae5';
+    msgEl.style.color = '#065f46';
+    msgEl.style.display = 'block';
+    
+    btn.textContent = 'Tutup';
+    btn.disabled = false;
+    btn.onclick = closeForgotModal;
+
+  } catch(err) {
+    msgEl.textContent = '✗ ' + err.message;
+    msgEl.style.background = '#fee2e2';
+    msgEl.style.color = '#991b1b';
+    msgEl.style.display = 'block';
+    
+    btn.textContent = 'Kirim Link';
+    btn.disabled = false;
+  }
+}
+
+/* ============================================================
    ROLE SELECTOR
    ============================================================ */
 $$('.role-btn').forEach(btn => {
@@ -548,23 +743,19 @@ function resolveNipGuru(user, username){
 }
 
 /* ============================================================
-   LOGIN — Firebase Auth + role check dari /users
+   LOGIN — Smart Mode (Cek Database Dulu, Baru Login)
    ============================================================ */
 $('#loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   hideMsg();
 
-  let username = $('#inpUsername').value.trim().toLowerCase();
-  // Jika user memasukkan email lengkap, ambil bagian depannya saja
-  if (username.includes('@')) {
-    username = username.split('@')[0];
-  }
+  let inputUser = $('#inpUsername').value.trim().toLowerCase();
   const password = $('#inpPassword').value;
   const role = getSelectedRole();
   const remember = $('#chkRemember').checked;
 
-  if(!username || !password){
-    showMsg('⚠️ Username dan password wajib diisi', 'err');
+  if(!inputUser || !password){
+    showMsg('⚠️ Username/Email dan password wajib diisi', 'err');
     return;
   }
 
@@ -573,13 +764,36 @@ $('#loginForm').addEventListener('submit', async (e) => {
   $('#btnLabel').innerHTML = '<span class="spinner"></span> Memverifikasi...';
 
   try{
-    const auth = await authSignIn(username, password);
+    let auth = null;
+    let emailToAuth = inputUser;
+
+    // TAHAP 1: SMART CHECK - Cari email asli di database terlebih dahulu
+    // Ini mencegah "Terlalu banyak percobaan" karena kita tidak mencoba login dengan email salah
+    if (!inputUser.includes('@')) {
+		let resolved = null;
+		try {
+			const r = await fetch(FB_URL + '/instrumen/users/' + encodeURIComponent(inputUser) + '/email.json');
+			if (r.ok) {
+				const em = await r.json();
+				if (typeof em === 'string' && em.includes('@')) resolved = em;
+			} else {
+			  console.warn('Lookup username gagal, HTTP', r.status, '— cek Firebase Rules');
+			}
+		} catch (err) {
+		  console.warn('Lookup username error:', err);
+		}
+		// fallback untuk akun lama yang dibuat dengan email lokal
+		emailToAuth = resolved || (inputUser + EMAIL_DOMAIN);
+	}
+
+    // TAHAP 2: Login ke Firebase Auth (Hanya 1x Percobaan)
+    auth = await authSignIn(emailToAuth, password);
+    
+    // TAHAP 3: Simpan Sesi Auth
     const now = Date.now();
     const expiresAt = now + parseInt(auth.expiresIn, 10) * 1000;
-
     const authSess = {
       uid: auth.localId,
-      username,
       email: auth.email,
       idToken: auth.idToken,
       refreshToken: auth.refreshToken,
@@ -588,30 +802,55 @@ $('#loginForm').addEventListener('submit', async (e) => {
     };
     saveAuthSession(authSess, remember);
 
-    // Ambil profil dari RTDB
-    const profRes = await fetch(
-      FB_URL + '/instrumen/users/' + encodeURIComponent(username) + '.json?auth=' + auth.idToken
-    );
-    if(!profRes.ok){
-      clearAuthSession();
-      throw new Error('Gagal membaca profil (HTTP ' + profRes.status + '). Cek Rules /users.');
+    // TAHAP 4: Cari Profil Berdasarkan UID (agar dapat Username Asli)
+    let prof = null;
+    let actualUsername = '';
+
+    // Coba Query Cepat Berdasarkan UID
+    try {
+      const qRes = await fetch(FB_URL + '/instrumen/users.json?orderBy="uid"&equalTo="' + auth.localId + '"&auth=' + auth.idToken);
+      if (qRes.ok) {
+        const qData = await qRes.json();
+        if (qData && Object.keys(qData).length > 0) {
+          actualUsername = Object.keys(qData)[0]; // Misal: razikia17
+          prof = qData[actualUsername];
+        }
+      }
+    } catch(err) { console.warn('Query by UID gagal, fallback ke manual...'); }
+
+    // Fallback: Jika query gagal (Rules ketat), tarik semua user
+    if (!prof) {
+      const allRes = await fetch(FB_URL + '/instrumen/users.json?auth=' + auth.idToken);
+      if (allRes.ok) {
+        const allUsers = await allRes.json();
+        for (const uname in allUsers) {
+          if (allUsers[uname] && allUsers[uname].uid === auth.localId) {
+            actualUsername = uname;
+            prof = allUsers[uname];
+            break;
+          }
+        }
+      }
     }
-    const prof = await profRes.json();
-    if(!prof){ clearAuthSession(); throw new Error('Profil akun tidak ditemukan di /users'); }
+
+    // Jika profil tidak ditemukan di database
+    if (!prof) {
+      clearAuthSession();
+      throw new Error('Profil tidak ditemukan di database. Hubungi Admin.');
+    }
+
+    // Cek Role
     if(prof.role !== role){
       clearAuthSession();
       throw new Error('Akun ini bukan untuk role "' + role + '". Pilih role yang benar.');
     }
-    if(prof.uid && prof.uid !== auth.localId){
-      clearAuthSession();
-      throw new Error('Akun tidak sinkron (uid mismatch). Hubungi admin.');
-    }
 
-    const nipGuru = resolveNipGuru(prof, username);
+    // TAHAP 5: Simpan Sesi Aplikasi & Redirect
+    const nipGuru = resolveNipGuru(prof, actualUsername);
     const session = {
-      username,
+      username: actualUsername, // Gunakan username asli (razikia17) agar data nilai aman
       role: prof.role,
-      nama: prof.nama || username,
+      nama: prof.nama || actualUsername,
       nipGuru,
       teacherId: auth.localId,
       uid: auth.localId,
@@ -625,6 +864,7 @@ $('#loginForm').addEventListener('submit', async (e) => {
     setTimeout(() => {
       window.location.href = prof.role === 'admin' ? 'admin.html' : 'guru.html';
     }, 600);
+
   } catch(err){
     console.error(err);
     showMsg('✗ ' + err.message, 'err');
@@ -737,6 +977,16 @@ function closeChangelog(){
   document.addEventListener('DOMContentLoaded', updateStatus);
   updateStatus();
 })();
+
+/* ============================================================
+   ESC untuk menutup modal lupa sandi
+   ============================================================ */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    const m = document.getElementById('forgotModal');
+    if(m && m.classList.contains('show')) closeForgotModal();
+  }
+});
 </script>
 </body>
 </html>

@@ -5,11 +5,31 @@
    ============================================================ */
 
 window.APP_INFO = {
-  version: '1.2.1',
-  buildDate: '2026-10-23',
+  version: '1.3.0',
+  buildDate: '2026-11-09',
 
   changelog: [
     {
+      version: 'v1.3.0',
+      date: '2026-11-09',
+      highlights: [
+        '<b>🔐 Login</b>',
+        '📧 Login bisa pakai email atau username',
+        '🧠 Smart Mode cek database dulu → cegah error "terlalu banyak percobaan"',
+        '🔑 Lupa sandi mandiri via modal + link reset Firebase',
+        '🏷️ Brand baru: Yayasan Yusuf Al-Karimi / Pondok Pesantren Jabal Rahmah',
+        '<b>🖥️ Admin</b>',
+        '🖨️ Tab baru Cetak Rapor ATS &amp; Semester',
+        '✏️ Panel edit rapor real-time',
+        '📝 Template nasehat walikelas otomatis',
+        '📤 Terbitkan daftar siswa',
+        '<b>👨‍🏫 Guru</b>',
+        '👤 Menu Akun Saya + ganti sandi',
+        '🏫 Multi-madrasah: MTs, MAS, Pontren',
+        '📚 Kelas Pontren 1–7 otomatis'
+      ]
+    },
+	{
       version: 'v1.2.1',
       date: '2026-10-23',
       highlights: [

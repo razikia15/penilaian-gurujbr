@@ -2,6 +2,18 @@
 ============================================================
   VERSION TOOL — Pengelola Versi version.js
 ============================================================
+  Usage:
+    version-tool.ps1 -Action read
+    version-tool.ps1 -Action patch -Message "Bullet 1 | Bullet 2"
+    version-tool.ps1 -Action patch -MessageFile "changelog.txt"
+    version-tool.ps1 -Action set -Version "1.3.0" -MessageFile "changelog.txt"
+
+  Format file changelog (.txt):
+    ## 🔐 Login            ← HEADER (otomatis <b>bold</b>)
+    📧 Login bisa email    ← bullet biasa
+    # komentar diabaikan   ← komentar (single #)
+    (baris kosong)         ← diabaikan
+============================================================
 #>
 
 param(
@@ -10,6 +22,7 @@ param(
     [string]$Action,
 
     [string]$Message = 'Update aplikasi',
+    [string]$MessageFile = '',
     [string]$Version = ''
 )
 
@@ -35,6 +48,7 @@ if ($Action -eq 'read') {
     exit 0
 }
 
+# ===== HITUNG VERSI BARU =====
 $parts = $currentVersion -split '\.'
 $major = [int]$parts[0]
 $minor = [int]$parts[1]
@@ -46,8 +60,7 @@ if ($Action -eq 'set') {
         exit 1
     }
     $newVersion = $Version
-}
-else {
+} else {
     switch ($Action) {
         'patch' { $patch = $patch + 1 }
         'minor' { $minor = $minor + 1; $patch = 0 }
@@ -58,25 +71,68 @@ else {
 
 $today = Get-Date -Format 'yyyy-MM-dd'
 
+# ===== ESCAPE UNTUK JS + HTML =====
 function ConvertTo-JsSafe {
     param([string]$Text)
     if ($null -eq $Text) { return '' }
     $t = $Text.Trim()
-    $t = $t -replace '\\', '\\'
-    $t = $t -replace "'",  "\'"
-    $t = $t -replace '`r?`n', ' '
+    $t = $t -replace '\\', '\\'        # backslash → JS escape
+    $t = $t -replace "'", "\'"         # kutip tunggal → JS escape
+    $t = $t -replace '&', '&amp;'      # & → HTML entity
+    $t = $t -replace '<', '&lt;'       # < → HTML entity
+    $t = $t -replace '>', '&gt;'       # > → HTML entity
+    $t = $t -replace '`r?`n', ' '      # newline → spasi
     return $t
 }
 
-$rawBullets = $Message -split '\s*\|\s*'
+# ===== KUMPULKAN BULLETS =====
+$rawBullets = @()
+
+if ($MessageFile -and (Test-Path -LiteralPath $MessageFile)) {
+    # MODE FILE — baca baris demi baris
+    $lines = Get-Content -LiteralPath $MessageFile -Encoding UTF8
+    foreach ($line in $lines) {
+        $t = $line.Trim()
+        if ($t -eq '') { continue }
+
+        # Header: "## ..."  → akan di-bold
+        if ($t -match '^##\s+(.*)$') {
+            $hdr = $matches[1].Trim()
+            if ($hdr -ne '') { $rawBullets += "<b>$hdr</b>" }
+            continue
+        }
+        # Komentar: "# ..." (single hash)
+        if ($t -match '^#') { continue }
+
+        # Bullet biasa
+        $rawBullets += $t
+    }
+} else {
+    # MODE PIPA (backward compat) — pisah dengan |
+    $rawBullets = $Message -split '\s*\|\s*'
+}
+
+# ===== ESCAPE CONTENT (header tetap dengan tag <b>) =====
 $cleanBullets = @()
 foreach ($b in $rawBullets) {
-    if ($b -and $b.Trim() -ne '') {
-        $cleanBullets += (ConvertTo-JsSafe $b)
+    if (-not $b -or $b.Trim() -eq '') { continue }
+    $t = $b.Trim()
+
+    if ($t -match '^<b>(.*)</b>$') {
+        # Header — escape isi, pertahankan tag <b>
+        $inner = $matches[1]
+        $safeInner = ConvertTo-JsSafe $inner
+        if ($safeInner -ne '') { $cleanBullets += "<b>$safeInner</b>" }
+    } else {
+        $cleanBullets += ConvertTo-JsSafe $t
     }
 }
-if ($cleanBullets.Count -eq 0) { $cleanBullets = @('Update aplikasi') }
 
+if ($cleanBullets.Count -eq 0) {
+    $cleanBullets = @('Update aplikasi')
+}
+
+# ===== BANGUN ENTRY JS =====
 $bulletsJs = ($cleanBullets | ForEach-Object { "        '$_'" }) -join ",`r`n"
 
 $newEntry = @"
@@ -89,6 +145,7 @@ $bulletsJs
     },
 "@
 
+# ===== SISIPKAN KE version.js =====
 $pattern = "(changelog\s*:\s*\[\s*\r?\n)"
 if ($content -match $pattern) {
     $content = $content -replace $pattern, "`$1$newEntry`r`n"
