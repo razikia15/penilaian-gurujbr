@@ -5,10 +5,40 @@
    ============================================================ */
 
 window.APP_INFO = {
-  version: '1.3.1',
-  buildDate: '2026-11-09',
+  version: '1.3.2',
+  buildDate: '2026-11-10',
 
   changelog: [
+    {
+      version: 'v1.3.2',
+      date: '2026-11-10',
+      highlights: [
+        '<b>⚡ Sinkronisasi Real-Time &amp; Optimalisasi Data</b>',
+        'Mengganti sistem polling (cek data tiap 15 detik) dengan metode Stream API (SSE) di Admin',
+        'Menghemat kuota Firebase hingga 99% dan membuat dashboard admin update secara instan',
+        'Sinkronisasi dua arah antara Admin dan Guru menggunakan Global Roster',
+        '<b>👥 Manajemen Akun &amp; Keamanan (Admin)</b>',
+        'Pembuatan akun guru otomatis terdaftar di Firebase Authentication (tanpa input UID manual)',
+        'Email opsional (otomatis menggunakan @jabalrahmah.local jika kosong)',
+        'Fitur Backup Database untuk mengunduh seluruh data ke format JSON',
+        'Fitur Reset Sandi Guru via email langsung dari panel Admin',
+        '<b>🏫 Pusat Data Siswa &amp; Kelas (Admin)</b>',
+        'Tab baru "Kelola Siswa" untuk memusatkan data siswa (NIS, NISN, JK, TTL)',
+        'Fitur Import &amp; Export Excel untuk mempermudah input data siswa',
+        'Fitur Pengaturan Kelas &amp; Madrasah Dinamis (Admin bisa menambah/mengubah MTs, MAS, Pontren dan kelasnya)',
+        'Data siswa yang diinput Admin otomatis terdistribusi ke semua guru (nilai guru tidak tertimpa)',
+        '<b>👨‍🏫 Penyempurnaan Aplikasi Guru (guru.html)</b>',
+        'Perbaikan bug perpindahan kelas lintas Madrasah (bisa pindah dari MAS ke Pontren dengan lancar)',
+        'Perbaikan bug mapel yang berubah kembali ke default saat di-refresh',
+        'Data siswa di guru dikunci (Read-only) - guru hanya bisa mengisi nilai/absen, tidak bisa hapus/tambah',
+        'Fitur Ganti Sandi kini memerlukan konfirmasi "Sandi Saat Ini" (Sandi Lama) demi keamanan',
+        'Penambahan tombol 👁️ Tampilkan untuk melihat ketiga kolom sandi sekaligus',
+        '<b>🎨 Perbaikan Tampilan (UI/UX)</b>',
+        'Penyeragaman desain Hero Section (sudut melengkung, margin, dan shadow) di Admin &amp; Guru',
+        'Memperbaiki tampilan tabel input data siswa di Admin (garis border transparan, efek fokus biru)',
+        'Perbaikan filter data sampah (key invalid) di dashboard Admin agar tampilan lebih bersih'
+      ]
+    },
     {
       version: 'v1.3.1',
       date: '2026-11-09',

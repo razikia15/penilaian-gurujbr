@@ -1,0 +1,30 @@
+{
+  "rules": {
+    "instrumen": {
+      "users": {
+        ".read": "auth != null",
+        ".indexOn": ["uid"],
+        "$username": {
+          "email": { ".read": true },
+          ".write": "auth != null && (root.child('instrumen/admins').child(auth.uid).exists() || auth.uid === data.child('uid').val())"
+        }
+      },
+      "roster": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('instrumen/admins').child(auth.uid).exists()"
+      },
+      "personal": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      },
+      "teachers": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('instrumen/admins').child(auth.uid).exists())"
+        }
+      }
+    }
+  }
+}

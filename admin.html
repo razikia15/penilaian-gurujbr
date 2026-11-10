@@ -391,6 +391,15 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+    /* Tambahan untuk Cetak Batch */
+  body.printing-rapor #raporPrintArea .rapor-sheet.batch-sheet {
+    page-break-after: always !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 20px;
+  }
+  .batch-print-container .rapor-sheet:last-child {
+    page-break-after: auto !important; /* Mencegah halaman kosong di akhir */
+  }
   body.printing-rapor .rapor-header h1 { font-size:12px !important; margin:0 !important; }
   body.printing-rapor .rapor-header h2 { font-size:14px !important; margin:2px 0 6px 0 !important; }
   body.printing-rapor .rapor-info-table td { padding:1px 2px !important; font-size:10px !important; }
@@ -488,6 +497,83 @@
     .btn-toggle-edit { bottom: 20px; right: 20px; padding: 10px 18px; font-size: 13px; }
   }
   
+  /* ============================================================
+   PERBAIKAN TAMPILAN INPUT TABEL KELOLA SISWA (ADMIN)
+   ============================================================ */
+#tblAdmSiswa input[type="text"],
+#tblAdmSiswa select {
+  border: 1px solid transparent; /* Menghilangkan garis kotak hitam */
+  background-color: transparent; /* Menyatu dengan warna tabel */
+  padding: 8px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+/* Efek saat kursor diarahkan ke input */
+#tblAdmSiswa input[type="text"]:hover,
+#tblAdmSiswa select:hover {
+  border-color: #cbd5e1;
+  background-color: #f8fafc;
+}
+
+/* Efek saat input diklik / diketik */
+#tblAdmSiswa input[type="text"]:focus,
+#tblAdmSiswa select:focus {
+  outline: none;
+  border-color: #3b82f6; /* Warna biru fokus */
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); /* Efek glow halus */
+}
+
+/* Memastikan teks nama tetap rata kiri dan agak tebal */
+#tblAdmSiswa td:nth-child(2) input {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Merapikan garis antar baris tabel */
+#tblAdmSiswa tbody tr {
+  transition: background-color 0.15s ease;
+}
+#tblAdmSiswa tbody tr:hover {
+  background-color: #f8fafc;
+}
+  
+/* ===== PENUGASAN MENGAJAR ===== */
+.assign-hero{background:linear-gradient(135deg,var(--green-50),#fff);border:1.5px solid var(--green-300)}
+.assign-active{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;background:var(--green-700);color:#fff;border-radius:12px;margin-bottom:16px}
+.assign-active .big{font-size:22px;font-weight:800;line-height:1.1}
+.assign-active .sub{font-size:12px;opacity:.85}
+.assign-active .pill{background:rgba(255,255,255,.18);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.agroup{margin-bottom:14px}
+.agroup-title{font-size:11.5px;font-weight:800;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.agroup-title::after{content:"";flex:1;height:1px;background:var(--gray-200)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;border:1.5px solid var(--gray-200);border-radius:12px;background:#fff;cursor:pointer;font-family:inherit;transition:.15s;font-size:13px;font-weight:700;color:var(--gray-800)}
+.chip:hover{border-color:var(--green-500);transform:translateY(-1px)}
+.chip.active{background:var(--green-100);border-color:var(--green-700);color:var(--green-900);box-shadow:0 0 0 3px var(--green-100)}
+.chip .cnt{font-size:11px;font-weight:600;color:var(--gray-400)}
+.chip.active .cnt{color:var(--green-700)}
+.chip .x{border:none;background:transparent;color:var(--gray-400);cursor:pointer;font-size:13px;font-weight:700;width:22px;height:22px;border-radius:6px;line-height:1}
+.chip .x:hover{background:var(--red-50);color:var(--red)}
+.chip-add{border-style:dashed;color:var(--green-700);background:var(--green-50);padding:7px 14px}
+.assign-empty{padding:18px;text-align:center;color:var(--gray-400);border:1.5px dashed var(--gray-200);border-radius:10px;margin-bottom:12px}
+.add-panel{display:none;margin-top:14px;padding:16px;background:#fff;border:1.5px dashed var(--green-500);border-radius:12px}
+.add-panel.open{display:block}
+.add-grid{display:grid;grid-template-columns:1fr 2fr;gap:16px}
+@media(max-width:700px){.add-grid{grid-template-columns:1fr}}
+.kelas-checks{display:flex;flex-wrap:wrap;gap:8px}
+.kc{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1.5px solid var(--gray-200);border-radius:20px;cursor:pointer;font-size:13px;font-weight:700;user-select:none}
+.kc input{accent-color:var(--green-700)}
+.kc.on{background:var(--green-100);border-color:var(--green-500);color:var(--green-900)}
+.kc.disabled{opacity:.45;cursor:not-allowed;background:var(--gray-100)}
+.add-note{font-size:11.5px;color:var(--gray-600);margin-top:8px}
+.badge-ro{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;background:var(--blue-50);color:#1e40af;border-radius:8px;font-weight:700;font-size:13.5px;border:1.5px solid #bfdbfe}
+
 </style>
 </head>
 <body>
@@ -546,13 +632,15 @@
           </svg>
         </button>
         <div class="dropdown-menu" id="moreMenu">
-          <button class="dropdown-item" onclick="openConfigModal();closeDropdown()">
+          <button class="dropdown-item" onclick="backupDatabase();closeDropdown()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
-            <span>Konfigurasi</span>
+            <span>Backup Database</span>
           </button>
+          <div class="dropdown-divider"></div>
 		  <button class="dropdown-item" onclick="publishRoster();closeDropdown()">
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 				<path d="M9 11l3 3L22 4"/>
@@ -581,19 +669,23 @@
     </div>
   </div>
 
-  <!-- Hero Section -->
-  <div class="hero-section">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1>Admin Panel 👋</h1>
-      <h2>Jabal Rahmah</h2>
-      <p>Pantau data penilaian dari semua guru, kelola akun, dan analisis hasil belajar secara terpusat.</p>
+    <!-- ⭐ HERO SECTION BARU -->
+    <div class="hero-section" style="margin-bottom: 22px; border-radius: 12px; min-height: 160px; background-image:url('foto1.jpg');">
+      <div class="hero-overlay" style="border-radius: 12px;"></div>
+      <div class="hero-content">
+        <div id="admHeroDate" style="font-size: 13.5px; opacity: 0.9; font-weight: 600; margin-bottom: 6px; text-shadow: 0 1px 3px rgba(0,0,0,.4);">—</div>
+        <h1 style="font-size: 28px;">Selamat datang, <span id="admGreetingName">Admin</span> 👋</h1>
+        <h2 style="font-size: 24px; color: #d1fae5; margin-bottom: 8px;">Admin Panel Jabal Rahmah</h2>
+        <div style="font-size: 14px; font-weight: 600; color: #d1fae5;">
+          Pusat Kendali &amp; Analisis Data Penilaian
+        </div>
+      </div>
     </div>
-  </div>
 
   <!-- Navigation Tabs -->
   <nav class="tabs">
     <button class="active" data-tab="dashboard">📊 Dashboard</button>
+	<button data-tab="siswa">👨‍🎓 Data Siswa</button>
     <button data-tab="guru">👥 Data Guru</button>
     <button data-tab="detail">🔍 Detail Guru</button>
     <button data-tab="rekap">📈 Rekap &amp; Analisis</button>
@@ -643,6 +735,63 @@
           <tbody></tbody>
         </table>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB: KELOLA SISWA ============ -->
+<section class="tab-panel" id="tab-siswa">
+  <div class="info" style="margin-bottom: 20px;">
+    <b>👨‍🎓 Pusat Data Siswa</b> — Data yang diinput di sini akan otomatis terdistribusi ke semua guru yang mengajar di kelas tersebut. Guru hanya perlu mengisi nilai.
+  </div>
+  
+  <div class="card" style="box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-radius: 12px;">
+    <div class="card-title" style="border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
+      <span style="font-size: 16px;">📋 Daftar Siswa</span>
+    </div>
+    
+    <!-- Toolbar -->
+    <div class="toolbar no-print" style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; gap: 15px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <label style="font-weight: 700; color: #1e293b;">Pilih Kelas:</label>
+        <select id="admSiswaKelas" class="field-select" style="padding:8px 12px; border-radius:8px; border:1.5px solid #cbd5e1; font-weight:600; min-width: 150px;">
+          <option value="">— Pilih Kelas —</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="openKelolaKelas()" style="padding: 8px 12px;" title="Tambah/Hapus Kelas">⚙️ Kelola</button>
+      </div>
+      
+      <div class="sep" style="height: 30px;"></div>
+      
+      <button class="btn btn-primary btn-sm" onclick="loadAdminStudents()" style="padding: 8px 16px;">📂 Muat Data</button>
+      <button class="btn btn-outline btn-sm" onclick="addAdminStudentRow()" style="padding: 8px 16px;">➕ Tambah Baris</button>
+      <button class="btn btn-primary btn-sm" onclick="saveAdminStudents()" id="btnSaveAdmSiswa" style="padding: 8px 16px; background: #059669;">💾 Simpan &amp; Sinkronkan</button>
+      
+      <div class="sep" style="height: 30px;"></div>
+      
+      <!-- Import Export -->
+      <button class="btn btn-outline btn-sm" onclick="exportAdmSiswaExcel()" style="padding: 8px 16px;">📤 Ekspor Excel</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('fileImportSiswa').click()" style="padding: 8px 16px;">📥 Impor Excel</button>
+      <input type="file" id="fileImportSiswa" accept=".xlsx,.xls" style="display:none" onchange="importAdmSiswaExcel(event)">
+      
+      <span id="admSiswaStatus" style="font-size:13px;color:#64748b;font-weight:700;margin-left:auto; background: #e2e8f0; padding: 4px 12px; border-radius: 20px;">0 siswa</span>
+    </div>
+    
+    <!-- Tabel -->
+    <div class="tbl-wrap" style="max-height: 600px; border-radius: 10px; border: 1px solid #e2e8f0;">
+      <table id="tblAdmSiswa" style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #f1f5f9; color: #334155;">
+          <tr>
+            <th style="width:50px; padding: 12px; border-bottom: 2px solid #cbd5e1;">No</th>
+            <th style="min-width:220px; padding: 12px; border-bottom: 2px solid #cbd5e1; text-align: left;">Nama Lengkap Siswa</th>
+            <th style="width:120px; padding: 12px; border-bottom: 2px solid #cbd5e1;">NIS / NISM</th>
+            <th style="width:120px; padding: 12px; border-bottom: 2px solid #cbd5e1;">NISN</th>
+            <th style="width:80px; padding: 12px; border-bottom: 2px solid #cbd5e1;">L / P</th>
+            <th style="min-width:180px; padding: 12px; border-bottom: 2px solid #cbd5e1;">Tempat &amp; Tgl Lahir</th>
+            <th style="width:60px; padding: 12px; border-bottom: 2px solid #cbd5e1;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -813,6 +962,7 @@
     <input id="rpNisn" placeholder="0123456789 / 12345" style="padding:6px 10px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:12px;width:170px;font-family:inherit">
     <div class="sep"></div>
     <button class="btn btn-primary btn-sm" onclick="buildRaporPrint()">📄 Generate</button>
+	<button class="btn btn-primary btn-sm" onclick="buildRaporPrintAll()" id="btnPrintAll" style="background:#059669; border:none; margin-left: 5px;">📚 Cetak Semua (Batch)</button>
     <button class="btn btn-outline btn-sm" onclick="printRapor()">🖨️ Cetak / PDF</button>
   </div>
   <div id="raporPrintArea">
@@ -1028,6 +1178,96 @@
 </div>
 
 <script>
+
+/* ============================================================
+   KELOLA DAFTAR KELAS DINAMIS
+   ============================================================ */
+let GLOBAL_CLASSES = {
+  madrasah: ['MTs Jabal Rahmah', 'MAS Jabal Rahmah', 'Pontren Jabal Rahmah'],
+  mts: ['VII', 'VIII', 'IX'],
+  mas: ['X', 'XI', 'XII'],
+  pontren: ['1', '2', '3', '4', '5', '6', '7']
+};
+
+async function loadGlobalClasses() {
+  try {
+    const res = await authFetch('/instrumen/settings/classes.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (data) GLOBAL_CLASSES = { ...GLOBAL_CLASSES, ...data };
+    }
+  } catch(e) { console.warn('Gagal load kelas', e); }
+}
+
+function openKelolaKelas() {
+  document.getElementById('txtDaftarMadrasah').value = (GLOBAL_CLASSES.madrasah || []).join(', ');
+  document.getElementById('txtKelasMts').value = (GLOBAL_CLASSES.mts || []).join(', ');
+  document.getElementById('txtKelasMas').value = (GLOBAL_CLASSES.mas || []).join(', ');
+  document.getElementById('txtKelasPontren').value = (GLOBAL_CLASSES.pontren || []).join(', ');
+  document.getElementById('modalKelolaKelas').classList.add('show');
+}
+
+function closeKelolaKelas() {
+  document.getElementById('modalKelolaKelas').classList.remove('show');
+}
+
+async function saveKelolaKelas() {
+  const btn = document.getElementById('btnSaveKelas');
+  btn.textContent = '⏳...'; btn.disabled = true;
+  
+  const parse = (str) => str.split(',').map(s => s.trim()).filter(Boolean);
+  
+  GLOBAL_CLASSES = {
+    madrasah: parse(document.getElementById('txtDaftarMadrasah').value),
+    mts: parse(document.getElementById('txtKelasMts').value),
+    mas: parse(document.getElementById('txtKelasMas').value),
+    pontren: parse(document.getElementById('txtKelasPontren').value)
+  };
+  
+  try {
+    // Simpan ke global settings
+    const res = await authFetch('/instrumen/settings/classes.json', {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(GLOBAL_CLASSES)
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+
+    toast('✓ Pengaturan kelas & madrasah tersimpan', 'ok');
+    closeKelolaKelas();
+    await reloadAll(false);
+    populateAdmSiswaDropdown();
+  } catch(err) {
+    toast('✗ Gagal: ' + err.message, 'err');
+  } finally {
+    btn.textContent = '💾 Simpan Kelas'; btn.disabled = false;
+  }
+}
+
+// 4. Update populateAdmSiswaDropdown agar dinamis
+function populateAdmSiswaDropdown() {
+  const selKelas = document.getElementById('admSiswaKelas');
+  if (!selKelas) return;
+  const curKelas = selKelas.value;
+  
+  selKelas.innerHTML = '<option value="">— Pilih Kelas —</option>';
+  
+  // Gabungkan semua kelas yang ada di GLOBAL_CLASSES
+  const allClasses = [...(GLOBAL_CLASSES.mts || []), ...(GLOBAL_CLASSES.mas || []), ...(GLOBAL_CLASSES.pontren || [])];
+  
+  allClasses.forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = 'Kelas ' + k;
+    selKelas.appendChild(opt);
+  });
+  
+  if (curKelas && allClasses.includes(curKelas)) selKelas.value = curKelas;
+}
+
+// Panggil loadGlobalClasses() di dalam init()
+// Cari async function init() { ... } dan tambahkan:
+// await loadGlobalClasses();
 
 /* ============================================================
    FUNGSI AUTH FETCH UNTUK ADMIN
@@ -1362,6 +1602,7 @@ $$('nav.tabs button').forEach(btn=>{
     $('#tab-'+btn.dataset.tab).classList.add('active');
     const t = btn.dataset.tab;
     if(t === 'dashboard') renderDashboard();
+	if(t === 'siswa') populateAdmSiswaDropdown();
     if(t === 'guru') renderGuruList();
     if(t === 'rekap') renderRekap();
     if(t === 'rapor') renderRapor();
@@ -1578,6 +1819,316 @@ function renderDashboard(){
     });
   }
 }
+
+/* ============================================================
+   FITUR HERO & KELOLA DATA SISWA (ADMIN)
+   ============================================================ */
+
+function updateAdmHero() {
+  const d = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const elDate = document.getElementById('admHeroDate');
+  if (elDate) elDate.textContent = d.toLocaleDateString('id-ID', options);
+  
+  const sess = window.__ADMIN_SESSION__;
+  if (sess && sess.nama) {
+    const elName = document.getElementById('admGreetingName');
+    if (elName) elName.textContent = sess.nama;
+  }
+}
+
+/* ============================================================
+   FITUR KELOLA SISWA ADMIN (GLOBAL ROSTER)
+   ============================================================ */
+
+function populateAdmSiswaDropdown() {
+  const selKelas = document.getElementById('admSiswaKelas');
+  if (!selKelas) return;
+  const curKelas = selKelas.value;
+  
+  selKelas.innerHTML = '<option value="">— Pilih Kelas —</option>';
+  const allClasses = ['VII','VIII','IX','X','XI','XII','1','2','3','4','5','6','7'];
+  
+  allClasses.forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = 'Kelas ' + k;
+    selKelas.appendChild(opt);
+  });
+  
+  if (curKelas && allClasses.includes(curKelas)) selKelas.value = curKelas;
+}
+
+let _admSiswaData = [];
+
+async function loadAdminStudents() {
+  const kls = document.getElementById('admSiswaKelas').value;
+  const tb = document.querySelector('#tblAdmSiswa tbody');
+  tb.innerHTML = '';
+  
+  if (!kls) {
+    tb.innerHTML = `<tr><td colspan="7" style="padding:40px;color:#94a3b8;text-align:center;">Pilih kelas terlebih dahulu untuk memuat data.</td></tr>`;
+    document.getElementById('admSiswaStatus').textContent = '0 siswa';
+    return;
+  }
+  
+  document.getElementById('admSiswaStatus').textContent = 'Memuat data...';
+  
+  try {
+    // Tarik data dari Global Roster (jika ada)
+    const res = await authFetch('/instrumen/roster/' + kls + '.json');
+    let rosterData = res.ok ? await res.json() : null;
+    
+    // Jika belum ada di roster, coba tarik dari guru pertama yang punya kelas ini
+    if (!rosterData) {
+      const t = Object.values(ALL_TEACHERS).find(teacher => teacher.master?.classes?.[kls]?.siswa?.length > 0);
+      if (t) rosterData = t.master.classes[kls].siswa;
+    }
+    
+    _admSiswaData = rosterData ? JSON.parse(JSON.stringify(rosterData)) : [];
+    renderAdmSiswaTable();
+  } catch (err) {
+    toast('Gagal memuat: ' + err.message, 'err');
+    document.getElementById('admSiswaStatus').textContent = 'Gagal memuat';
+  }
+}
+
+function renderAdmSiswaTable() {
+  const tb = document.querySelector('#tblAdmSiswa tbody');
+  tb.innerHTML = '';
+  if (_admSiswaData.length === 0) {
+    tb.innerHTML = `<tr><td colspan="7" style="padding:40px;color:#94a3b8;text-align:center;">Belum ada data siswa.</td></tr>`;
+    document.getElementById('admSiswaStatus').textContent = '0 siswa';
+    return;
+  }
+  
+  _admSiswaData.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid #e2e8f0';
+    tr.innerHTML = `
+      <td style="text-align:center; padding:8px;">${i+1}</td>
+      <td><input type="text" value="${esc(s.nama||'')}" data-idx="${i}" data-f="nama" class="adm-siswa-inp form-control" style="width:100%; text-align:left;"></td>
+      <td><input type="text" value="${esc(s.nis||'')}" data-idx="${i}" data-f="nis" class="adm-siswa-inp form-control"></td>
+      <td><input type="text" value="${esc(s.nisn||'')}" data-idx="${i}" data-f="nisn" class="adm-siswa-inp form-control"></td>
+      <td style="text-align:center;">
+        <select data-idx="${i}" data-f="jk" class="adm-siswa-inp form-control" style="padding:6px; border-radius:6px; border:1px solid #cbd5e1;">
+          <option value="L" ${s.jk === 'L' ? 'selected' : ''}>L</option>
+          <option value="P" ${s.jk === 'P' ? 'selected' : ''}>P</option>
+        </select>
+      </td>
+      <td><input type="text" value="${esc(s.ttl||'')}" data-idx="${i}" data-f="ttl" class="adm-siswa-inp form-control" placeholder="Kota, Tgl Lahir"></td>
+      <td style="text-align:center;">
+        <button class="btn btn-danger btn-sm" onclick="removeAdminStudentRow(${i})" style="padding:4px 8px; border-radius: 6px;">✕</button>
+      </td>
+    `;
+    tb.appendChild(tr);
+  });
+  
+  tb.querySelectorAll('.adm-siswa-inp').forEach(inp => {
+    const ev = inp.tagName === 'SELECT' ? 'change' : 'input';
+    inp.addEventListener(ev, function() {
+      const idx = parseInt(this.dataset.idx, 10);
+      const f = this.dataset.f;
+      _admSiswaData[idx][f] = this.value;
+    });
+  });
+  
+  document.getElementById('admSiswaStatus').textContent = _admSiswaData.length + ' siswa';
+}
+
+function addAdminStudentRow() {
+  const kls = document.getElementById('admSiswaKelas').value;
+  if (!kls) { toast('Pilih Kelas dulu.', 'err'); return; }
+  
+  _admSiswaData.push({ 
+    id: 's' + Date.now().toString(36) + Math.random().toString(36).substr(2,4), 
+    nama: '', nis: '', nisn: '', jk: 'L', ttl: '',
+    absen: '', pengamatan: 100
+  });
+  renderAdmSiswaTable();
+}
+
+function removeAdminStudentRow(idx) {
+  if (!confirm('Hapus siswa ini dari daftar?')) return;
+  _admSiswaData.splice(idx, 1);
+  renderAdmSiswaTable();
+}
+
+async function saveAdminStudents() {
+  const kls = document.getElementById('admSiswaKelas').value;
+  if (!kls) return;
+  
+  const hasEmpty = _admSiswaData.some(s => !s.nama || s.nama.trim() === '');
+  if (hasEmpty) { toast('Nama siswa tidak boleh kosong.', 'err'); return; }
+  
+  const btn = document.getElementById('btnSaveAdmSiswa');
+  btn.innerHTML = '⏳ Menyimpan...';
+  btn.disabled = true;
+  
+  try {
+    const payload = {};
+    // 1. Simpan ke Global Roster
+    payload[`roster/${kls}`] = _admSiswaData;
+    
+    // 2. Distribusikan ke semua guru yang punya kelas ini
+    Object.keys(ALL_TEACHERS).forEach(tid => {
+      const t = ALL_TEACHERS[tid];
+      if (t.master?.classes?.[kls]) {
+        const existingSiswa = t.master.classes[kls].siswa || [];
+        
+        // Gabungkan: Pertahankan data nilai/absen guru, perbarui info identitas
+        const newSiswa = _admSiswaData.map(newS => {
+          const oldS = existingSiswa.find(o => o.id === newS.id || o.nama.toLowerCase() === newS.nama.toLowerCase());
+          if (oldS) {
+            return { ...oldS, ...newS }; // Update NIS, NISN, JK, TTL (absen & nilai tetap)
+          } else {
+            return { ...newS, absen: '', pengamatan: 100 }; // Siswa baru
+          }
+        });
+        
+        // ⭐ SIMPAN KE TEACHERS (Untuk Admin)
+        payload[`teachers/${tid}/master/classes/${kls}/siswa`] = newSiswa;
+        payload[`teachers/${tid}/lastUpdate`] = { '.sv': 'timestamp' };
+        
+      }
+    });
+    
+    const res = await authFetch('/instrumen.json', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    
+    toast('✓ Data siswa disimpan & disinkronkan ke guru.', 'ok');
+    await reloadAll(false);
+    loadAdminStudents();
+  } catch (err) {
+    toast('✗ Gagal: ' + err.message, 'err');
+  } finally {
+    btn.innerHTML = '💾 Simpan & Sinkronkan';
+    btn.disabled = false;
+  }
+}
+
+/* ============================================================
+   IMPORT / EXPORT EXCEL DATA SISWA
+   ============================================================ */
+async function exportAdmSiswaExcel() {
+  const kls = document.getElementById('admSiswaKelas').value;
+  if (!kls) { toast('Pilih kelas dulu.', 'err'); return; }
+  
+  if (typeof XLSX === 'undefined') {
+    toast('✗ Library Excel (XLSX) belum termuat. Periksa koneksi internet.', 'err');
+    return;
+  }
+
+  try {
+    
+    const wb = XLSX.utils.book_new();
+    const rows = [['No', 'Nama Lengkap', 'NIS/NISM', 'NISN', 'L/P', 'Tempat & Tgl Lahir']];
+    
+    _admSiswaData.forEach((s, i) => {
+      rows.push([i+1, s.nama || '', s.nis || '', s.nisn || '', s.jk || 'L', s.ttl || '']);
+    });
+    
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    
+    // Beri lebar kolom agar rapi
+    ws['!cols'] = [
+      { wch: 5 },  // No
+      { wch: 30 }, // Nama
+      { wch: 15 }, // NIS
+      { wch: 15 }, // NISN
+      { wch: 5 },  // L/P
+      { wch: 25 }  // TTL
+    ];
+    
+    XLSX.utils.book_append_sheet(wb, ws, 'Siswa Kelas ' + kls);
+    XLSX.writeFile(wb, `Data_Siswa_Kelas_${kls}.xlsx`);
+    toast('✓ Ekspor berhasil', 'ok');
+  } catch (err) {
+    toast('✗ Gagal ekspor: ' + err.message, 'err');
+  }
+}
+
+async function importAdmSiswaExcel(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const kls = document.getElementById('admSiswaKelas').value;
+  if (!kls) { toast('Pilih kelas dulu sebelum impor.', 'err'); ev.target.value=''; return; }
+  
+  if (typeof XLSX === 'undefined') {
+    toast('✗ Library Excel (XLSX) belum termuat. Periksa koneksi internet.', 'err');
+    ev.target.value='';
+    return;
+  }
+
+  try {
+    // ⭐ BARIS await loadSheetJS(); SUDAH DIHAPUS DARI SINI
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const wb = XLSX.read(e.target.result, {type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const aoa = XLSX.utils.sheet_to_json(ws, {header:1});
+        
+        const newData = [];
+        // Mulai dari baris 1 (index 1), karena index 0 adalah header
+        for (let i = 1; i < aoa.length; i++) {
+          const r = aoa[i];
+          if (!r || !r[1]) continue; // Skip jika nama kosong
+          newData.push({
+            id: 's' + Date.now().toString(36) + Math.random().toString(36).substr(2,4),
+            nama: String(r[1]).trim(),
+            nis: r[2] ? String(r[2]).trim() : '',
+            nisn: r[3] ? String(r[3]).trim() : '',
+            jk: r[4] ? String(r[4]).trim().toUpperCase() : 'L',
+            ttl: r[5] ? String(r[5]).trim() : '',
+            absen: '', pengamatan: 100
+          });
+        }
+        
+        if (newData.length === 0) throw new Error('Tidak ada data valid di file Excel.');
+        
+        if (confirm(`Ditemukan ${newData.length} siswa. Timpa data saat ini di layar?`)) {
+          _admSiswaData = newData;
+          renderAdmSiswaTable();
+          toast('✓ Berhasil impor. Jangan lupa klik "Simpan".', 'ok');
+        }
+      } catch (err) {
+        toast('✗ Format Excel salah: ' + err.message, 'err');
+      }
+      ev.target.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  } catch (err) {
+    toast('✗ Gagal memproses file: ' + err.message, 'err');
+    ev.target.value = '';
+  }
+}
+
+// Panggil fungsi hero saat dashboard dirender
+const _origRenderDashboard = renderDashboard;
+renderDashboard = function() {
+  _origRenderDashboard();
+  updateAdmHero();
+  populateAdmSiswaDropdown();
+};
+
+// Event Listener saat halaman selesai dimuat
+document.addEventListener('DOMContentLoaded', () => {
+  // Isi dropdown kelas saat pertama kali halaman dibuka
+  populateAdmSiswaDropdown();
+
+  // Jika dropdown kelas diganti, otomatis muat data siswanya
+  const selKelas = document.getElementById('admSiswaKelas');
+  if (selKelas) {
+    selKelas.addEventListener('change', loadAdminStudents);
+  }
+});
 
 /* ============================================================
    LIST GURU
@@ -2563,7 +3114,54 @@ function exportAllExcel(){
   XLSX.writeFile(wb, fname);
   toast('✓ Berhasil ekspor ' + (no-1) + ' kelas', 'ok');
 }
+async function backupDatabase() {
+  if (!confirm('Proses ini akan mengunduh seluruh data dari Firebase (Guru, Siswa, Nilai, Akun) sebagai file JSON. Lanjutkan?')) return;
+  
+  toast('⏳ Mengambil seluruh data dari Firebase...');
+  
+  try {
+    // Daftar path yang diizinkan untuk dibaca oleh Admin
+    const paths = ['teachers', 'users', 'roster', 'settings', 'admins'];
+    const backupData = {};
 
+    // Tarik data satu per satu
+    for (const p of paths) {
+      const res = await authFetch('/instrumen/' + p + '.json');
+      if (res.ok) {
+        const data = await res.json();
+        if (data) backupData[p] = data; // Hanya masukkan jika ada isinya
+      }
+    }
+
+    if (Object.keys(backupData).length === 0) {
+      throw new Error('Tidak ada data yang bisa di-backup.');
+    }
+    
+    // Format tanggal untuk nama file
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0,10);
+    const timeStr = now.toTimeString().slice(0,8).replace(/:/g, '-');
+    
+    const fname = `Backup_JabalRahmah_${dateStr}_${timeStr}.json`;
+    const jsonStr = JSON.stringify(backupData, null, 2);
+    
+    // Buat file dan unduh
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast('✓ Backup berhasil diunduh', 'ok');
+  } catch (err) {
+    console.error(err);
+    toast('✗ Gagal backup: ' + err.message, 'err');
+  }
+}
 async function publishRoster(){
   const ids = Object.keys(ALL_TEACHERS).filter(id => ALL_TEACHERS[id]?.master?.classes);
   if(!ids.length){ toast('Belum ada data guru', 'err'); return; }
@@ -2949,6 +3547,86 @@ function buildRaporPrint() {
   renderRaporHTML();
 }
 
+async function buildRaporPrintAll() {
+  const kelas = $('#rpKelas').value;
+  const jenis = $('#rpJenis').value;
+  if (!kelas) { toast('Pilih kelas dulu', 'err'); return; }
+
+  const selSiswa = $('#rpSiswa');
+  populateRaporSiswa(); // Pastikan dropdown siswa terisi
+  const studentNames = Array.from(selSiswa.options).map(o => o.value).filter(Boolean);
+
+  if (!studentNames.length) { toast('Tidak ada siswa di kelas ini', 'err'); return; }
+
+  const btn = document.getElementById('btnPrintAll');
+  const origText = btn.innerHTML;
+  btn.innerHTML = '⏳ Memproses...';
+  btn.disabled = true;
+
+  // Tarik data NISN/NIS dari Global Roster
+  let rosterData = {};
+  try {
+    const r = await authFetch('/instrumen/roster/' + kelas + '.json');
+    if (r.ok) {
+      const arr = await r.json();
+      if (Array.isArray(arr)) {
+        arr.forEach(s => rosterData[s.nama] = s);
+      }
+    }
+  } catch(e){}
+
+  window.__BATCH_PRINTING__ = true; // Sembunyikan toast berulang
+  let combinedHTML = '';
+  
+  const origSelected = selSiswa.value;
+  const origNisn = $('#rpNisn').value;
+
+  // Looping setiap siswa
+  for (let i = 0; i < studentNames.length; i++) {
+    const nama = studentNames[i];
+    selSiswa.value = nama;
+    
+    // Set NISN otomatis dari roster jika ada
+    const studentData = rosterData[nama];
+    $('#rpNisn').value = studentData ? (studentData.nisn || studentData.nis || '') : '';
+
+    try {
+      buildRaporPrint(); // Fungsi bawaan Anda
+      
+      const sheet = document.querySelector('#raporPrintArea .rapor-sheet');
+      if (sheet) {
+        // Bersihkan tombol edit agar tidak ikut tercetak
+        sheet.querySelectorAll('.no-print').forEach(el => el.remove());
+        sheet.classList.add('batch-sheet');
+        combinedHTML += sheet.outerHTML;
+      }
+    } catch (e) {
+      console.error('Gagal generate untuk', nama, e);
+    }
+    
+    // Jeda sedikit setiap 5 siswa agar browser tidak nge-hang
+    if (i % 5 === 0) await new Promise(r => setTimeout(r, 10));
+  }
+
+  window.__BATCH_PRINTING__ = false;
+
+  // Kembalikan nilai form ke asalnya
+  selSiswa.value = origSelected;
+  $('#rpNisn').value = origNisn;
+  btn.innerHTML = origText;
+  btn.disabled = false;
+
+  // Tampilkan semua rapor di area cetak
+  $('#raporPrintArea').innerHTML = `
+    <div class="batch-print-container">
+      ${combinedHTML}
+    </div>
+    <button class="btn btn-primary no-print" onclick="printRapor()" style="position:fixed; bottom:30px; right:30px; z-index:9999; padding:12px 24px; font-size:14px; border-radius:50px; box-shadow:0 4px 15px rgba(0,0,0,0.3); background:#059669; border:none;">🖨️ Cetak Semua / PDF</button>
+  `;
+  
+  toast('✓ ' + studentNames.length + ' rapor siap dicetak', 'ok');
+}
+
 function printRapor() {
   const area = $('#raporPrintArea');
   if (!area || !area.innerHTML.trim() || area.querySelector('.empty-state')) {
@@ -3281,7 +3959,9 @@ function renderRaporHTML() {
   `;
 
   $('#raporPrintArea').innerHTML = finalHtml;
-  toast('✓ Rapor & Panel Edit siap', 'ok');
+  if (!window.__BATCH_PRINTING__) {
+    toast('✓ Rapor & Panel Edit siap', 'ok');
+  }
 }
 
 // Fungsi buka/tutup panel
@@ -3293,6 +3973,7 @@ function toggleEditPanel() {
 async function init(){
   if(!(await window.__ADMIN_SESSION_READY__)) return;   // ⭐ tunggu sesi
   document.body.style.display = '';                     // ⭐ tampilkan setelah valid
+  updateAdmHero();
   if(cfg.pin && !cfg.unlocked){
     $('#pinModal').classList.add('show');
     return;
@@ -4008,5 +4689,37 @@ function closeChangelog(){
 init();
 
 </script>
+
+<!-- MODAL KELOLA KELAS -->
+<div class="modal-overlay" id="modalKelolaKelas">
+  <div class="modal" style="max-width: 500px;">
+    <div class="modal-header" style="background:#1e3a8a">
+      <h3>⚙️ Pengaturan Daftar Kelas</h3>
+      <button class="modal-close" onclick="closeKelolaKelas()">✕</button>
+    </div>
+    <div class="modal-body">
+      <label>Daftar Madrasah (Pisahkan dengan koma):</label>
+      <input type="text" id="txtDaftarMadrasah" placeholder="MTs Jabal Rahmah, MAS Jabal Rahmah, Pontren Jabal Rahmah" style="margin-bottom: 15px;">
+      <div class="info" style="font-size: 11px; margin-top: -10px; margin-bottom: 15px;">
+        ⚠️ Nama harus mengandung kata <b>MTs</b>, <b>MAS</b>, atau <b>Pontren</b> agar sistem kelasnya terbaca otomatis.
+      </div>
+
+      <label>Kelas MTs:</label>
+      <input type="text" id="txtKelasMts" placeholder="VII, VIII, IX" style="margin-bottom: 12px;">
+      ...
+      
+      <label>Kelas MAS:</label>
+      <input type="text" id="txtKelasMas" placeholder="X, XI, XII" style="margin-bottom: 12px;">
+      
+      <label>Kelas Pontren:</label>
+      <input type="text" id="txtKelasPontren" placeholder="1, 2, 3, 4, 5, 6, 7" style="margin-bottom: 12px;">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeKelolaKelas()">Batal</button>
+      <button class="btn btn-primary btn-sm" onclick="saveKelolaKelas()" id="btnSaveKelas">💾 Simpan Kelas</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

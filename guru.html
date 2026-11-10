@@ -64,9 +64,8 @@
   .dropdown-item svg{width:16px;height:16px;flex-shrink:0}
   .dropdown-divider{height:1px;background:var(--gray-200);margin:4px 8px}
 
-  .hero-section{position:relative;min-height:200px;display:flex;align-items:center;padding:25px 20px;background-image:url('foto1.jpg');background-size:cover;background-position:center;border-radius:0 0 24px 24px;margin:0 16px;box-shadow:0 4px 12px rgba(0,0,0,.15);}
-  .hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,92,46,.95) 0%,rgba(13,92,46,.65) 50%,rgba(0,0,0,.1) 100%);border-radius:0 0 24px 24px;}
-  .hero-content{position:relative;z-index:1;max-width:800px;color:#fff;animation:fadeIn .6s ease-out}
+.hero-section{position:relative;min-height:200px;display:flex;align-items:center;padding:34px 40px;background-image:url('foto1.jpg');background-size:cover;background-position:center;border-radius:24px;margin:16px;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,92,46,.95) 0%,rgba(13,92,46,.65) 50%,rgba(0,0,0,.1) 100%);border-radius:24px;}  .hero-content{position:relative;z-index:1;max-width:800px;color:#fff;animation:fadeIn .6s ease-out}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   .hero-content h1{font-size:32px;font-weight:800;margin-bottom:4px;text-shadow:0 2px 4px rgba(0,0,0,.3);letter-spacing:-.5px}
   .hero-content h2{font-size:30px;font-weight:600;margin-bottom:12px;color:#d1fae5;text-shadow:0 2px 4px rgba(0,0,0,.3)}
@@ -281,7 +280,27 @@
     .status-badge{padding:5px 10px;font-size:11px}
     .version-chip{padding:5px 10px;font-size:11px}
     .icon-btn{width:34px;height:34px;font-size:14px}
-    .hero-section{min-height:250px;padding:24px 14px}
+      /* ===== HERO SECTION ===== */
+  .hero-section{
+    position:relative;
+    min-height:200px;
+    display:flex;
+    align-items:center;
+    padding:24px 14px;
+    background-image:url('foto1.jpg');
+    background-size:cover;
+    background-position:center;
+    border-radius:24px; 
+    margin:16px; 
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+  }
+  
+  .hero-overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg,rgba(13,92,46,.95) 0%,rgba(13,92,46,.65) 50%,rgba(0,0,0,.1) 100%);
+    border-radius:24px;
+  }
     .hero-content h1{font-size:24px}
     .hero-content h2{font-size:16px}
     .hero-content p{font-size:12.5px}
@@ -343,6 +362,191 @@
   .cs-badge {width: 36px;height: 36px;display: flex;align-items: center;justify-content: center;border-radius: 50%;font-size: 13px;padding: 0;border: 2px solid var(--green-500);}
 }
 
+/* CSS untuk ikon mata di modal sandi */
+.field.pw-relative {
+  position: relative;
+}
+.field.pw-relative input {
+  padding-right: 40px !important; /* Memberi ruang agar teks tidak menabrak ikon */
+}
+.toggle-pw-btn {
+  position: absolute;
+  right: 10px;
+  bottom: 8px; /* Menyesuaikan posisi ikon di dalam input */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--gray-400);
+  padding: 5px;
+}
+.toggle-pw-btn:hover {
+  color: var(--green-700);
+}
+
+/* ===== PENUGASAN MENGAJAR ===== */
+.assign-hero{background:linear-gradient(135deg,var(--green-50),#fff);border:1.5px solid var(--green-300)}
+.assign-active{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 16px;background:var(--green-700);color:#fff;border-radius:12px;margin-bottom:16px}
+.assign-active .big{font-size:22px;font-weight:800;line-height:1.1}
+.assign-active .sub{font-size:12px;opacity:.85}
+.assign-active .pill{background:rgba(255,255,255,.18);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.agroup{margin-bottom:14px}
+.agroup-title{font-size:11.5px;font-weight:800;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.agroup-title::after{content:"";flex:1;height:1px;background:var(--gray-200)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;border:1.5px solid var(--gray-200);border-radius:12px;background:#fff;cursor:pointer;font-family:inherit;transition:.15s;font-size:13px;font-weight:700;color:var(--gray-800)}
+.chip:hover{border-color:var(--green-500);transform:translateY(-1px)}
+.chip.active{background:var(--green-100);border-color:var(--green-700);color:var(--green-900);box-shadow:0 0 0 3px var(--green-100)}
+.chip .cnt{font-size:11px;font-weight:600;color:var(--gray-400)}
+.chip.active .cnt{color:var(--green-700)}
+.chip .x{border:none;background:transparent;color:var(--gray-400);cursor:pointer;font-size:13px;font-weight:700;width:22px;height:22px;border-radius:6px;line-height:1}
+.chip .x:hover{background:var(--red-50);color:var(--red)}
+.chip-add{border-style:dashed;color:var(--green-700);background:var(--green-50);padding:7px 14px}
+.assign-empty{padding:18px;text-align:center;color:var(--gray-400);border:1.5px dashed var(--gray-200);border-radius:10px;margin-bottom:12px}
+.add-panel{display:none;margin-top:14px;padding:16px;background:#fff;border:1.5px dashed var(--green-500);border-radius:12px}
+.add-panel.open{display:block}
+.add-grid{display:grid;grid-template-columns:1fr 2fr;gap:16px}
+@media(max-width:700px){.add-grid{grid-template-columns:1fr}}
+.kelas-checks{display:flex;flex-wrap:wrap;gap:8px}
+.kc{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1.5px solid var(--gray-200);border-radius:20px;cursor:pointer;font-size:13px;font-weight:700;user-select:none}
+.kc input{accent-color:var(--green-700)}
+.kc.on{background:var(--green-100);border-color:var(--green-500);color:var(--green-900)}
+.kc.disabled{opacity:.45;cursor:not-allowed;background:var(--gray-100)}
+.add-note{font-size:11.5px;color:var(--gray-600);margin-top:8px}
+.badge-ro{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;background:var(--blue-50);color:#1e40af;border-radius:8px;font-weight:700;font-size:13.5px;border:1.5px solid #bfdbfe}
+
+/* ===== SWITCHER 2 LANGKAH (MAPEL → KELAS) ===== */
+.cs-dropdown{width:320px;max-width:calc(100vw - 24px);max-height:75vh;overflow-y:auto;padding:8px}
+.cs-dropdown .cs-dropdown-header{padding:8px 6px 6px;margin:0 0 6px}
+.cs-mapel-list{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.cs-mapel-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--gray-800);border:1.5px solid transparent;transition:.15s}
+.cs-mapel-item:hover{background:var(--gray-50)}
+.cs-mapel-item.picked{background:var(--green-50);border-color:var(--green-300);color:var(--green-900)}
+.cs-mapel-item.current::before{content:"●";color:var(--green-500);font-size:9px;margin-right:6px}
+.cs-mapel-item .cs-n{font-size:10.5px;font-weight:600;color:var(--gray-400);white-space:nowrap}
+.cs-kelas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.cs-kelas-tile{text-align:center;padding:10px 4px;border:1.5px solid var(--gray-200);border-radius:12px;cursor:pointer;background:#fff;transition:.15s}
+.cs-kelas-tile:hover{border-color:var(--green-500);transform:translateY(-1px)}
+.cs-kelas-tile b{display:block;font-size:16px;line-height:1.2;color:var(--green-900)}
+.cs-kelas-tile span{font-size:10.5px;color:var(--gray-400);font-weight:600}
+.cs-kelas-tile.active{background:var(--green-700);border-color:var(--green-700)}
+.cs-kelas-tile.active b,.cs-kelas-tile.active span{color:#fff}
+.cs-empty{grid-column:1/-1;text-align:center;font-size:11.5px;color:var(--gray-400);padding:10px}
+.cs-foot{display:flex;align-items:center;gap:6px;padding:10px 8px 4px;border-top:1px dashed var(--gray-200);font-size:12px;font-weight:700;color:var(--green-700);cursor:pointer}
+.cs-foot:hover{color:var(--green-900)}
+
+/* ===== JENJANG + KITAB ===== */
+.seg{display:inline-flex;background:var(--gray-100);border-radius:12px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{border:none;background:transparent;padding:8px 14px;border-radius:9px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--gray-600);cursor:pointer}
+.seg button.on{background:#fff;color:var(--green-900);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.add-kitab{margin-top:14px}
+.add-kitab .kt-title{font-size:11.5px;font-weight:800;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.kt-row{display:flex;gap:10px;padding:7px 10px;border-radius:8px;font-size:12px;border:1px solid var(--gray-200);margin-bottom:4px;background:#fff}
+.kt-row b{min-width:64px;color:var(--green-900)}
+.kt-row span{color:var(--gray-600)}
+.kt-row.on{background:var(--green-50);border-color:var(--green-300)}
+
+/* ===== DAFTAR PENUGASAN KOMPAK ===== */
+.assign-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.assign-bar .seg button i{font-style:normal;font-size:10.5px;background:var(--gray-200);color:var(--gray-600);border-radius:10px;padding:1px 7px;margin-left:5px}
+.assign-bar .seg button.on i{background:var(--green-100);color:var(--green-900)}
+#assignSearch{flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--gray-200);border-radius:10px;font-family:inherit;font-size:13px;background:#fff}
+#assignSearch:focus{outline:none;border-color:var(--green-500);box-shadow:0 0 0 3px var(--green-100)}
+.assign-list{max-height:360px;overflow-y:auto;margin-bottom:12px;border:1px solid var(--gray-200);border-radius:12px;background:#fff}
+.assign-list::-webkit-scrollbar{width:6px}
+.assign-list::-webkit-scrollbar-thumb{background:var(--gray-400);border-radius:10px}
+.asub{position:sticky;top:0;z-index:1;background:var(--gray-50);padding:6px 14px;font-size:10.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--gray-600);border-bottom:1px solid var(--gray-200)}
+.arow{display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--gray-100)}
+.arow:last-child{border-bottom:none}
+.arow-name{font-size:13px;font-weight:700;color:var(--gray-800);line-height:1.25}
+.arow-name small{display:block;font-size:10.5px;font-weight:600;color:var(--gray-400)}
+@media(max-width:700px){.arow{grid-template-columns:1fr;gap:6px}}
+.arow .chip{padding:5px 6px 5px 10px;font-size:12.5px;gap:6px}
+.arow .chip .cnt{background:var(--gray-100);border-radius:10px;padding:1px 7px;font-size:10.5px;font-weight:700;color:var(--gray-600)}
+.arow .chip.active .cnt{background:var(--green-700);color:#fff}
+.arow .chip.kosong{border-style:dashed;background:var(--gray-50);color:var(--gray-400)}
+.arow .chip .x{opacity:0;width:20px;height:20px;font-size:12px}
+.arow .chip:hover .x{opacity:1}
+@media(hover:none){.arow .chip .x{opacity:1}}
+
+/* ===== RESPONSIF: GRID & FORM (anti meluber di HP) ===== */
+.grid-2-form{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+.chart-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.grid-2-form>*,.grid-3>*,.grid-4>*,.chart-grid>*{min-width:0}
+
+/* ===== IDENTITAS: SATUAN PENDIDIKAN & KEPALA/GURU ===== */
+.id-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:18px;margin-bottom:18px;align-items:stretch}
+.id-top>.card{margin-bottom:0;min-width:0;display:flex;flex-direction:column}
+.id-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:0 16px}
+.id-fields .field{min-width:0}
+.ct-ico{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:var(--green-100);font-size:15px;flex-shrink:0}
+.id-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:14px;border-top:1px dashed var(--gray-200)}
+.meta-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--green-50);border:1px solid var(--green-100);color:var(--green-900);font-size:12px;font-weight:700}
+@media(max-width:768px){
+  .field input,.field select,.custom-dropdown-btn{font-size:16px;min-height:44px}
+  .card-title{flex-wrap:wrap}
+  .custom-dropdown-list{max-height:240px}
+}
+
+/* ===== UTS / UAS MODERN ===== */
+.rule-note{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--gray-200);border-left:4px solid var(--amber);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--gray-600);margin-bottom:14px;line-height:1.55}
+.rule-note b{color:var(--gray-800)}
+.ujian-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px;margin-bottom:16px}
+.us-card{position:relative;background:#fff;border:1px solid var(--gray-200);border-radius:14px;padding:14px 16px 14px 20px;box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.us-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,var(--green-500))}
+.us-card.g{--c:var(--green-500)}.us-card.b{--c:var(--blue)}.us-card.a{--c:var(--amber)}.us-card.r{--c:var(--red)}
+.us-card .lbl{font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px}
+.us-card .val{font-size:26px;font-weight:800;color:var(--gray-800);line-height:1.15;margin-top:2px}
+.us-card .val small{font-size:13px;font-weight:600;color:var(--gray-400)}
+.us-card .sub{font-size:11.5px;color:var(--gray-400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+#tblUTS,#tblUAS{border-collapse:separate;border-spacing:0}
+#tblUTS thead th,#tblUAS thead th{background:linear-gradient(180deg,var(--green-700),var(--green-900));padding:12px 10px;border-right:none;font-size:11px;letter-spacing:.5px}
+#tblUTS tbody tr,#tblUAS tbody tr{background:#fff;transition:background .12s}
+#tblUTS tbody tr:nth-child(even),#tblUAS tbody tr:nth-child(even){background:var(--gray-50)}
+#tblUTS tbody tr:hover,#tblUAS tbody tr:hover{background:var(--green-50)}
+#tblUTS td,#tblUAS td{padding:10px;border-bottom:1px solid var(--gray-100)}
+#tblUTS tbody td input,#tblUAS tbody td input{display:block;margin:0 auto;max-width:100px;padding:7px 8px;border:1.5px solid var(--gray-200);border-radius:8px;background:#fff}
+#tblUTS .cell-green,#tblUAS .cell-green{background:transparent;color:var(--green-900);font-size:14px;font-weight:800}
+#tblUTS .cell-green.is-low,#tblUAS .cell-green.is-low{color:var(--red)}
+#tblUTS .cell-rank,#tblUAS .cell-rank{background:transparent}
+#tblUTS tfoot td,#tblUAS tfoot td{padding:11px 10px}
+#tblUTS thead th:nth-child(2),#tblUAS thead th:nth-child(2){position:sticky;left:0;z-index:4}
+#tblUTS tbody td:nth-child(2),#tblUAS tbody td:nth-child(2){position:sticky;left:0;z-index:1;background:inherit;font-weight:600;box-shadow:1px 0 0 var(--gray-200)}
+.rank-badge{display:inline-grid;place-items:center;min-width:30px;height:30px;border-radius:50%;font-size:12.5px;font-weight:800;background:var(--gray-100);color:var(--gray-600)}
+.rank-badge.r1{background:#fde68a;color:#92400e}
+.rank-badge.r2{background:#e5e7eb;color:#374151}
+.rank-badge.r3{background:#fed7aa;color:#9a3412}
+.rank-badge.none{opacity:.4}
+
+.desc-acc{border:1px solid var(--gray-200);border-radius:12px;margin-bottom:10px;background:#fff;overflow:hidden}
+.desc-acc summary{cursor:pointer;list-style:none;padding:12px 16px;font-size:13px;font-weight:800;color:var(--green-900);display:flex;align-items:center;justify-content:space-between;background:var(--gray-50)}
+.desc-acc summary::-webkit-details-marker{display:none}
+.desc-acc summary::after{content:"▾";color:var(--green-700);transition:transform .2s}
+.desc-acc[open] summary{border-bottom:1px solid var(--gray-200)}
+.desc-acc[open] summary::after{transform:rotate(180deg)}
+.desc-body{padding:12px 14px 14px;overflow-x:auto}
+.desc-body .desc-table{min-width:420px}
+
+/* ===== FIX: footer tidak tertutup kolom nama (UTS/UAS) ===== */
+#tblUTS tfoot td,#tblUAS tfoot td{
+  position:sticky;bottom:0;z-index:5;
+  box-shadow:0 -6px 12px -6px rgba(0,0,0,.12);
+}
+#tblUTS tfoot td:first-child,#tblUAS tfoot td:first-child{
+  left:0;z-index:6;text-align:left;padding-left:18px;letter-spacing:.4px
+}
+#tblUTS thead th,#tblUAS thead th{z-index:7}
+#tblUTS thead th:nth-child(2),#tblUAS thead th:nth-child(2){z-index:8}
+
+/* kolom nama: tetap rapi di dalam bingkai, nama panjang dipotong dengan … */
+#tblUTS tbody td:nth-child(2),#tblUAS tbody td:nth-child(2){
+  max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+#tblUTS tbody td:nth-child(1),#tblUAS tbody td:nth-child(1){text-align:center;color:var(--gray-400)}
+#tblUTS tbody tr:last-child td,#tblUAS tbody tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
@@ -432,9 +636,12 @@
       </button>
 
       <div class="cs-dropdown" id="csDropdown">
-        <div class="cs-dropdown-header">PILIH KELAS</div>
-        <div class="cs-list" id="csList"></div>
-      </div>
+		<div class="cs-dropdown-header">① MATA PELAJARAN</div>
+		<div class="cs-mapel-list" id="csMapelList"></div>
+		<div class="cs-dropdown-header" id="csKelasHeader">② KELAS</div>
+		<div class="cs-kelas-grid" id="csKelasGrid"></div>
+		<div class="cs-foot" onclick="csKelola()">＋ Kelola penugasan</div>
+	  </div>
     </div>
   </nav>
 </div>
@@ -500,9 +707,10 @@
 </section>
 
 <section class="tab-panel" id="tab-identitas">
-  <div class="grid-2-form">
-    <div class="card">
-      <div class="card-title">🏫 Data Satuan Pendidikan</div>
+<div class="id-top">
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">🏫</span> Data Satuan Pendidikan</div>
+    <div class="id-fields">
       <div class="field">
         <label>Nama Madrasah</label>
         <div class="custom-dropdown" id="madrasahDropdown">
@@ -515,45 +723,89 @@
       </div>
       <div class="field"><label>Tahun Ajaran</label><input id="inp-tahun"></div>
     </div>
-    <div class="card">
-      <div class="card-title">👥 Data Kepala Madrasah &amp; Guru</div>
-      <div class="grid-2-form">
-        <div class="field">
-          <label>Kepala Madrasah</label>
-          <div class="custom-dropdown" id="kepalaDropdown">
-            <button type="button" class="custom-dropdown-btn" id="kepalaBtn">
-              <span id="kepalaLabel">— Pilih Kepala Madrasah —</span>
-              <span class="arrow">▼</span>
-            </button>
-            <div class="custom-dropdown-list" id="kepalaList"></div>
-          </div>
+    <div class="id-meta" id="idMeta" data-nosync></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="ct-ico">👥</span> Data Kepala Madrasah &amp; Guru</div>
+    <div class="id-fields">
+      <div class="field">
+        <label>Kepala Madrasah</label>
+        <div class="custom-dropdown" id="kepalaDropdown">
+          <button type="button" class="custom-dropdown-btn" id="kepalaBtn">
+            <span id="kepalaLabel">— Pilih Kepala Madrasah —</span>
+            <span class="arrow">▼</span>
+          </button>
+          <div class="custom-dropdown-list" id="kepalaList"></div>
         </div>
-        <div class="field">
-          <label>NIP/NUPTK Kepala <span class="link-hint">🔗 auto</span></label>
-          <input id="inp-nipKepala" title="Terisi otomatis dari Kepala Madrasah — tetap bisa diedit">
-        </div>
-        <div class="field">
-          <label>Guru Mata Pelajaran <span class="lock-hint">🔒 auto</span></label>
-          <input id="inp-guru" readonly title="Diisi otomatis dari akun login">
-        </div>
-        <div class="field">
-          <label>NIP/NUPTK Guru <span class="lock-hint">🔒 auto</span></label>
-          <input id="inp-nipGuru" readonly title="Diisi otomatis dari akun login">
-        </div>
+      </div>
+      <div class="field">
+        <label>NIP/NUPTK Kepala <span class="link-hint">🔗 auto</span></label>
+        <input id="inp-nipKepala" title="Terisi otomatis dari Kepala Madrasah — tetap bisa diedit">
+      </div>
+      <div class="field">
+        <label>Guru Mata Pelajaran <span class="lock-hint">🔒 auto</span></label>
+        <input id="inp-guru" readonly title="Diisi otomatis dari akun login">
+      </div>
+      <div class="field">
+        <label>NIP/NUPTK Guru <span class="lock-hint">🔒 auto</span></label>
+        <input id="inp-nipGuru" readonly title="Diisi otomatis dari akun login">
       </div>
     </div>
   </div>
+</div>
+  <!-- ===== PENUGASAN MENGAJAR ===== -->
+  <div class="card assign-hero">
+    <div class="card-title">🎯 Penugasan Mengajar <span class="badge" id="badgeAssign">0 penugasan</span></div>
+    <div class="assign-active" id="activeBar"></div>
+	<div class="assign-bar" id="assignBar" data-nosync>
+		<div class="seg" id="assignTabs">
+		  <button type="button" data-j="all" class="on">Semua <i id="cntAll">0</i></button>
+		  <button type="button" data-j="madrasah">🏫 Madrasah <i id="cntMad">0</i></button>
+		  <button type="button" data-j="pontren">🕌 Pontren <i id="cntPon">0</i></button>
+		</div>
+    <input id="assignSearch" type="search" placeholder="🔍 Cari mapel / kelas…">
+    <label class="chk"><input type="checkbox" id="assignHideEmpty"><span>Sembunyikan kosong</span></label>
+    <button class="btn btn-outline btn-sm" id="btnCleanEmpty" type="button">🧹 Rapikan kosong</button>
+    <button class="btn btn-outline btn-sm" id="btnAssignCollapse" type="button">▾ Sembunyikan daftar</button>
+	</div>
+    <div id="assignGroups"></div>
+    <button class="chip chip-add" id="btnOpenAdd" type="button">＋ Tambah Penugasan</button>
+
+<div class="add-panel" id="addPanel" data-nosync>
+  <div class="field" style="margin-bottom:14px">
+    <label>Jenjang</label>
+    <div class="seg" id="addJenjang">
+      <button type="button" data-j="madrasah" class="on">🏫 Madrasah (MTs / MAS)</button>
+      <button type="button" data-j="pontren">🕌 Pontren</button>
+    </div>
+  </div>
+  <div class="add-grid">
+    <div class="field" style="margin:0">
+      <label>Mata Pelajaran</label>
+      <select id="addMapel"></select>
+      <div class="add-note">Mapel mengikuti jenjang dan penetapan Admin untuk akun Anda.</div>
+    </div>
+    <div class="field" style="margin:0">
+      <label>Kelas (boleh pilih lebih dari satu)</label>
+      <div class="kelas-checks" id="addKelas"></div>
+      <div class="add-note">Abu-abu = penugasan sudah ada, atau mapel tidak ada di kelas itu menurut kurikulum.</div>
+    </div>
+  </div>
+  <div class="add-kitab" id="addKitab"></div>
+  <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+    <button class="btn btn-outline" type="button" id="btnCancelAdd">Batal</button>
+    <button class="btn btn-primary" type="button" id="btnSaveAdd">Tambahkan</button>
+  </div>
+</div
+  </div>
+
+  <!-- ===== DATA PENUGASAN AKTIF ===== -->
   <div class="card">
-    <div class="card-title">📚 Data Mata Pelajaran, Guru dan Siswa</div>
+    <div class="card-title">📚 Data Penugasan Aktif <span class="badge" id="badgeIdent">—</span></div>
     <div class="grid-3">
-      <div class="field">
-		<label>Mata Pelajaran</label>
-		<select id="inp-mapel" style="width:100%; padding:9px 12px; border:1.5px solid var(--gray-200); border-radius:8px; font-family:inherit;"></select>
-	  </div>
-      <div class="field">
-        <label>Kelas</label>
-        <select id="inp-kelas"></select>
-      </div>
+      <div class="field"><label>Mata Pelajaran</label><div><span class="badge-ro" id="roMapel">—</span></div></div>
+      <div class="field"><label>Kelas</label><div><span class="badge-ro" id="roKelas">—</span></div></div>
       <div class="field"><label>Semester</label>
         <select id="inp-semester"><option>Ganjil</option><option selected>Genap</option></select>
       </div>
@@ -573,18 +825,12 @@
   </div>
   <div class="card">
     <div class="card-title">👨‍🎓 Data Siswa/Santri <span class="badge" id="badgeJumlahSiswa">0 siswa</span></div>
-    <div class="toolbar no-print">
-      <button class="btn btn-primary btn-sm" onclick="tambahSiswa()">➕ Tambah Siswa</button>
-      <button class="btn btn-outline btn-sm" onclick="isiSiswaContoh()">🧪 Isi Contoh (8 Siswa)</button>
-      <div class="sep"></div>
-      <button class="btn btn-danger btn-sm" onclick="hapusSiswaKosong()">🗑️ Hapus Baris Kosong</button>
-    </div>
     <div class="tbl-wrap">
       <table id="tblSiswa">
         <thead><tr>
           <th style="width:50px">No</th><th style="min-width:220px">Nama Siswa/Santri</th>
           <th style="width:100px">Absen</th><th style="width:110px">Pengamatan</th>
-          <th style="width:100px">Total Sikap</th><th style="width:60px">Aksi</th>
+          <th style="width:100px">Total Sikap</th>
         </tr></thead>
         <tbody></tbody>
       </table>
@@ -766,11 +1012,10 @@
 </section>
 
 <section class="tab-panel" id="tab-uts">
-  <div class="info">
-    <b>Nilai Akhir UTS:</b> Jika perbaikan &gt; KKM → dibatasi KKM. Jika perbaikan ≤ KKM → ambil tertinggi antara nilai awal &amp; perbaikan.
-  </div>
+  <div class="rule-note">📘 <div><b>Aturan nilai akhir UTS:</b> nilai awal ≥ KKM dipakai apa adanya · perbaikan &gt; KKM dibatasi KKM · perbaikan ≤ KKM ambil yang tertinggi antara nilai awal &amp; perbaikan.</div></div>
+  <div class="ujian-stats" id="statUTS"></div>
   <div class="card">
-    <div class="card-title">📘 Daftar Nilai UTS</div>
+    <div class="card-title"><span class="ct-ico">📘</span> Daftar Nilai UTS <span class="badge">Isi Nilai Awal &amp; Perbaikan</span></div>
     <div class="tbl-wrap">
       <table id="tblUTS">
         <thead><tr>
@@ -786,22 +1031,21 @@
   </div>
   <div class="chart-grid">
     <div class="card">
-      <div class="card-title">📊 Distribusi Nilai UTS</div>
+      <div class="card-title"><span class="ct-ico">📊</span> Distribusi Nilai UTS</div>
       <div class="chart-box"><canvas id="chartUTS"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">📋 Deskripsi Hasil UTS</div>
+      <div class="card-title"><span class="ct-ico">📋</span> Deskripsi Hasil UTS</div>
       <div id="descUTS"></div>
     </div>
   </div>
 </section>
 
 <section class="tab-panel" id="tab-uas">
-  <div class="info">
-    <b>Nilai Akhir UAS:</b> Jika perbaikan &gt; KKM → dibatasi KKM. Jika perbaikan ≤ KKM → ambil tertinggi antara nilai awal &amp; perbaikan.
-  </div>
+  <div class="rule-note">📗 <div><b>Aturan nilai akhir UAS:</b> Jika perbaikan &gt; KKM → dibatasi KKM. Jika perbaikan ≤ KKM → ambil tertinggi antara nilai awal &amp; perbaikan.</div></div>
+  <div class="ujian-stats" id="statUAS"></div>
   <div class="card">
-    <div class="card-title">📗 Daftar Nilai UAS</div>
+    <div class="card-title"><span class="ct-ico">📗</span> Daftar Nilai UAS <span class="badge">Isi Nilai Awal &amp; Perbaikan</span></div>
     <div class="tbl-wrap">
       <table id="tblUAS">
         <thead><tr>
@@ -817,11 +1061,11 @@
   </div>
   <div class="chart-grid">
     <div class="card">
-      <div class="card-title">📊 Distribusi Nilai UAS</div>
+      <div class="card-title"><span class="ct-ico">📊</span> Distribusi Nilai UAS</div>
       <div class="chart-box"><canvas id="chartUAS"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">📋 Deskripsi Hasil UAS</div>
+      <div class="card-title"><span class="ct-ico">📋</span> Deskripsi Hasil UAS</div>
       <div id="descUAS"></div>
     </div>
   </div>
@@ -956,9 +1200,17 @@
         <b>NIP:</b> <span id="accNip">-</span><br>
         <b>Username:</b> <span id="accUsername">-</span>
       </div>
-      
-      <h4 style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--gray-800)">Ganti Sandi</h4>
+            <!-- ⭐ JUDUL & TOMBOL 1 SAJA -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h4 style="font-size:13px;font-weight:700;color:var(--gray-800); margin:0;">Ganti Sandi</h4>
+        <button type="button" class="btn btn-outline btn-sm" id="togglePwAllBtn" onclick="toggleAllPasswords()" style="padding:4px 10px; font-size:11px;">👁️ Tampilkan</button>
+      </div>
+	        <!-- ⭐ HAPUS <h4>GANTI SANDI YANG KEDUA DI SINI ⭐ -->
       <div class="field">
+        <label>Sandi Saat Ini</label>
+        <input type="password" id="oldPassword" placeholder="Masukkan sandi lama Anda">
+      </div>
+	  <div class="field">
         <label>Sandi Baru</label>
         <input type="password" id="newPassword" placeholder="Minimal 6 karakter">
       </div>
@@ -1002,6 +1254,77 @@ const MASTER_MAPEL = [
   "Seni Budaya dan Keterampilan (SBK)", "Sosiologi", "Ilmu Tafsir", "Ilmu Hadits", 
   "Ushul Fiqih", "Akhlak Tasawuf", "Qawa'id", "Tahfiz", "Bimbingan Konseling (BK)"
 ];
+/* ===== KURIKULUM PONTREN (Struktur Kurikulum TA 2025/2026) =====
+   kitab: kunci = kelas ('1') atau rentang ('3-4') */
+const GRUP_DINIYAH = "Ta'lim Diniyah", GRUP_ALAT = "Ta'lim Ilm Alat";
+const MAPEL_PONTREN = {
+  "Fiqih": { grup:GRUP_DINIYAH, kitab:{
+    '1':"Matan Al-Ghayah wat Taqrib",
+    '2':"Hasyiyah al-Bajuri Syarah Fathul Qarib (Jilid 1-2)",
+    '3':"Hasyiah I'anatut Tholibin (Jilid I)", '4':"Hasyiah I'anatut Tholibin (Jilid II)",
+    '5':"Hasyiah I'anatut Tholibin (Jilid III)", '6':"Hasyiah I'anatut Tholibin (Jilid IV)" }},
+  "Tauhid": { grup:GRUP_DINIYAH, kitab:{
+    '1':"Matan Sanusiyah", '2':"Syarah Tijan Ad-Dadhari",
+    '3-4':"Kifayatul Awam", '5-6':"Hasyiah Syarqawi 'Ala Hud hudi" }},
+  "Akhlak dan Tasawuf": { grup:GRUP_DINIYAH, kitab:{
+    '1':"Nashaihul Ibad, Irsyadul Ibad", '2':"Syarah Ta'lim Al-Muta'allim",
+    '3-4':"Muraqil Ubudiyah", '5-6':"Tanbihul Ghafilin" }},
+  "Al-Qur'an": { grup:GRUP_DINIYAH, kitab:{ '1':"Al-Qur'an Al-Karim" }},
+  "Tafsir": { grup:GRUP_DINIYAH, kitab:{ '2-6':"Tafsir Shawiy" }},
+  "Hadits": { grup:GRUP_DINIYAH, kitab:{
+    '1':"Matan Arba'in An Nawawi", '2':"Mawaidzul Usfuriyah", '3-6':"Mukhtasar Ibnu Abi Jamrah" }},
+  "Tarikh": { grup:GRUP_DINIYAH, kitab:{ '1-2':"Khulasah Nurul Yaqin", '3-6':"Syarah Nurul Yaqin" }},
+  "Nahwu": { grup:GRUP_ALAT, kitab:{
+    '1':"Matan Jurumiyah", '2':"Syarah Mukhtashor Jiddan", '3-4':"Al-Kawakib Durriyah", '5-6':"Syarah Ibnu Aqil" }},
+  "Sharfi": { grup:GRUP_ALAT, kitab:{
+    '1':"Matan Bina Wal Asasi, Zamon wa Madkhal", '2-4':"Syarah Al-Kailaniy (Matan Izzi)", '5-6':"Al-Matlub" }},
+  "Mantiq": { grup:GRUP_ALAT, kitab:{
+    '2':"Sulam Munawwaraq", '3-4':"Idhahul Mubham", '5-6':"Syarah Isaghuji Fil Mantiq" }},
+  "Ushul Fiqih": { grup:GRUP_ALAT, kitab:{
+    '2-3':"Syarah Al-Waraqot", '4':"Lathaiful Isyarah", '5-6':"Ghayah Al-Whusul" }},
+  "Ulumul Qur'an": { grup:GRUP_ALAT, kitab:{
+    '3':"Al-Qawa'idul Asasiyah", '5-6':"Mabahists fi 'Ulumil Qur'an (Manaul Qatthan)" }},
+  "Ulumul Hadits": { grup:GRUP_ALAT, kitab:{ '4':"Minhatul Mughits", '5-6':"Al-Manhalul Lathif" }},
+  "Balaghah": { grup:GRUP_ALAT, kitab:{ '3-4':"Syarah Majmu' Khamsa Rasail", '5-6':"Jauhar Maknun" }},
+  "Qawaid Fiqhiyah": { grup:GRUP_ALAT, kitab:{
+    '4':"Al-Faraid al-Bahiyyah", '5-6':"Al-Mawahibus Saniyah" }},
+  "'Arudh": { grup:GRUP_ALAT, kitab:{ '5-6':"Mukhtashar Al-Syafi" }}
+};
+const KELAS_DI_KURIKULUM = ['1','2','3','4','5','6'];
+
+function isKelasPontren(k){
+  const dariAdmin = (typeof CUSTOM_CLASSES !== 'undefined' && CUSTOM_CLASSES && Array.isArray(CUSTOM_CLASSES.pontren))
+    ? CUSTOM_CLASSES.pontren.map(String) : null;
+  return (dariAdmin || CLASSES_PONTREN).includes(String(k));
+}
+function kelasDiMapelPontren(mapel){
+  const def = MAPEL_PONTREN[mapel]; if(!def) return [];
+  const out = [];
+  Object.keys(def.kitab).forEach(key=>{
+    const [a,b] = key.split('-').map(Number);
+    for(let i=a; i<=(b||a); i++) out.push(String(i));
+  });
+  return out;
+}
+function kitabPontren(mapel, kelas){
+  const def = MAPEL_PONTREN[mapel]; if(!def) return '';
+  const n = Number(kelas);
+  for(const key of Object.keys(def.kitab)){
+    const [a,b] = key.split('-').map(Number);
+    if(n >= a && n <= (b||a)) return def.kitab[key];
+  }
+  return '';
+}
+// daftar mapel untuk satu jenjang. Dibatasi mapelGuru dari Admin; kalau hasilnya kosong → tampilkan semua jenjang itu
+function mapelUntukJenjang(jenjang){
+  const base  = jenjang === 'pontren' ? Object.keys(MAPEL_PONTREN) : MASTER_MAPEL;
+  const other = jenjang === 'pontren' ? MASTER_MAPEL : Object.keys(MAPEL_PONTREN);
+  const guru = (Array.isArray(master.mapelGuru) && master.mapelGuru.length) ? master.mapelGuru : null;
+  if(!guru) return base;
+  const hasil = guru.filter(m => base.includes(m) || !other.includes(m));
+  return hasil.length ? hasil : base;
+}
+
 const DEFAULT_MADRASAH_LIST = ['MAS Jabal Rahmah', 'MTs Jabal Rahmah'];
 const DEFAULT_KEPALA_LIST = ['Yusmawati, S.Ag', 'Rita Ernawati, S.Pd.I'];
 
@@ -1237,6 +1560,21 @@ const CLASSES = ['VII','VIII','IX','X','XI','XII'];
 const CLASSES_PONTREN = ['1','2','3','4','5','6','7']; // KELAS KHUSUS PONTREN
 const ALL_CLASSES = [...CLASSES, ...CLASSES_PONTREN];
 
+let CUSTOM_CLASSES = null; // Untuk menyimpan kelas dari Admin
+
+async function fetchGlobalClassesFromAdmin() {
+  try {
+    const sess = readAuthSession();
+    if(!sess || !sess.idToken) return;
+    const base = (master.fbUrl || DEFAULT_FB_URL).replace(/\/+$/,'');
+    const res = await fetch(base + '/instrumen/settings/classes.json?auth=' + sess.idToken);
+    if(res.ok) {
+      const data = await res.json();
+      if(data) CUSTOM_CLASSES = data;
+    }
+  } catch(e) { console.warn('Gagal ambil kelas dari admin', e); }
+}
+
 // Fungsi deteksi Pontren/Ponpes
 function isPontren(madrasah) {
    if (!madrasah) return false;
@@ -1244,14 +1582,22 @@ function isPontren(madrasah) {
    return m.includes('pontren') || m.includes('ponpes') || m.includes('pesantren');
 }
 
-// Fungsi untuk menentukan daftar kelas berdasarkan madrasah yang dipilih
 function getAvailableClasses() {
-  const madrasah = (state && state.identitas && state.identitas.madrasah) ? state.identitas.madrasah : '';
-  // Jika madrasah mengandung kata "Pontren", gunakan kelas 1-7
-  if (madrasah.toLowerCase().includes('pontren')) {
+  const madrasah = (state && state.identitas && state.identitas.madrasah) ? state.identitas.madrasah.toLowerCase() : '';
+  
+  // 1. Cek apakah ada pengaturan dari Admin
+  if (typeof CUSTOM_CLASSES !== 'undefined' && CUSTOM_CLASSES) {
+    if (madrasah.includes('mts')) return CUSTOM_CLASSES.mts || CLASSES;
+    if (madrasah.includes('mas')) return CUSTOM_CLASSES.mas || CLASSES;
+    if (madrasah.includes('pontren') || madrasah.includes('ponpes') || madrasah.includes('pesantren')) {
+      return CUSTOM_CLASSES.pontren || CLASSES_PONTREN;
+    }
+  }
+  
+  // 2. Fallback jika Admin belum atur
+  if (madrasah.includes('pontren') || madrasah.includes('ponpes') || madrasah.includes('pesantren')) {
     return CLASSES_PONTREN;
   }
-  // Jika MTs/MAS, gunakan kelas default
   return CLASSES;
 }
 
@@ -1269,7 +1615,7 @@ function defaultClassState(kelas){
       tahun:'2026/2027',
       kepala:'Rita Ernawati, S.Pd.I', nipKepala:'',
       guru:'Muhammad Arrazi, M.Pd', nipGuru:'111111111111',
-      mapel:'Bahasa Arab', kelas: kelas, semester:'Genap',
+      mapel: isKelasPontren(kelas) ? 'Fiqih' : 'Bahasa Arab', kelas: kelas, semester:'Genap',
       wali: WALI_KELAS_MAP[kelas] || '', kkm:75, kkt:70
     },
     siswa: [],
@@ -1581,8 +1927,6 @@ function uid(){ return 's' + (++uidCounter) + '_' + Date.now().toString(36); }
 
 function switchClass(kelas){
   if(kelas === master.currentClass) return;
-  const available = getAvailableClasses();
-  if(!available.includes(kelas)) return;
 
   try {
     master.currentClass = kelas;
@@ -1613,6 +1957,7 @@ function switchClass(kelas){
 
     updateHeroInfo();
     updateClassSwitcherUI();
+	renderPenugasan();
     toast('✓ Beralih ke kelas ' + kelas);
   } catch (err) {
     console.error("Error saat ganti kelas:", err);
@@ -1623,41 +1968,75 @@ function switchClass(kelas){
 /* ============================================================
    CLASS SWITCHER
    ============================================================ */
+let csMapelPilih = null;   // mapel yang sedang dilihat di popup
+
 function updateClassSwitcherUI() {
   if (!state || !state.identitas) return;
+  ensurePenugasan();
 
-  document.getElementById('csBadge').textContent = master.currentClass;
-  document.getElementById('csMapel').textContent = state.identitas.mapel || 'Mata Pelajaran';
+  const aktifKelas = master.currentClass;
+  const aktifMapel = state.identitas.mapel;
+  if (!master.penugasan.some(p => p.kelas === aktifKelas && p.mapel === aktifMapel))
+    master.penugasan.push({ kelas: aktifKelas, mapel: aktifMapel });
 
-  const sem = state.identitas.semester || 'Ganjil';
-  const thn = state.identitas.tahun || '2026/2027';
-  document.getElementById('csSemester').textContent = `${sem} • ${thn}`;
+  // tombol kecil di nav
+  document.getElementById('csBadge').textContent = aktifKelas;
+  document.getElementById('csMapel').textContent = aktifMapel || 'Mata Pelajaran';
+  document.getElementById('csSemester').textContent =
+    `${state.identitas.semester || 'Ganjil'} • ${state.identitas.tahun || '2026/2027'}`;
 
-  const listEl = document.getElementById('csList');
-  if (!listEl) return;
-  listEl.innerHTML = '';
-  
-  // Ambil daftar kelas yang sesuai dengan madrasah saat ini
-  const availableClasses = getAvailableClasses();
+  const mapelEl = document.getElementById('csMapelList');
+  const kelasEl = document.getElementById('csKelasGrid');
+  if (!mapelEl || !kelasEl) return;
 
-  availableClasses.forEach(k => {
-    const cls = master.classes[k];
-    const count = cls && cls.siswa ? cls.siswa.length : 0;
+  const open = document.getElementById('csDropdown')?.classList.contains('open');
+  if (!open || !csMapelPilih || !master.penugasan.some(p => p.mapel === csMapelPilih)) csMapelPilih = aktifMapel;
 
+  // ① daftar mapel
+  const byMapel = {};
+  master.penugasan.forEach(p => (byMapel[p.mapel] = byMapel[p.mapel] || []).push(p));
+  mapelEl.innerHTML = '';
+  Object.keys(byMapel).sort().forEach(mapel => {
     const item = document.createElement('div');
-    item.className = 'cs-item' + (k === master.currentClass ? ' active' : '');
-    item.innerHTML = `
-      <span>Kelas ${k}</span>
-      <span class="cs-count">${count} siswa</span>
-    `;
+    item.className = 'cs-mapel-item' + (mapel === csMapelPilih ? ' picked' : '') + (mapel === aktifMapel ? ' current' : '');
+    item.innerHTML = `<span>${esc(mapel)}</span><span class="cs-n">${byMapel[mapel].length} kelas</span>`;
+    item.addEventListener('click', e => {
+      e.stopPropagation();
+      csMapelPilih = mapel;
+      // kelas yang sedang dibuka juga punya mapel ini? langsung pindah di kelas yang sama
+      if (byMapel[mapel].some(p => p.kelas === aktifKelas)) switchPenugasan(aktifKelas, mapel);
+      else updateClassSwitcherUI();
+    });
+    mapelEl.appendChild(item);
+  });
 
-    item.addEventListener('click', () => {
-      switchClass(k);
+  // ② kelas untuk mapel terpilih
+  document.getElementById('csKelasHeader').textContent = '② KELAS — ' + csMapelPilih;
+  kelasEl.innerHTML = '';
+  const daftar = (byMapel[csMapelPilih] || [])
+    .slice().sort((a, b) => ALL_CLASSES.indexOf(a.kelas) - ALL_CLASSES.indexOf(b.kelas));
+  if (!daftar.length) kelasEl.innerHTML = '<div class="cs-empty">Belum ada kelas untuk mapel ini</div>';
+  daftar.forEach(p => {
+    const d = dataPenugasan(p.kelas, p.mapel);
+    const n = (d && d.siswa) ? d.siswa.length
+            : ((master.classes[p.kelas] && master.classes[p.kelas].siswa) || []).length;
+    const tile = document.createElement('div');
+    tile.className = 'cs-kelas-tile' + (p.kelas === aktifKelas && p.mapel === aktifMapel ? ' active' : '');
+    tile.innerHTML = `<b>${esc(p.kelas)}</b><span>${n} siswa</span>`;
+    tile.addEventListener('click', e => {
+      e.stopPropagation();
+      switchPenugasan(p.kelas, p.mapel);
       closeClassSwitcher();
     });
-
-    listEl.appendChild(item);
+    kelasEl.appendChild(tile);
   });
+}
+
+function csKelola() {
+  closeClassSwitcher();
+  pindahTab('identitas');
+  const btn = document.getElementById('btnOpenAdd');
+  if (btn) { btn.click(); btn.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 }
 
 function toggleClassSwitcher(e) {
@@ -1678,6 +2057,7 @@ function toggleClassSwitcher(e) {
 function closeClassSwitcher() {
   document.getElementById('csBtn')?.classList.remove('open');
   document.getElementById('csDropdown')?.classList.remove('open');
+  csMapelPilih = null;
 }
 
 document.addEventListener('click', (e) => {
@@ -1691,8 +2071,8 @@ function updateClassSelector(){
   const sel = $('#inp-kelas'); if(!sel) return;
   sel.innerHTML = '';
   
-  // Ambil daftar kelas yang sesuai
-  const availableClasses = getAvailableClasses();
+  // ⭐ UBAH BARIS INI: Gunakan ALL_CLASSES
+  const availableClasses = ALL_CLASSES;
   
   availableClasses.forEach(c=>{
     const o = document.createElement('option');
@@ -1815,12 +2195,27 @@ function setKepalaNip(kepala, nip){
 }
 
 function renderMadrasahDropdown(){
-  const list = getMadrasahList();
+  // 1. Ambil daftar madrasah dari pengaturan Admin
+  let list = getMadrasahList();
+  if (typeof CUSTOM_CLASSES !== 'undefined' && CUSTOM_CLASSES && CUSTOM_CLASSES.madrasah && CUSTOM_CLASSES.madrasah.length > 0) {
+    list = CUSTOM_CLASSES.madrasah;
+  }
+
   let cur = state.identitas.madrasah;
-  if(!cur || !list.includes(cur)){ cur = list[0] || ''; state.identitas.madrasah = cur; saveState(); }
-  const label = $('#madrasahLabel'); if(label) label.textContent = cur || '— Pilih Madrasah —';
-  const listEl = $('#madrasahList'); if(!listEl) return;
+  if(!cur || !list.includes(cur)){ 
+    cur = list[0] || ''; 
+    state.identitas.madrasah = cur; 
+    saveState(); 
+  }
+  
+  const label = $('#madrasahLabel'); 
+  if(label) label.textContent = cur || '— Pilih Madrasah —';
+  
+  const listEl = $('#madrasahList'); 
+  if(!listEl) return;
   listEl.innerHTML = '';
+  
+  // 2. Tampilkan daftar madrasah (Hanya Teks, tanpa tombol hapus ✕)
   list.forEach(name=>{
     const item = document.createElement('div');
     item.className = 'custom-dropdown-item' + (name === cur ? ' active' : '');
@@ -1828,88 +2223,37 @@ function renderMadrasahDropdown(){
     nameSpan.className = 'item-name';
     nameSpan.textContent = name;
     item.appendChild(nameSpan);
-    if(list.length > 1){
-      const del = document.createElement('button');
-      del.type = 'button'; del.className = 'item-del'; del.textContent = '✕';
-      del.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        if(confirm('Hapus "' + name + '" dari daftar madrasah?')){
-          const newList = list.filter(x=>x !== name);
-          saveMadrasahList(newList);
-          if(state.identitas.madrasah === name) state.identitas.madrasah = newList[0] || '';
-          saveState(); renderMadrasahDropdown();
-          toast('✓ "' + name + '" dihapus');
-        }
-      });
-      item.appendChild(del);
-    }
+    
+    // ⭐ TOMBOL HAPUS (✕) SUDAH DIHAPUS DARI SINI
+
     item.addEventListener('click', ()=>{
-      state.identitas.madrasah = name; // Set madrasah di state saat ini
+      state.identitas.madrasah = name;
       const mappedKepala = MADRASAH_KEPALA_MAP[name];
-      if(mappedKepala){
-        state.identitas.kepala = mappedKepala;
-      }
+      if(mappedKepala) state.identitas.kepala = mappedKepala;
 	  
 	  // --- VALIDASI KELAS SAAT MADRASAH DIGANTI ---
       const available = getAvailableClasses();
       if (!available.includes(master.currentClass)) {
-          master.currentClass = available[0]; // Pindah ke kelas pertama (misal: '1')
+          master.currentClass = available[0]; // Pindah ke kelas pertama
           state = master.classes[master.currentClass] || defaultClassState(master.currentClass);
           master.classes[master.currentClass] = state;
-          
-          // ⭐ PENTING: Paksa state baru menggunakan madrasah yang baru dipilih
+             // Paksa state baru menggunakan madrasah yang baru dipilih
           state.identitas.madrasah = name; 
           state.identitas.kelas = master.currentClass;
-
           updateClassSelector(); // Perbarui dropdown form
       } else {
           state.identitas.madrasah = name;
       }
-      // --------------------------------------------
 	  
       saveState();
       renderMadrasahDropdown(); renderKepalaDropdown(); closeMadrasahDropdown();
-
-      initDashFilter();
-      renderDashboard();
-	  updateHeroInfo();
-	  updateClassSwitcherUI(); // Perbarui dropdown pojok kanan atas
-
-      if(mappedKepala) toast('✓ Kepala Madrasah otomatis: ' + mappedKepala);
-      else toast('ℹ️ Madrasah diganti. Silakan pilih kepala madrasah manual.');
+      initDashFilter(); renderDashboard(); updateHeroInfo(); updateClassSwitcherUI();
+      toast('✓ Madrasah: ' + name);
     });
     listEl.appendChild(item);
   });
-  const addBtn = document.createElement('div');
-  addBtn.className = 'custom-dropdown-add';
-  addBtn.innerHTML = '<span class="plus">+</span> Tambah Madrasah Lainnya';
-  addBtn.addEventListener('click', ()=>{
-    const name = prompt('Masukkan nama madrasah baru:');
-    if(!name || !name.trim()) return;
-    const clean = name.trim();
-    if(list.includes(clean)){ toast('⚠️ "' + clean + '" sudah ada', true); return; }
-    list.push(clean); saveMadrasahList(list); 
-    state.identitas.madrasah = clean;
-    
-    // Validasi jika madrasah baru berakhiran Pontren/Ponpes
-    const available = getAvailableClasses();
-    if (!available.includes(master.currentClass)) {
-        master.currentClass = available[0];
-        state = master.classes[master.currentClass] || defaultClassState(master.currentClass);
-        master.classes[master.currentClass] = state;
-        state.identitas.madrasah = clean;
-        state.identitas.kelas = master.currentClass;
-        updateClassSelector();
-    }
 
-    saveState(); renderMadrasahDropdown(); closeMadrasahDropdown();
-    updateHeroInfo();
-    initDashFilter();
-    renderDashboard();
-    updateClassSwitcherUI();
-    toast('✓ Madrasah "' + clean + '" ditambahkan');
-  });
-  listEl.appendChild(addBtn);
+  // ⭐ TOMBOL "+ Tambah Madrasah Lainnya" SUDAH DIHAPUS DARI SINI
 }
 function openMadrasahDropdown(){ $('#madrasahBtn')?.classList.add('open'); $('#madrasahList')?.classList.add('open'); }
 function closeMadrasahDropdown(){ $('#madrasahBtn')?.classList.remove('open'); $('#madrasahList')?.classList.remove('open'); }
@@ -2297,9 +2641,8 @@ async function firebaseLoad(){
   toast('⏳ Memuat dari Firebase...');
   closeSyncModal();
   try{
-    const res = await authFetch('/instrumen/personal/' + encodeURIComponent(teacherId) + '.json', { cache:'no-store' });
+    const res = await authFetch('/instrumen/teachers/' + encodeURIComponent(teacherId) + '/master.json', { cache:'no-store' });
     if(!res.ok) throw new Error('HTTP ' + res.status);
-
     const loadedRaw = await res.json();
     const loaded = decodeFirebaseKeys(loadedRaw);
 
@@ -2435,7 +2778,7 @@ async function autoLoadFromFirebase(){
   }
 
   try{
-    const res = await authFetch('/instrumen/personal/' + encodeURIComponent(teacherId) + '.json', { cache:'no-store' });
+    const res = await authFetch('/instrumen/teachers/' + encodeURIComponent(teacherId) + '/master.json', { cache:'no-store' });
     if(!res.ok) return;
 
     const dataRaw = await res.json();
@@ -2859,6 +3202,314 @@ function drawDashCharts(scores, tuntas, remedial, KKM) {
 }
 
 /* ============================================================
+   PENUGASAN MENGAJAR (kelas + mapel)
+   master.classes[kelas] = data mapel AKTIF di kelas itu
+   master.stash[kelas][slug-mapel] = data mapel lain di kelas itu
+   master.penugasan = [{kelas, mapel}]
+   ============================================================ */
+const slugMapel = s => String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+function getMapelGuru(){
+  return (Array.isArray(master.mapelGuru) && master.mapelGuru.length) ? master.mapelGuru : MASTER_MAPEL;
+}
+
+function ensurePenugasan(){
+  if(!master.stash || typeof master.stash !== 'object') master.stash = {};
+  if(!Array.isArray(master.penugasan)) master.penugasan = [];
+  if(!master.penugasan.length){
+    ALL_CLASSES.forEach(k=>{
+      const c = master.classes[k];
+      if(c && c.siswa && c.siswa.length){
+        master.penugasan.push({ kelas:k, mapel:(c.identitas && c.identitas.mapel) || 'Bahasa Arab' });
+      }
+    });
+  }
+}
+
+// data milik penugasan (aktif di master.classes, atau tersimpan di stash)
+function dataPenugasan(kelas, mapel){
+  const c = master.classes[kelas];
+  if(c && c.identitas && c.identitas.mapel === mapel) return c;
+  return (master.stash && master.stash[kelas] && master.stash[kelas][slugMapel(mapel)]) || null;
+}
+
+// buat state baru untuk mapel lain di kelas yang sama (siswa & pengaturan disalin, nilai kosong)
+function buatStatePenugasan(kelas, mapel, sumber){
+  const next = defaultClassState(kelas);
+  ['madrasah','tahun','kepala','nipKepala','guru','nipGuru','wali','semester','kkm','kkt'].forEach(f=>{
+    if(sumber.identitas[f] !== undefined) next.identitas[f] = sumber.identitas[f];
+  });
+  next.identitas.mapel = mapel;
+  next.identitas.kelas = kelas;
+  next.siswa = (sumber.siswa || []).map(s=>({ id:s.id, nama:s.nama, absen:s.absen, pengamatan:s.pengamatan }));
+  next.config.bobotSumatif = JSON.parse(JSON.stringify(sumber.config.bobotSumatif));
+  next.config.bobotAkhir   = JSON.parse(JSON.stringify(sumber.config.bobotAkhir));
+  return next;
+}
+
+function syncBobotInputs(){
+  ['bobotSikap','bobotUH','bobotTugas'].forEach(id=>{
+    const el = $('#'+id); if(el) el.value = state.config.bobotSumatif[id.replace('bobot','').toLowerCase()];
+  });
+  ['bobotAkhirSumatif','bobotAkhirUTS','bobotAkhirUAS'].forEach(id=>{
+    const el = $('#'+id); if(el) el.value = state.config.bobotAkhir[id.replace('bobotAkhir','').toLowerCase()];
+  });
+}
+
+// tukar mapel aktif pada kelas yang sedang dibuka
+function swapMapel(mapel){
+  ensurePenugasan();
+  const k = master.currentClass;
+  const lama = state.identitas.mapel;
+  if(lama === mapel) return;
+  if(!master.stash[k]) master.stash[k] = {};
+  master.stash[k][slugMapel(lama)] = state;                 // simpan yang lama
+  let next = master.stash[k][slugMapel(mapel)];
+  if(next) delete master.stash[k][slugMapel(mapel)];        // ambil yang sudah ada
+  else next = buatStatePenugasan(k, mapel, state);          // atau buat baru
+  normalizeClass(next, k);
+  master.classes[k] = next;
+  state = next;
+  saveState();
+  bindIdentitasValues();
+  syncBobotInputs();
+  refreshAll();
+  toast('✓ Beralih ke Kelas ' + k + ' • ' + mapel);
+}
+
+function switchPenugasan(kelas, mapel){
+  if(kelas === master.currentClass && state.identitas.mapel === mapel) return;
+  if(kelas !== master.currentClass) switchClass(kelas);
+  if(state.identitas.mapel !== mapel) swapMapel(mapel);
+}
+
+function hapusPenugasan(kelas, mapel){
+  if(kelas === master.currentClass && state.identitas.mapel === mapel){
+    toast('⚠️ Beralih dulu ke penugasan lain, baru hapus', true); return;
+  }
+  if(!confirm(`Hapus penugasan "${mapel} — Kelas ${kelas}"?\n\nSemua nilai pada penugasan ini ikut terhapus.`)) return;
+  master.penugasan = master.penugasan.filter(p => !(p.kelas === kelas && p.mapel === mapel));
+  const c = master.classes[kelas];
+  if(c && c.identitas.mapel === mapel){
+    const st = (master.stash && master.stash[kelas]) || {};
+    const nextKey = Object.keys(st)[0];
+    if(nextKey){ master.classes[kelas] = st[nextKey]; delete st[nextKey]; normalizeClass(master.classes[kelas], kelas); }
+    else master.classes[kelas] = buatStatePenugasan(kelas, mapel, c);   // nilai dikosongkan, siswa tetap
+  } else if(master.stash && master.stash[kelas]){
+    delete master.stash[kelas][slugMapel(mapel)];
+  }
+  saveState(); refreshAll();
+  toast('✓ Penugasan dihapus');
+}
+
+const assignUI = { j:'all', q:'', hideEmpty:false, collapsed:false };
+try{ Object.assign(assignUI, JSON.parse(localStorage.getItem('jabal_assignUI') || '{}')); assignUI.q = ''; }catch(e){}
+function saveAssignUI(){ try{ localStorage.setItem('jabal_assignUI', JSON.stringify({ j:assignUI.j, hideEmpty:assignUI.hideEmpty, collapsed:assignUI.collapsed })); }catch(e){} }
+
+function jenjangPenugasan(p){ return isKelasPontren(p.kelas) ? 'pontren' : 'madrasah'; }
+function siswaPenugasan(p){
+  const d = dataPenugasan(p.kelas, p.mapel);
+  if(d && d.siswa) return d.siswa.length;
+  return ((master.classes[p.kelas] && master.classes[p.kelas].siswa) || []).length;
+}
+function labelPenugasan(p){
+  if(jenjangPenugasan(p) === 'madrasah') return '🏫 Madrasah (MTs / MAS)';
+  return '🕌 Pontren · ' + ((MAPEL_PONTREN[p.mapel] || {}).grup || 'Lainnya');
+}
+const URUT_LABEL = ['🏫 Madrasah (MTs / MAS)', "🕌 Pontren · Ta'lim Diniyah", "🕌 Pontren · Ta'lim Ilm Alat", '🕌 Pontren · Lainnya'];
+
+function renderPenugasan(){
+  const wrap = $('#assignGroups'); if(!wrap || !state) return;
+  wrap.classList.add('assign-list');
+  ensurePenugasan();
+  const k = master.currentClass, m = state.identitas.mapel;
+  if(!master.penugasan.some(p => p.kelas === k && p.mapel === m)) master.penugasan.push({ kelas:k, mapel:m });
+  const all = master.penugasan;
+
+  // bar aktif + info
+  $('#badgeAssign').textContent = all.length + ' penugasan';
+    const meta = document.getElementById('idMeta');
+  if(meta){
+    meta.innerHTML = `<span class="meta-chip">${isKelasPontren(k) ? '🕌 Pontren' : '🏫 Madrasah'}</span>
+      <span class="meta-chip">📚 ${all.length} penugasan</span>
+      <span class="meta-chip">👥 ${state.siswa.length} siswa aktif</span>`;
+  }
+  const kt = isKelasPontren(k) ? kitabPontren(m, k) : '';
+  $('#activeBar').innerHTML = `
+    <div><div class="sub">Sedang dikerjakan</div><div class="big">Kelas ${esc(k)} • ${esc(m)}</div></div>
+    <span class="pill">${state.siswa.length} siswa</span>
+    <span class="pill">Semester ${esc(state.identitas.semester || '-')}</span>
+    ${kt ? `<span class="pill">📖 ${esc(kt)}</span>` : ''}`;
+  $('#roMapel').textContent = m;
+  $('#roKelas').textContent = 'Kelas ' + k;
+  $('#badgeIdent').textContent = m + ' • ' + k;
+
+  // tab + hitungan + tombol lipat
+  const nPon = all.filter(p => jenjangPenugasan(p) === 'pontren').length;
+  const setTxt = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  setTxt('cntAll', all.length); setTxt('cntMad', all.length - nPon); setTxt('cntPon', nPon);
+  $$('#assignTabs button').forEach(b => b.classList.toggle('on', b.dataset.j === assignUI.j));
+  const bc = $('#btnAssignCollapse'); if(bc) bc.textContent = assignUI.collapsed ? '▸ Tampilkan daftar' : '▾ Sembunyikan daftar';
+  wrap.style.display = assignUI.collapsed ? 'none' : '';
+  if(assignUI.collapsed) return;
+
+  // filter
+  const q = assignUI.q.trim().toLowerCase();
+  const list = all.filter(p => {
+    if(assignUI.j !== 'all' && jenjangPenugasan(p) !== assignUI.j) return false;
+    const aktif = (p.kelas === k && p.mapel === m);
+    if(assignUI.hideEmpty && !aktif && siswaPenugasan(p) === 0) return false;
+    if(q && !(p.mapel.toLowerCase().includes(q) || ('kelas ' + p.kelas).toLowerCase().includes(q))) return false;
+    return true;
+  });
+  wrap.innerHTML = '';
+  if(!list.length){
+    wrap.innerHTML = '<div class="assign-empty" style="margin:12px;border-radius:10px">Tidak ada penugasan yang cocok dengan filter.</div>';
+    return;
+  }
+
+  // urut: label → mapel → kelas
+  const rank = p => { const i = URUT_LABEL.indexOf(labelPenugasan(p)); return i < 0 ? 99 : i; };
+  list.sort((a, b) => rank(a) - rank(b) || a.mapel.localeCompare(b.mapel, 'id')
+                       || ALL_CLASSES.indexOf(a.kelas) - ALL_CLASSES.indexOf(b.kelas));
+
+  // jumlah kelas per (label+mapel)
+  const jml = {};
+  list.forEach(p => { const key = labelPenugasan(p) + '|' + p.mapel; jml[key] = (jml[key] || 0) + 1; });
+
+  let lastLabel = '', lastKey = '', chips = null;
+  list.forEach(p => {
+    const label = labelPenugasan(p), key = label + '|' + p.mapel;
+    if(label !== lastLabel){
+      const h = document.createElement('div'); h.className = 'asub'; h.textContent = label;
+      wrap.appendChild(h); lastLabel = label; lastKey = '';
+    }
+    if(key !== lastKey){
+      const row = document.createElement('div'); row.className = 'arow';
+      row.innerHTML = `<div class="arow-name">${esc(p.mapel)}<small>${jml[key]} kelas</small></div><div class="chips"></div>`;
+      wrap.appendChild(row); chips = row.querySelector('.chips'); lastKey = key;
+    }
+    const n = siswaPenugasan(p);
+    const aktif = (p.kelas === k && p.mapel === m);
+    const ktp = isKelasPontren(p.kelas) ? kitabPontren(p.mapel, p.kelas) : '';
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (aktif ? ' active' : '') + (n === 0 ? ' kosong' : '');
+    chip.setAttribute('role', 'button'); chip.tabIndex = 0;
+    chip.title = `${p.mapel} — Kelas ${p.kelas} • ${n} siswa` + (ktp ? '\n📖 ' + ktp : '');
+    chip.innerHTML = `<span class="k">${esc(p.kelas)}</span><span class="cnt">${n}</span><button class="x" type="button" title="Hapus penugasan">✕</button>`;
+    chip.addEventListener('click', () => switchPenugasan(p.kelas, p.mapel));
+    chip.addEventListener('keydown', e => { if(e.key === 'Enter') switchPenugasan(p.kelas, p.mapel); });
+    chip.querySelector('.x').addEventListener('click', e => { e.stopPropagation(); hapusPenugasan(p.kelas, p.mapel); });
+    chips.appendChild(chip);
+  });
+}
+
+function bersihkanKosong(){
+  ensurePenugasan();
+  const k = master.currentClass, m = state.identitas.mapel;
+  const target = master.penugasan.filter(p => !(p.kelas === k && p.mapel === m) && siswaPenugasan(p) === 0);
+  if(!target.length){ toast('✓ Tidak ada penugasan kosong'); return; }
+  const daftar = target.slice(0, 12).map(p => `• ${p.mapel} — Kelas ${p.kelas}`).join('\n') + (target.length > 12 ? '\n• …' : '');
+  if(!confirm(`Hapus ${target.length} penugasan yang belum berisi siswa?\n\n${daftar}`)) return;
+  master.penugasan = master.penugasan.filter(p => !target.includes(p));
+  target.forEach(p => { if(master.stash && master.stash[p.kelas]) delete master.stash[p.kelas][slugMapel(p.mapel)]; });
+  saveState(); renderPenugasan(); updateClassSwitcherUI();
+  toast(`✓ ${target.length} penugasan kosong dirapikan`);
+}
+
+function initAssignFilter(){
+  $$('#assignTabs button').forEach(b => b.addEventListener('click', () => { assignUI.j = b.dataset.j; saveAssignUI(); renderPenugasan(); }));
+  const s = $('#assignSearch');
+  if(s) s.addEventListener('input', () => { assignUI.q = s.value; renderPenugasan(); });
+  const h = $('#assignHideEmpty');
+  if(h){ h.checked = assignUI.hideEmpty; h.addEventListener('change', () => { assignUI.hideEmpty = h.checked; saveAssignUI(); renderPenugasan(); }); }
+  $('#btnCleanEmpty')?.addEventListener('click', bersihkanKosong);
+  $('#btnAssignCollapse')?.addEventListener('click', () => { assignUI.collapsed = !assignUI.collapsed; saveAssignUI(); renderPenugasan(); });
+}
+
+let addJenjang = 'madrasah';
+
+function kelasUntukJenjang(j){
+  return ALL_CLASSES.filter(k => isKelasPontren(k) === (j === 'pontren'));
+}
+
+function isiMapelAdd(pilih){
+  const sel = $('#addMapel');
+  const list = mapelUntukJenjang(addJenjang);
+  if(addJenjang === 'pontren'){
+    const grup = {};
+    list.forEach(m => { const g = (MAPEL_PONTREN[m] || {}).grup || 'Lainnya'; (grup[g] = grup[g] || []).push(m); });
+    sel.innerHTML = Object.keys(grup).map(g =>
+      `<optgroup label="${esc(g)}">${grup[g].map(m => `<option>${esc(m)}</option>`).join('')}</optgroup>`).join('');
+  } else {
+    sel.innerHTML = list.map(m => `<option>${esc(m)}</option>`).join('');
+  }
+  if(pilih && list.includes(pilih)) sel.value = pilih;
+  renderKelasChecks();
+}
+
+function renderKelasChecks(){
+  const mapel = $('#addMapel').value;
+  const box = $('#addKelas'); box.innerHTML = '';
+  const kelasMapel = addJenjang === 'pontren' ? kelasDiMapelPontren(mapel) : null;
+  kelasUntukJenjang(addJenjang).forEach(k=>{
+    const ada = master.penugasan.some(p => p.kelas === k && p.mapel === mapel);
+    // kelas 1-6 mengikuti kurikulum; kelas di luar itu (mis. 7, 8) dibiarkan bebas
+    const tidakAda = !!kelasMapel && KELAS_DI_KURIKULUM.includes(String(k)) && !kelasMapel.includes(String(k));
+    const lab = document.createElement('label');
+    lab.className = 'kc' + ((ada || tidakAda) ? ' disabled' : '');
+    if(tidakAda) lab.title = 'Mapel ini tidak ada di kelas ' + k + ' (sesuai struktur kurikulum)';
+    lab.innerHTML = `<input type="checkbox" value="${esc(k)}" ${(ada || tidakAda) ? 'disabled' : ''}> Kelas ${esc(k)}${ada ? ' ✓' : ''}`;
+    const cb = lab.querySelector('input');
+    cb.addEventListener('change', ()=>{ lab.classList.toggle('on', cb.checked); updateKitabPreview(); });
+    box.appendChild(lab);
+  });
+  updateKitabPreview();
+}
+
+function updateKitabPreview(){
+  const el = $('#addKitab'); if(!el) return;
+  if(addJenjang !== 'pontren'){ el.innerHTML = ''; return; }
+  const mapel = $('#addMapel').value;
+  const dipilih = [...document.querySelectorAll('#addKelas input:checked')].map(i => i.value);
+  const rows = kelasDiMapelPontren(mapel).map(k =>
+    `<div class="kt-row${dipilih.includes(k) ? ' on' : ''}"><b>Kelas ${esc(k)}</b><span>${esc(kitabPontren(mapel, k))}</span></div>`);
+  el.innerHTML = rows.length ? `<div class="kt-title">📖 Kitab ${esc(mapel)} per kelas</div>${rows.join('')}` : '';
+}
+
+function initPenugasan(){
+  $('#btnOpenAdd').addEventListener('click', ()=>{
+    ensurePenugasan();
+    addJenjang = isKelasPontren(master.currentClass) ? 'pontren' : 'madrasah';
+    $$('#addJenjang button').forEach(b => b.classList.toggle('on', b.dataset.j === addJenjang));
+    isiMapelAdd(state.identitas.mapel);
+    $('#addPanel').classList.add('open');
+  });
+  $$('#addJenjang button').forEach(b => b.addEventListener('click', ()=>{
+    addJenjang = b.dataset.j;
+    $$('#addJenjang button').forEach(x => x.classList.toggle('on', x === b));
+    isiMapelAdd();
+  }));
+  $('#addMapel').addEventListener('change', renderKelasChecks);
+  $('#btnCancelAdd').addEventListener('click', ()=> $('#addPanel').classList.remove('open'));
+  $('#btnSaveAdd').addEventListener('click', ()=>{
+    const mapel = $('#addMapel').value;
+    const picked = [...document.querySelectorAll('#addKelas input:checked')].map(i => i.value);
+    if(!picked.length){ toast('⚠️ Pilih minimal satu kelas', true); return; }
+    picked.forEach(k=>{
+      if(!master.penugasan.some(p => p.kelas === k && p.mapel === mapel))
+        master.penugasan.push({ kelas:k, mapel, kitab: isKelasPontren(k) ? kitabPontren(mapel, k) : '' });
+    });
+    saveState();
+    $('#addPanel').classList.remove('open');
+    switchPenugasan(picked[0], mapel);
+    renderPenugasan();
+    toast(`✓ ${picked.length} penugasan ditambahkan (${mapel})`);
+  });
+  initAssignFilter();
+}
+
+/* ============================================================
    TAB 1 : IDENTITAS
    ============================================================ */
 function bindIdentitas(){
@@ -2884,6 +3535,7 @@ function bindIdentitas(){
       saveState();
       updateHeroInfo(); 
       renderDashboard();
+	  renderPenugasan();
     });
   }
 
@@ -2900,6 +3552,7 @@ function bindIdentitas(){
       renderDeskripsi('uts'); renderDeskripsi('uas');
       renderAkhir(); renderRemedial();
       updateHeroInfo();
+	   renderPenugasan();
     });
   });
 
@@ -2977,7 +3630,7 @@ function renderSiswa(){
         <td><input type="number" value="${s.absen??''}" data-id="${s.id}" data-f="absen" min="0" max="100"></td>
         <td><input type="number" value="${s.pengamatan??''}" data-id="${s.id}" data-f="pengamatan" min="0" max="100"></td>
         <td class="cell-calc">${fmt(total)}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="hapusSiswa('${s.id}')">✕</button></td>`;
+      `;
       tb.appendChild(tr);
     });
   }
@@ -3773,12 +4426,59 @@ function updateRemedialSummary(jenis, KKM){
 function renderUTS(){ renderUjian('tblUTS','uts','chartUTS'); renderDeskripsi('uts'); }
 function renderUAS(){ renderUjian('tblUAS','uas','chartUAS'); renderDeskripsi('uas'); }
 
+function rankBadge(r){
+  if(!r) return '<span class="rank-badge none">–</span>';
+  return `<span class="rank-badge ${r <= 3 ? 'r' + r : ''}">${r}</span>`;
+}
+
+function renderStatUjian(key){
+  const el = document.getElementById(key === 'uts' ? 'statUTS' : 'statUAS'); if(!el) return;
+  const KKM = num(state.identitas.kkm) || 75;
+  const rows = state.siswa
+    .map(s => ({ s, a: hitungNilaiAkhirUjian(state[key][s.id] || {}, KKM) }))
+    .filter(r => r.a > 0);
+  const total = state.siswa.length, n = rows.length;
+  if(!n){
+    el.innerHTML = `<div class="us-card b"><div class="lbl">Peserta</div><div class="val">0<small> / ${total}</small></div><div class="sub">Isi kolom Nilai Awal di tabel</div></div>`;
+    return;
+  }
+  const avg = rows.reduce((t, r) => t + r.a, 0) / n;
+  const top = rows.reduce((p, r) => r.a > p.a ? r : p);
+  const low = rows.reduce((p, r) => r.a < p.a ? r : p);
+  const tuntas = rows.filter(r => r.a >= KKM).length;
+  const perlu = n - tuntas;
+  el.innerHTML = `
+    <div class="us-card b"><div class="lbl">Peserta</div><div class="val">${n}<small> / ${total}</small></div><div class="sub">siswa sudah bernilai</div></div>
+    <div class="us-card g"><div class="lbl">Rata-rata</div><div class="val">${fmt(avg)}</div><div class="sub">KKM ${KKM}</div></div>
+    <div class="us-card g"><div class="lbl">Tertinggi</div><div class="val">${fmt(top.a)}</div><div class="sub">${esc(top.s.nama)}</div></div>
+    <div class="us-card a"><div class="lbl">Terendah</div><div class="val">${fmt(low.a)}</div><div class="sub">${esc(low.s.nama)}</div></div>
+    <div class="us-card g"><div class="lbl">Ketuntasan</div><div class="val">${fmt(tuntas / n * 100, 0)}%</div><div class="sub">${tuntas} dari ${n} tuntas</div></div>
+    <div class="us-card ${perlu ? 'r' : 'g'}"><div class="lbl">Perlu perbaikan</div><div class="val">${perlu}</div><div class="sub">${perlu ? 'nilai di bawah KKM' : 'semua tuntas'}</div></div>`;
+}
+
+const descOpen = { uts:[true,false,false], uas:[true,false,false] };
+function accordionDesc(el, key){
+  el.querySelectorAll('.desc-block').forEach((b, i) => {
+    const h = b.querySelector('h4'); if(!h) return;
+    const det = document.createElement('details');
+    det.className = 'desc-acc';
+    det.open = !!descOpen[key][i];
+    const sum = document.createElement('summary'); sum.textContent = h.textContent; h.remove();
+    const body = document.createElement('div'); body.className = 'desc-body';
+    while(b.firstChild) body.appendChild(b.firstChild);
+    det.append(sum, body);
+    det.addEventListener('toggle', () => { descOpen[key][i] = det.open; });
+    b.replaceWith(det);
+  });
+}
+
 function renderUjian(tblId, key, chartId){
   const tb = $('#'+tblId+' tbody'); tb.innerHTML='';
   const tf = $('#'+tblId+' tfoot'); tf.innerHTML='';
   const KKM = num(state.identitas.kkm) || 75;
   if(!state.siswa.length){
     tb.innerHTML = `<tr><td colspan="7" style="padding:24px;color:var(--gray-400)">Belum ada data siswa.</td></tr>`;
+    renderStatUjian(key);
     return;
   }
   const hasil = state.siswa.map(s=>{
@@ -3792,16 +4492,15 @@ function renderUjian(tblId, key, chartId){
     const { s, d, akhir } = h;
     const isT = akhir >= KKM && akhir>0;
     if(akhir>0){ arr.push(akhir); cnt++; if(isT) tuntas++; }
-    const rank = rankMap.get(s.id);
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${i+1}</td>
       <td>${esc(s.nama)}</td>
       <td><input type="number" value="${d.awal??''}" data-id="${s.id}" data-f="awal" min="0" max="100"></td>
       <td><input type="number" value="${d.perbaikan??''}" data-id="${s.id}" data-f="perbaikan" min="0" max="100"></td>
-      <td class="cell-green" data-role="akhir">${fmt(akhir)}</td>
+      <td class="cell-green${akhir>0 && !isT ? ' is-low' : ''}" data-role="akhir">${fmt(akhir)}</td>
       <td data-role="status"><span class="${isT?'badge-tuntas':'badge-belum'}">${akhir>0?(isT?'Tuntas':'Belum'):'-'}</span></td>
-      <td class="cell-rank" data-role="rank">${rank ?? '-'}</td>`;
+      <td class="cell-rank" data-role="rank">${rankBadge(rankMap.get(s.id))}</td>`;
     tb.appendChild(tr);
   });
   const rata = cnt ? arr.reduce((a,b)=>a+b,0)/cnt : 0;
@@ -3823,9 +4522,11 @@ function renderUjian(tblId, key, chartId){
         const tr = tb.children[idx];
         const isT = x.akhir >= KKM && x.akhir>0;
         if(x.akhir>0){ a2.push(x.akhir); c2++; if(isT) t2++; }
-        tr.querySelector('[data-role="akhir"]').textContent = fmt(x.akhir);
+        const ca = tr.querySelector('[data-role="akhir"]');
+        ca.textContent = fmt(x.akhir);
+        ca.classList.toggle('is-low', x.akhir>0 && !isT);
         tr.querySelector('[data-role="status"]').innerHTML = `<span class="${isT?'badge-tuntas':'badge-belum'}">${x.akhir>0?(isT?'Tuntas':'Belum'):'-'}</span>`;
-        tr.querySelector('[data-role="rank"]').textContent = rMap.get(x.s.id) ?? '-';
+        tr.querySelector('[data-role="rank"]').innerHTML = rankBadge(rMap.get(x.s.id));
       });
       const rr = c2 ? a2.reduce((x,y)=>x+y,0)/c2 : 0;
       const f = tf.querySelectorAll('td');
@@ -3833,10 +4534,12 @@ function renderUjian(tblId, key, chartId){
       f[2].textContent = c2 ? fmt(t2/c2*100,1)+'%' : '-';
       saveState();
       drawDistChart(chartId, a2, KKM);
+      renderStatUjian(key);
       renderDeskripsi(key); renderAkhir();
     });
   });
   drawDistChart(chartId, arr, KKM);
+  renderStatUjian(key);
 }
 
 function renderDeskripsi(key){
@@ -3927,6 +4630,8 @@ function renderDeskripsi(key){
         </tbody>
       </table>
     </div>`;
+	
+	accordionDesc(el, key);
 }
 
 /* ============================================================
@@ -4622,7 +5327,7 @@ function openAccountModal() {
   document.getElementById('accName').textContent = sess.nama || '-';
   document.getElementById('accNip').textContent = sess.nipGuru || sess.nip || '-';
   document.getElementById('accUsername').textContent = sess.username || '-';
-  
+  document.getElementById('oldPassword').value = '';
   document.getElementById('newPassword').value = '';
   document.getElementById('confirmPassword').value = '';
   document.getElementById('accError').style.display = 'none';
@@ -4633,7 +5338,33 @@ function closeAccountModal() {
   document.getElementById('accountModal').classList.remove('show');
 }
 
+// ⭐ TARUH KODE TOGGLE DI SINI ⭐
+function toggleAllPasswords() {
+  const p1 = document.getElementById('oldPassword');
+  const p2 = document.getElementById('newPassword');
+  const p3 = document.getElementById('confirmPassword');
+  const btn = document.getElementById('togglePwAllBtn');
+  
+  if (p1.type === 'password') {
+    p1.type = 'text';
+    p2.type = 'text';
+    p3.type = 'text';
+    btn.innerHTML = '🙈 Sembunyikan';
+    btn.style.color = 'var(--green-700)';
+    btn.style.borderColor = 'var(--green-700)';
+  } 
+  else {
+    p1.type = 'password';
+    p2.type = 'password';
+    p3.type = 'password';
+    btn.innerHTML = '👁️ Tampilkan';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+  }
+}
+
 async function changePassword() {
+  const oldPass = document.getElementById('oldPassword').value;
   const newPass = document.getElementById('newPassword').value;
   const confirmPass = document.getElementById('confirmPassword').value;
   const errEl = document.getElementById('accError');
@@ -4641,6 +5372,11 @@ async function changePassword() {
   
   errEl.style.display = 'none';
   
+  if(!oldPass) {
+    errEl.textContent = 'Sandi saat ini harus diisi.';
+    errEl.style.display = 'block';
+    return;
+  }
   if(!newPass || !confirmPass) {
     errEl.textContent = 'Sandi baru dan konfirmasi harus diisi.';
     errEl.style.display = 'block';
@@ -4656,15 +5392,34 @@ async function changePassword() {
     errEl.style.display = 'block';
     return;
   }
+  if(oldPass === newPass) {
+    errEl.textContent = 'Sandi baru tidak boleh sama dengan sandi lama.';
+    errEl.style.display = 'block';
+    return;
+  }
 
   btn.disabled = true;
-  btn.textContent = '⏳ Menyimpan...';
+  btn.textContent = '⏳ Memverifikasi...';
 
   try {
     const sess = readAuthSession();
-    if(!sess || !sess.idToken) throw new Error('Sesi tidak valid. Silakan login ulang.');
+    if(!sess || !sess.idToken || !sess.email) {
+      throw new Error('Sesi tidak valid atau email tidak ditemukan. Silakan login ulang.');
+    }
     
-    // 1. Update password via Firebase Auth REST API
+    // ⭐ 1. Verifikasi Sandi Lama (Re-autentikasi)
+    const authCheck = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FB_API_KEY}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: sess.email, password: oldPass, returnSecureToken: false })
+    });
+
+    if(!authCheck.ok) {
+      throw new Error('Sandi saat ini salah.');
+    }
+
+    // ⭐ 2. Update Sandi Baru
+    btn.textContent = '⏳ Menyimpan...';
     const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=${FB_API_KEY}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -4679,14 +5434,14 @@ async function changePassword() {
       throw new Error(data.error?.message || 'Gagal mengganti sandi.');
     }
     
-    // 2. Update token di session agar tidak ter-logout paksa
+    // 3. Update token di session agar tidak ter-logout paksa
     if(data.idToken) {
       sess.idToken = data.idToken;
       if(data.refreshToken) sess.refreshToken = data.refreshToken;
       saveAuthSession(sess);
     }
     
-    // 3. Simpan LOG waktu ganti sandi ke Realtime Database (Agar Admin bisa lihat)
+    // 4. Simpan LOG waktu ganti sandi ke Realtime Database
     try {
       const teacherId = sess.uid;
       if(teacherId) {
@@ -4816,11 +5571,25 @@ window.addEventListener('pagehide', () => {
    ============================================================ */
 async function init(){
   if(!(await window.__SESSION_READY__)) return;
-  // Body sudah hidden oleh session IIFE
-
   const token = await ensureValidToken();
-  if(!token) return;   // forceLogout sudah alert + redirect
+  if(!token) return;
   document.body.style.display = '';
+
+  // 1. Tarik pengaturan dari Admin
+  await fetchGlobalClassesFromAdmin(); 
+  
+  // 2. Paksa update cache lokal (LocalStorage)
+  if (typeof CUSTOM_CLASSES !== 'undefined' && CUSTOM_CLASSES) {
+    master.refs = master.refs || {};
+    if (CUSTOM_CLASSES.madrasah) master.refs.madrasahList = CUSTOM_CLASSES.madrasah;
+    saveLocalNow(); // Simpan permanen ke local storage guru
+    
+    // 3. Daftarkan kelas baru ke ALL_CLASSES agar tidak error
+    const mergeClasses = (arr) => arr.forEach(c => { if(!ALL_CLASSES.includes(c)) ALL_CLASSES.push(c); });
+    if(CUSTOM_CLASSES.mts) mergeClasses(CUSTOM_CLASSES.mts);
+    if(CUSTOM_CLASSES.mas) mergeClasses(CUSTOM_CLASSES.mas);
+    if(CUSTOM_CLASSES.pontren) mergeClasses(CUSTOM_CLASSES.pontren);
+  }
 
   if(localStorage.getItem(LS_DIRTY) === '1'){
     window.__UNSAVED__ = true;
@@ -4832,34 +5601,47 @@ async function init(){
   state.identitas.kelas = master.currentClass;
   autoFillFromSession();
   
-  // Jika mapel masih kosong/default, ambil dari setelan Admin
   const sess = window.__TEACHER_SESSION__ || {};
   if (sess.username) {
     try {
-      // Coba ambil mapel default dari database users
       const resUser = await authFetch('/instrumen/users/' + sess.username + '.json');
       if (resUser.ok) {
         const userData = await resUser.json();
         if (userData && userData.mapelDefault) {
-          // Jika guru punya lebih dari 1 mapel (dipisah koma), ambil yang pertama sebagai default tampilan
-          const defaultMapel = userData.mapelDefault.split(',')[0].trim();
-          
-          // Terapkan ke semua kelas yang mapelnya masih kosong atau masih "Bahasa Arab" bawaan sistem
-          Object.keys(master.classes).forEach(k => {
-            if (!master.classes[k].identitas.mapel || master.classes[k].identitas.mapel === 'Bahasa Arab') {
-               master.classes[k].identitas.mapel = defaultMapel;
-            }
-          });
+          const daftar = userData.mapelDefault.split(',').map(s => s.trim()).filter(Boolean);
+          master.mapelGuru = daftar;                 // dipakai form "Tambah Penugasan"
+          if (!master.mapelDefaultApplied) {         // hanya sekali, bukan tiap buka halaman
+            Object.keys(master.classes).forEach(k => {
+              const id = master.classes[k].identitas;
+              if (!id.mapel || id.mapel === 'Bahasa Arab') id.mapel = daftar[0];
+            });
+            master.mapelDefaultApplied = true;
+          }
           saveState();
         }
       }
     } catch(e) { console.warn('Gagal load default mapel', e); }
   }
   
+    // rapikan: kelas Pontren kosong yang terlanjur bermapel madrasah → mapel Pontren; buang penugasan nyasar
+  ensurePenugasan();
+  Object.keys(master.classes).forEach(k=>{
+    if(!isKelasPontren(k)) return;
+    const c = master.classes[k];
+    if(!MAPEL_PONTREN[c.identitas.mapel] && !(c.siswa || []).length) c.identitas.mapel = 'Fiqih';
+  });
+  master.penugasan = master.penugasan.filter(p=>{
+    if(!isKelasPontren(p.kelas) || MAPEL_PONTREN[p.mapel]) return true;
+    const d = dataPenugasan(p.kelas, p.mapel);
+    return !!(d && d.siswa && d.siswa.length);
+  });
+  saveState();
+  
   updateClassSelector();
   renderLogo();
   bindIdentitas();
   bindIdentitasValues();
+  initPenugasan();
   initSumatif();
   initUH();
   initRemedial();
@@ -4990,8 +5772,9 @@ function clearUnsaved(){
   try { localStorage.removeItem(LS_DIRTY); } catch(e){}
   updateSyncBadge('saved');
 }
-document.addEventListener('input', markUnsaved, true);
-document.addEventListener('change', markUnsaved, true);
+const _skipSync = e => e.target && e.target.closest && e.target.closest('[data-nosync]');
+document.addEventListener('input',  e => { if(!_skipSync(e)) markUnsaved(); }, true);
+document.addEventListener('change', e => { if(!_skipSync(e)) markUnsaved(); }, true);
 
 /* ============================================================
    FLUSH PENYIMPANAN LOKAL
