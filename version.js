@@ -5,10 +5,34 @@
    ============================================================ */
 
 window.APP_INFO = {
-  version: '1.3.2',
-  buildDate: '2026-11-10',
+  version: '1.3.3',
+  buildDate: '2026-11-12',
 
   changelog: [
+    {
+      version: 'v1.3.3',
+      date: '2026-11-12',
+      highlights: [
+        '\'Satu guru kini bisa mengajar beberapa kelas dan mapel sekaligus (Madrasah maupun Pontren)\',',
+        '\'Popup pindah kelas dan mapel dipisah menjadi dua langkah yang jelas dan mudah\',',
+        '\'Mapel Pontren mengikuti Struktur Kurikulum TA 2025/2026 (kelas 1–6) lengkap dengan kitab per kelas\',',
+        '\'Guru bebas menambah mapel apa pun; mapel utama dari Admin tampil di urutan teratas pilihan\',',
+        '\'Daftar penugasan dibuat ringkas dan profesional, dilengkapi filter dan tombol "Rapikan kosong"\',',
+        '\'Tampilan Identitas, UTS, dan UAS lebih responsif untuk layar kecil dan HP\',',
+        '\'Data siswa dari Admin otomatis tampil saat guru login — tanpa mengubah ID, nilai, dan absensi guru\',',
+        '\'Admin dan guru hanya menampilkan kelas dan mapel yang benar-benar dipilih guru (tidak ada lagi mapel atau kelas "nyasar")\',',
+        '\'Kolom mapel dan kelas di Admin dibuat rapi untuk guru dengan banyak mapel (ringkas dengan tombol +N)\',',
+        '\'Memperbaiki nama siswa yang tampil "[object Object]" saat sinkron dari Admin\',',
+        '\'Memperbaiki data absen dan pengamatan yang bisa tertimpa saat Admin menyimpan data siswa\',',
+        '\'Memperbaiki halaman Admin yang kadang kosong (blank) saat pertama kali dibuka\',',
+        '\'Memperbaiki tulisan merah yang muncul saat berganti kelas\',',
+        '\'Akun dengan email lokal (@jabalrahmah.local) kini bisa diganti Admin ke email asli melalui verifikasi saat guru login\',',
+        '\'Login bisa menggunakan username atau email asli; lupa sandi terkirim ke email asli\',',
+        '\'Lupa sandi sekarang bisa diisi dengan username; akun yang masih email lokal mendapat pesan agar menghubungi Admin\',',
+        '\'Edit Akun di Admin tidak lagi menghapus data tambahan akun dan tidak mengubah role akun admin\',',
+        '\'Menu "Konfigurasi Firebase" dan "Muat Data Demo" dihapus dari menu guru\''
+      ]
+    },
     {
       version: 'v1.3.2',
       date: '2026-11-10',
@@ -75,136 +99,5 @@ window.APP_INFO = {
         '📚 Kelas Pontren 1–7 otomatis'
       ]
     },
-	{
-      version: 'v1.2.1',
-      date: '2026-10-23',
-      highlights: [
-        'Update file: admin.html, guru.html, index.html'
-      ]
-    },
-    {
-      version: 'v1.2.0',
-      date: '2026-10-22',
-      highlights: [
-        'update admin, update guru'
-      ]
-    },
-    {
-      version: 'v1.1.13',
-      date: '2026-10-22',
-      highlights: [
-        'Update file: Update.bat, guru.html, index.html'
-      ]
-    },
-    {
-      version: 'v1.1.12',
-      date: '2026-10-22',
-      highlights: [
-        'Update file: admin.html, guru.html'
-      ]
-    },
-    {
-      version: 'v1.1.11',
-      date: '2026-10-22',
-      highlights: [
-        'Update file: admin.html'
-      ]
-    },
-    {
-      version: 'v1.1.10',
-      date: '2026-10-22',
-      highlights: [
-        'Update file: update_git.bat, version.js'
-      ]
-    },
-    {
-      version: 'v1.1.9',
-      date: '2026-10-21',
-      highlights: [
-        'Update file: Untitled-1.jpg, admin.html, ai-changelog.ps1, guru.html, index.html, migrate.js, package.json, service-account.json, set-admin.js, set-admin.mjs'
-      ]
-    },
-    {
-      version: 'v1.1.8',
-      date: '2026-10-19',
-      highlights: [
-        'Update file: update_git.bat'
-      ]
-    },
-    {
-      version: 'v1.1.7',
-      date: '2026-10-19',
-      highlights: [
-        'Update file: update_git.bat'
-      ]
-    },
-    {
-      version: 'v1.1.6',
-      date: '2026-10-19',
-      highlights: [
-        'Update file: Update.bat, update.bat, update_git.bat'
-      ]
-    },
-    {
-      version: 'v1.1.5',
-      date: '2026-10-19',
-      highlights: [
-        'Update file: update.bat, version.js'
-      ]
-    },
-    {
-      version: 'v1.1.4',
-      date: '2026-10-19',
-      highlights: [
-        'Update file: .gitignore, Update-biasa.bat, update.bat, ai-changelog.ps1, guru.html, update_git.bat, version-tool.ps1'
-      ]
-    },
-    {
-      version: 'v1.1.3',
-      date: '2026-10-19',
-      highlights: [
-        'Update: Untitled-1.jpg, foto1.jpg'
-      ]
-    },
-    {
-      version: 'v1.1.2',
-      date: '2026-10-19',
-      highlights: [
-        'Update: admin.html, guru.html'
-      ]
-    },
-    {
-      version: 'v1.1.1',
-      date: '2026-10-06',
-      highlights: [
-        'Update project files ^(8 files^)'
-      ]
-    },
-    {
-      version: 'v1.1.0',
-      date: '2026-10-06',
-      highlights: [
-        '🔧 Fix input remedial — bisa ketik 2 digit (mis. 70) tanpa kehilangan fokus',
-        '🔗 Materi Sumatif jadi master — otomatis tersinkron ke tab UH, UH Manual & Remedial',
-        '🔒 Materi UH sekarang readonly (auto dari Sumatif) untuk hindari duplikasi input',
-        '🐛 Fix bug input data siswa (variabel "sel" tidak terdefinisi)',
-        '✨ Dropdown UH & Remedial menampilkan materi otomatis sebagai subtitle',
-        '🛡️ Normalisasi data — sinkron materi Sumatif → UH untuk data lama',
-        '📥 Impor Excel: materi dari sheet Sumatif langsung dipakai di UH'
-      ]
-    },
-    {
-      version: 'v1.0.0',
-      date: '2026-10-04',
-      highlights: [
-        '🎉 Rilis perdana Instrumen Penilaian Guru MAS Jabal Rahmah',
-        '📚 Multi-kelas: VII, VIII, IX, X, XI, XII',
-        '📝 Sumatif, Analisis UH, UH Manual, Remedial, UTS, UAS, Nilai Akhir',
-        '☁️ Sinkronisasi Firebase Realtime Database (mode personal per guru)',
-        '📤 Ekspor & Impor Excel lengkap',
-        '🔐 Login multi-role (Guru & Admin)',
-        '👨‍💼 Admin Panel: dashboard, rekap, rapor, kelola akun'
-      ]
-    }
   ]
 };

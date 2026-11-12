@@ -1,6 +1,14 @@
 {
   "rules": {
     "instrumen": {
+      "admins": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "settings": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('instrumen/admins').child(auth.uid).exists()"
+      },
       "users": {
         ".read": "auth != null",
         ".indexOn": ["uid"],

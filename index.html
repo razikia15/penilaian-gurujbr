@@ -529,8 +529,8 @@
         Masukkan email yang terdaftar di akun Anda. Kami akan mengirimkan link untuk mereset sandi.
       </p>
       <div class="input-group user-group" style="margin-bottom:12px;">
-        <label for="forgotEmail">Email</label>
-        <input type="email" id="forgotEmail" placeholder="contoh@jabalrahmah.sch.id" autocomplete="email">
+        <label for="forgotEmail">Email / Username</label>
+        <input type="text" id="forgotEmail" placeholder="email atau username" autocomplete="email">
       </div>
       <div id="forgotMsg" style="display:none; padding:10px; border-radius:8px; font-size:12px; font-weight:600; line-height:1.5;"></div>
     </div>
@@ -664,12 +664,27 @@ function closeForgotModal(){
 }
 
 async function submitForgotPassword(){
-  const emailInput = document.getElementById('forgotEmail').value.trim();
+  let emailInput = document.getElementById('forgotEmail').value.trim().toLowerCase();
   const msgEl = document.getElementById('forgotMsg');
   const btn = document.getElementById('btnSendReset');
 
+  // Boleh isi username: cari email aslinya di database
+  if(emailInput && !emailInput.includes('@')){
+    try{
+      const r = await fetch(FB_URL + '/instrumen/users/' + encodeURIComponent(emailInput) + '/email.json');
+      const em = r.ok ? await r.json() : null;
+      if(typeof em === 'string' && em.includes('@')) emailInput = em;
+    }catch(e){}
+  }
+  if(emailInput.endsWith('@jabalrahmah.local')){
+    msgEl.textContent = '⚠️ Akun ini masih memakai email lokal, sehingga link tidak bisa dikirim. Hubungi Admin untuk mengganti ke email asli.';
+    msgEl.style.background = '#fef3c7';
+    msgEl.style.color = '#78350f';
+    msgEl.style.display = 'block';
+    return;
+  }
   if(!emailInput || !emailInput.includes('@')){
-    msgEl.textContent = '⚠️ Masukkan alamat email yang valid.';
+    msgEl.textContent = '⚠️ Masukkan email atau username yang valid.';
     msgEl.style.background = '#fee2e2';
     msgEl.style.color = '#991b1b';
     msgEl.style.display = 'block';
@@ -743,6 +758,58 @@ function resolveNipGuru(user, username){
 }
 
 /* ============================================================
+   SINKRON EMAIL PROFIL
+   - Menyamakan users/{username}/email dengan email di Firebase Auth
+   - Jika admin mengisi email asli baru (emailPending), kirim link verifikasi
+   ============================================================ */
+async function sinkronEmailProfil(prof, username, auth){
+  const url = FB_URL + '/instrumen/users/' + encodeURIComponent(username) + '.json?auth=' + auth.idToken;
+  const patch = async (obj) => {
+    try{
+      const r = await fetch(url, { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify(obj) });
+      return r.ok;
+    }catch(e){ return false; }
+  };
+  const emailAuth = String(auth.email || '').toLowerCase();
+  let note = '';
+
+  // 1) Database berbeda dengan Auth -> ikuti Auth
+  if (emailAuth && String(prof.email || '').toLowerCase() !== emailAuth) {
+    const p = { email: emailAuth };
+    const selesai = prof.emailPending && String(prof.emailPending).toLowerCase() === emailAuth;
+    if (selesai) { p.emailPending = null; p.emailSentTo = null; }
+    if (await patch(p)) {
+      prof.email = emailAuth;
+      if (selesai) { prof.emailPending = null; note = 'Email akun Anda kini: ' + emailAuth + '.'; }
+    }
+  }
+
+  // 2) Ada email baru yang belum diverifikasi -> kirim link (sekali per permintaan admin)
+  const pending = prof.emailPending ? String(prof.emailPending).toLowerCase() : '';
+  if (pending && pending !== emailAuth && prof.emailSentTo !== pending) {
+    try{
+      const res = await fetch(AUTH_BASE + '/accounts:sendOobCode?key=' + FB_API_KEY, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ requestType:'VERIFY_AND_CHANGE_EMAIL', idToken: auth.idToken, newEmail: pending })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        await patch({ emailSentTo: pending });
+        note = '📧 Link verifikasi dikirim ke ' + pending + '. Buka email itu dan klik link-nya untuk menyelesaikan penggantian email.';
+      } else {
+        const m = data?.error?.message || 'ERROR';
+        note = m === 'EMAIL_EXISTS'
+          ? '⚠️ Email ' + pending + ' sudah dipakai akun lain. Hubungi Admin.'
+          : '⚠️ Gagal mengirim verifikasi email (' + m + ').';
+      }
+    }catch(e){ console.warn('Kirim verifikasi email gagal:', e); }
+  }
+  return note;
+}
+
+
+/* ============================================================
    LOGIN — Smart Mode (Cek Database Dulu, Baru Login)
    ============================================================ */
 $('#loginForm').addEventListener('submit', async (e) => {
@@ -767,27 +834,45 @@ $('#loginForm').addEventListener('submit', async (e) => {
     let auth = null;
     let emailToAuth = inputUser;
 
-    // TAHAP 1: SMART CHECK - Cari email asli di database terlebih dahulu
-    // Ini mencegah "Terlalu banyak percobaan" karena kita tidak mencoba login dengan email salah
+    // TAHAP 1: SMART CHECK - cari email asli di database (dan email baru yang menunggu verifikasi)
+    let pendingEmail = null;
     if (!inputUser.includes('@')) {
-		let resolved = null;
-		try {
-			const r = await fetch(FB_URL + '/instrumen/users/' + encodeURIComponent(inputUser) + '/email.json');
-			if (r.ok) {
-				const em = await r.json();
-				if (typeof em === 'string' && em.includes('@')) resolved = em;
-			} else {
-			  console.warn('Lookup username gagal, HTTP', r.status, '— cek Firebase Rules');
-			}
-		} catch (err) {
-		  console.warn('Lookup username error:', err);
-		}
-		// fallback untuk akun lama yang dibuat dengan email lokal
-		emailToAuth = resolved || (inputUser + EMAIL_DOMAIN);
-	}
+      let resolved = null;
+      try {
+        const base = FB_URL + '/instrumen/users/' + encodeURIComponent(inputUser);
+        const [r1, r2] = await Promise.all([
+          fetch(base + '/email.json'),
+          fetch(base + '/emailPending.json')
+        ]);
+        if (r1.ok) {
+          const em = await r1.json();
+          if (typeof em === 'string' && em.includes('@')) resolved = em;
+        } else {
+          console.warn('Lookup username gagal, HTTP', r1.status, '— cek Firebase Rules');
+        }
+        if (r2.ok) {
+          const pe = await r2.json();
+          if (typeof pe === 'string' && pe.includes('@')) pendingEmail = pe;
+        }
+      } catch (err) {
+        console.warn('Lookup username error:', err);
+      }
+      // fallback untuk akun lama yang dibuat dengan email lokal
+      emailToAuth = resolved || (inputUser + EMAIL_DOMAIN);
+    }
 
-    // TAHAP 2: Login ke Firebase Auth (Hanya 1x Percobaan)
-    auth = await authSignIn(emailToAuth, password);
+    // TAHAP 2: Login ke Firebase Auth
+    try {
+      auth = await authSignIn(emailToAuth, password);
+    } catch (e1) {
+      // Email baru sudah diverifikasi tapi database belum sempat diperbarui -> coba email baru
+      const salahEmail = /tidak ditemukan|salah/i.test(e1.message);
+      if (pendingEmail && pendingEmail !== emailToAuth && salahEmail) {
+        auth = await authSignIn(pendingEmail, password);
+      } else {
+        throw e1;
+      }
+    }
     
     // TAHAP 3: Simpan Sesi Auth
     const now = Date.now();
@@ -845,6 +930,9 @@ $('#loginForm').addEventListener('submit', async (e) => {
       throw new Error('Akun ini bukan untuk role "' + role + '". Pilih role yang benar.');
     }
 
+    // TAHAP 4b: samakan email di database dengan email Auth + kirim verifikasi email baru
+    const catatanEmail = await sinkronEmailProfil(prof, actualUsername, auth);
+
     // TAHAP 5: Simpan Sesi Aplikasi & Redirect
     const nipGuru = resolveNipGuru(prof, actualUsername);
     const session = {
@@ -860,10 +948,10 @@ $('#loginForm').addEventListener('submit', async (e) => {
     if(remember) localStorage.setItem(LS_SESSION, JSON.stringify(session));
     else sessionStorage.setItem(LS_SESSION, JSON.stringify(session));
 
-    showMsg('✓ Login berhasil. Mengalihkan...', 'ok');
+    showMsg(catatanEmail ? ('✓ Login berhasil. ' + catatanEmail) : '✓ Login berhasil. Mengalihkan...', catatanEmail ? 'info' : 'ok');
     setTimeout(() => {
       window.location.href = prof.role === 'admin' ? 'admin.html' : 'guru.html';
-    }, 600);
+    }, catatanEmail ? 4500 : 600);
 
   } catch(err){
     console.error(err);
@@ -989,4 +1077,4 @@ document.addEventListener('keydown', function(e){
 });
 </script>
 </body>
-</html>
+</html>

@@ -574,6 +574,12 @@
 .add-note{font-size:11.5px;color:var(--gray-600);margin-top:8px}
 .badge-ro{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;background:var(--blue-50);color:#1e40af;border-radius:8px;font-weight:700;font-size:13.5px;border:1.5px solid #bfdbfe}
 
+.mp-wrap{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:center;max-width:100%}
+.mp-extra{display:none;flex-wrap:wrap;gap:4px;justify-content:center;flex-basis:100%}
+.mp-wrap.open .mp-extra{display:flex}
+.mp-more{border:1.5px solid #c4b5fd;background:#f5f3ff;color:#5b21b6;font-weight:800;font-size:11px;border-radius:20px;padding:1px 9px;cursor:pointer;font-family:inherit}
+.mp-more:hover{background:#ede9fe}
+
 </style>
 </head>
 <body>
@@ -1034,13 +1040,13 @@
       <label>NIP / NUPTK</label>
       <input type="text" id="accNip" placeholder="121212" autocomplete="off">
       
-      <label>Mata Pelajaran Default (Pisahkan dengan koma jika lebih dari 1)</label>
+      <label>Mata Pelajaran Utama (Pisahkan dengan koma jika lebih dari 1)</label>
       <input type="text" id="accMapel" placeholder="Contoh: Bahasa Arab, IPS" autocomplete="off">
-      <div class="hint">Mapel ini akan otomatis muncul di aplikasi guru saat mereka login.</div>
+      <div class="hint">Muncul di urutan teratas pilihan mapel guru. Guru tetap bisa menambah mapel lain sendiri lewat "Tambah Penugasan".</div>
       
       <label>Email (Opsional)</label>
       <input type="email" id="accEmail" placeholder="guru@gmail.com" autocomplete="off">
-      <div class="hint">Jika dikosongkan, sistem otomatis membuat email <code>username@jabalrahmah.local</code>.</div>
+      <<div class="hint" id="accEmailInfo">Jika dikosongkan, sistem otomatis membuat email <code>username@jabalrahmah.local</code>.</div>
       
       <label>Role</label>
       <input type="text" id="accRole" value="guru" readonly style="background:var(--gray-100);color:var(--gray-600)">
@@ -1386,17 +1392,36 @@ let ALL_TEACHERS = {};
 let ALL_RAW = {};
 let RAPOR_CLASS = 'VII';
 
+/* ===== Tampilan admin dibatasi pada KELAS & MAPEL pilihan guru (master.penugasan) ===== */
+function penugasanGuru(record){
+  const m = (record && record.master) || {};
+  const raw = Array.isArray(m.penugasan) ? m.penugasan : Object.values(m.penugasan || {});
+  const list = raw.filter(p => p && p.kelas !== undefined && p.kelas !== null && p.mapel);
+  if(list.length) return list;
+  // akun lama tanpa penugasan: pakai kelas yang berisi siswa
+  return Object.entries(m.classes || {})
+    .filter(([k, c]) => c && (c.siswa || []).length)
+    .map(([k, c]) => ({ kelas: k, mapel: (c.identitas && c.identitas.mapel) || '' }));
+}
+function batasiKePenugasan(record){
+  const m = record && record.master;
+  if(!m || !m.classes) return record;
+  const ok = new Set(penugasanGuru(record).map(p => String(p.kelas)));
+  const classes = {};
+  Object.keys(m.classes).forEach(k => { if(ok.has(String(k))) classes[k] = m.classes[k]; });
+  return Object.assign({}, record, { master: Object.assign({}, m, { classes }) });
+}
 function dedupeTeachers(raw){
   // UID adalah identitas kanonis. Jangan menggabungkan guru hanya karena nama/NIP sama.
   const out = {};
   Object.entries(raw || {}).forEach(([uid, record]) => {
     if(!record || typeof record !== 'object') return;
-    out[uid] = {
+    out[uid] = batasiKePenugasan({
       ...record,
       uid,
       teacherId: uid,
       lastUpdate: Number(record.lastUpdate || 0)
-    };
+    });
   });
   return out;
 }
@@ -1575,15 +1600,25 @@ function uniqueStudentNames(classes){
 }
 
 function getMapelListFromTeacher(teacher){
-  const mapelSet = new Set();
-  const classes = teacher?.master?.classes || {};
-  Object.values(classes).forEach(cls => {
-    if(cls && cls.identitas && cls.identitas.mapel){
-      const m = String(cls.identitas.mapel).trim();
-      if(m) mapelSet.add(m);
-    }
-  });
-  return [...mapelSet];
+  const set = new Set();
+  penugasanGuru(teacher).forEach(p => { const m = String(p.mapel || '').trim(); if(m) set.add(m); });
+  return [...set];
+}
+
+function chipRingkas(items, max, cls){
+  items = items || [];
+  if(!items.length) return '<span style="color:#9ca3af">—</span>';
+  const chip = x => `<span class="${cls}">${esc(x)}</span>`;
+  if(items.length <= max) return `<span class="mp-wrap">${items.map(chip).join('')}</span>`;
+  const sisa = items.length - max;
+  return `<span class="mp-wrap">${items.slice(0, max).map(chip).join('')}` +
+    `<span class="mp-extra">${items.slice(max).map(chip).join('')}</span>` +
+    `<button type="button" class="mp-more" data-n="${sisa}" onclick="event.stopPropagation();toggleMp(this)" title="${esc(items.join(', '))}">+${sisa}</button></span>`;
+}
+function toggleMp(btn){
+  const w = btn.closest('.mp-wrap');
+  w.classList.toggle('open');
+  btn.textContent = w.classList.contains('open') ? 'Tutup ▴' : '+' + btn.dataset.n;
 }
 
 function applyRemedialRule(nilaiAwal, R, KKM){
@@ -1810,9 +1845,9 @@ function renderDashboard(){
       tr.innerHTML = `
         <td>${i+1}</td>
         <td style="text-align:left"><b>${esc(t.nama || tid)}</b></td>
-        <td>${mapelList.length ? mapelList.map(m => `<span class="badge-mapel">${esc(m)}</span>`).join(' ') : '<span style="color:#9ca3af">—</span>'}</td>
+        <td>${chipRingkas(mapelList, 2, 'badge-mapel')}</td>
         <td>${timeAgo(t.lastUpdate)}</td>
-        <td>${kelasAktif.length ? kelasAktif.map(k => `<span class="badge-info">${k}</span>`).join(' ') : '—'}</td>
+        <td>${chipRingkas(kelasAktif, 4, 'badge-info')}</td>
         <td>${jmlSiswa}</td>
         <td><button class="btn btn-blue btn-sm" onclick="openTeacherFromRekap('${esc(tid)}', null)">Lihat →</button></td>`;
       tb.appendChild(tr);
@@ -1859,6 +1894,44 @@ function populateAdmSiswaDropdown() {
   if (curKelas && allClasses.includes(curKelas)) selKelas.value = curKelas;
 }
 
+/* ===== identitas siswa saja (tanpa absen/pengamatan/nilai) ===== */
+const FIELD_ID_SISWA = ['id','nama','nis','nisn','jk','ttl'];
+const pickIdentitas = s => {
+  const o = {};
+  FIELD_ID_SISWA.forEach(f => { if(s && s[f] !== undefined && s[f] !== null) o[f] = s[f]; });
+  return o;
+};
+const _nmA = s => String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+
+/* gabung daftar siswa guru dengan roster: nilai/absen guru aman, id guru dipertahankan */
+function gabungKeGuru(existingSiswa, rosterList){
+  return rosterList.map(newS => {
+    const ident = pickIdentitas(newS);
+    const oldS = existingSiswa.find(o => (newS.id && o.id === newS.id) || _nmA(o.nama) === _nmA(newS.nama));
+    if(oldS) return Object.assign({}, oldS, ident, { id: oldS.id });
+    return Object.assign({}, ident, { absen: '', pengamatan: '' });
+  });
+}
+
+/* susun roster dari data seorang guru; kelas yang SUDAH ada di roster tidak ditimpa */
+function susunRosterDariGuru(existing, teacherClasses){
+  const hasil = {};
+  Object.keys(teacherClasses || {}).forEach(k => {
+    const sudah = existing && existing[k] && (Array.isArray(existing[k]) ? existing[k].length : Object.keys(existing[k]).length);
+    if(sudah) return;
+    const seen = new Set();
+    const list = [];
+    (teacherClasses[k].siswa || []).forEach(s => {
+      const nama = String(s && s.nama || '').trim();
+      if(!nama || nama === '[object Object]' || seen.has(_nmA(nama))) return;
+      seen.add(_nmA(nama));
+      list.push(Object.assign({ id: s.id || ('s' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)) }, pickIdentitas(s), { nama }));
+    });
+    if(list.length) hasil[k] = list;
+  });
+  return hasil;
+}
+
 let _admSiswaData = [];
 
 async function loadAdminStudents() {
@@ -1879,14 +1952,16 @@ async function loadAdminStudents() {
     const res = await authFetch('/instrumen/roster/' + kls + '.json');
     let rosterData = res.ok ? await res.json() : null;
     
-    // Jika belum ada di roster, coba tarik dari guru pertama yang punya kelas ini
+    let dariGuru = false;
     if (!rosterData) {
       const t = Object.values(ALL_TEACHERS).find(teacher => teacher.master?.classes?.[kls]?.siswa?.length > 0);
-      if (t) rosterData = t.master.classes[kls].siswa;
+      if (t) { rosterData = t.master.classes[kls].siswa.map(pickIdentitas); dariGuru = true; }
     }
-    
     _admSiswaData = rosterData ? JSON.parse(JSON.stringify(rosterData)) : [];
     renderAdmSiswaTable();
+    if (dariGuru) {
+      document.getElementById('admSiswaStatus').textContent += ' — ⚠️ belum di roster, klik Simpan & Sinkronkan';
+    }
   } catch (err) {
     toast('Gagal memuat: ' + err.message, 'err');
     document.getElementById('admSiswaStatus').textContent = 'Gagal memuat';
@@ -1968,7 +2043,7 @@ async function saveAdminStudents() {
   try {
     const payload = {};
     // 1. Simpan ke Global Roster
-    payload[`roster/${kls}`] = _admSiswaData;
+    payload[`roster/${kls}`] = _admSiswaData.map(pickIdentitas);
     
     // 2. Distribusikan ke semua guru yang punya kelas ini
     Object.keys(ALL_TEACHERS).forEach(tid => {
@@ -1977,19 +2052,11 @@ async function saveAdminStudents() {
         const existingSiswa = t.master.classes[kls].siswa || [];
         
         // Gabungkan: Pertahankan data nilai/absen guru, perbarui info identitas
-        const newSiswa = _admSiswaData.map(newS => {
-          const oldS = existingSiswa.find(o => o.id === newS.id || o.nama.toLowerCase() === newS.nama.toLowerCase());
-          if (oldS) {
-            return { ...oldS, ...newS }; // Update NIS, NISN, JK, TTL (absen & nilai tetap)
-          } else {
-            return { ...newS, absen: '', pengamatan: 100 }; // Siswa baru
-          }
-        });
+        const newSiswa = gabungKeGuru(existingSiswa, _admSiswaData);
         
         // ⭐ SIMPAN KE TEACHERS (Untuk Admin)
         payload[`teachers/${tid}/master/classes/${kls}/siswa`] = newSiswa;
         payload[`teachers/${tid}/lastUpdate`] = { '.sv': 'timestamp' };
-        
       }
     });
     
@@ -2184,7 +2251,8 @@ function renderGuruList(){
         <p>NIP: ${esc(t.nip || '—')}</p>
         <div class="teacher-meta">🕒 ${timeAgo(t.lastUpdate)}</div>
         <div class="teacher-classes">
-          ${mapelList.length ? mapelList.map(m => `<span style="background:#ede9fe;color:#5b21b6">${esc(m)}</span>`).join('') : ''}
+          ${mapelList.slice(0,3).map(m => `<span style="background:#ede9fe;color:#5b21b6">${esc(m)}</span>`).join('')}
+          ${mapelList.length > 3 ? `<span title="${esc(mapelList.join(', '))}" style="background:#f5f3ff;color:#5b21b6">+${mapelList.length - 3} mapel</span>` : ''}
           ${kelasAktif.length ? kelasAktif.map(k => `<span>Kelas ${k}</span>`).join('') : '<span style="background:#fee2e2;color:#991b1b">Belum ada siswa</span>'}
           <span>${jmlSiswa} siswa</span>
         </div>
@@ -3165,23 +3233,21 @@ async function backupDatabase() {
 async function publishRoster(){
   const ids = Object.keys(ALL_TEACHERS).filter(id => ALL_TEACHERS[id]?.master?.classes);
   if(!ids.length){ toast('Belum ada data guru', 'err'); return; }
-  const pick = prompt('Ambil daftar siswa dari guru nomor berapa?\n' +
+  const pick = prompt('Terbitkan daftar siswa dari guru nomor berapa?\n(Kelas yang sudah ada di roster TIDAK ditimpa)\n\n' +
     ids.map((id,i) => (i+1) + '. ' + (ALL_TEACHERS[id].nama || id)).join('\n'));
   const tid = ids[parseInt(pick, 10) - 1];
   if(!tid) return;
 
-  const classes = ALL_TEACHERS[tid].master.classes;
-  const roster = {};
-  CLASSES.forEach(k => {
-    const names = (classes[k]?.siswa || []).map(s => String(s.nama || '').trim()).filter(Boolean);
-    if(names.length) roster[k] = names;
-  });
-  const ringkas = Object.entries(roster).map(([k,v]) => k + ': ' + v.length + ' siswa').join('\n');
-  if(!confirm('Terbitkan daftar nama ini?\n\n' + ringkas)) return;
-
   try{
+    const r0 = await authFetch('/instrumen/roster.json', { cache:'no-store' });
+    const existing = r0.ok ? ((await r0.json()) || {}) : {};
+    const hasil = susunRosterDariGuru(existing, ALL_TEACHERS[tid].master.classes);
+    const ringkas = Object.entries(hasil).map(([k,v]) => 'Kelas ' + k + ': ' + v.length + ' siswa').join('\n');
+    if(!ringkas){ toast('ℹ️ Tidak ada kelas baru untuk diterbitkan', 'ok'); return; }
+    if(!confirm('Terbitkan kelas berikut ke roster?\n\n' + ringkas)) return;
+
     const res = await authFetch('/instrumen/roster.json', {
-      method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(roster)
+      method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(hasil)
     });
     if(!res.ok) throw new Error('HTTP ' + res.status);
     toast('✓ Daftar siswa diterbitkan', 'ok');
@@ -4399,6 +4465,7 @@ function openAccountModal(){
   $('#accNip').value = '';
   $('#accMapel').value = '';
   $('#accEmail').value = '';
+    setAccEmailInfo(null);
   $('#accPassword').value = '';
   $('#accPwdWrap').style.display = 'block'; // Tampilkan input password
   $('#accountModal').classList.add('show');
@@ -4406,6 +4473,22 @@ function openAccountModal(){
 }
 
 function closeAccountModal(){ $('#accountModal').classList.remove('show'); }
+
+function setAccEmailInfo(data){
+  const el = $('#accEmailInfo'); if(!el) return;
+  if(!data){
+    el.innerHTML = 'Jika dikosongkan, sistem otomatis membuat email <code>username@jabalrahmah.local</code>.';
+    return;
+  }
+  const aktif = data.email || '(belum tercatat)';
+  if(data.emailPending){
+    el.innerHTML = '⏳ Menunggu verifikasi: <b>' + esc(data.emailPending) + '</b>. Email aktif saat ini: ' + esc(aktif) + '.';
+  } else if(/@jabalrahmah\.local$/i.test(data.email || '')){
+    el.innerHTML = 'Email masih lokal (<code>' + esc(aktif) + '</code>). Isi <b>email asli</b> lalu simpan; link verifikasi dikirim saat guru login berikutnya.';
+  } else {
+    el.innerHTML = 'Email aktif: <b>' + esc(aktif) + '</b>. Mengisi email lain akan memicu verifikasi saat guru login.';
+  }
+}
 
 function editAccount(username){
   const data = ALL_USERS[username];
@@ -4418,7 +4501,8 @@ function editAccount(username){
   $('#accNama').value = data.nama || '';
   $('#accNip').value = data.nip || '';
   $('#accMapel').value = data.mapelDefault || '';
-  $('#accEmail').value = data.email || '';
+  $('#accEmail').value = data.emailPending || data.email || '';
+  setAccEmailInfo(data);
   $('#accPassword').value = '';
   $('#accPwdWrap').style.display = 'none'; // Sembunyikan input password saat edit
   $('#accountModal').classList.add('show');
@@ -4483,12 +4567,30 @@ async function saveAccount(){
 
     const previous = ALL_USERS[username] || {};
     const now = Date.now();
+
+    // Akun baru = email langsung dipakai. Akun lama = email asli menunggu verifikasi saat guru login.
+    let emailAktif = finalEmail, emailPending = null, emailSentTo = null;
+    if(_editingUsername){
+      const emailLama = (previous.email || '').toLowerCase();
+      if(!email){                                  // dikosongkan = tidak diubah
+        emailAktif = emailLama; emailPending = previous.emailPending || null; emailSentTo = previous.emailSentTo || null;
+      } else if(finalEmail === emailLama){          // sama dengan email aktif
+        emailAktif = emailLama;
+      } else {
+        if(finalEmail.endsWith('@jabalrahmah.local')) throw new Error('Email baru harus email asli (bukan @jabalrahmah.local).');
+        emailAktif = emailLama; emailPending = finalEmail;
+      }
+    }
     const accountPayload = {
-      role: 'guru', username, uid: teacherId, teacherId,
-      nama, nip, email: finalEmail,
+      ...previous,
+      role: previous.role || 'guru', username, uid: teacherId, teacherId,
+      nama, nip,
       mapelDefault: mapelDefault,
       createdAt: previous.createdAt || now, updatedAt: now
     };
+    if(emailAktif) accountPayload.email = emailAktif; else delete accountPayload.email;
+    if(emailPending) accountPayload.emailPending = emailPending; else delete accountPayload.emailPending;
+    if(emailSentTo) accountPayload.emailSentTo = emailSentTo; else delete accountPayload.emailSentTo;
 
     // 1. Simpan ke /instrumen/users/
     let res = await authFetch('/instrumen/users/' + encodeURIComponent(username) + '.json', {
@@ -4509,7 +4611,9 @@ async function saveAccount(){
     });
     if(!res.ok) throw new Error('Profil guru gagal disimpan (HTTP ' + res.status + ')');
 
-    toast('✓ Akun berhasil didaftarkan.', 'ok');
+    toast(emailPending
+      ? '✓ Tersimpan. Saat guru login berikutnya, link verifikasi dikirim ke ' + emailPending + '.'
+      : '✓ Akun berhasil didaftarkan.', 'ok');
     closeAccountModal();
     await Promise.all([reloadAccounts(false), reloadAll(false)]);
   } catch(err){
@@ -4553,8 +4657,8 @@ async function resetTeacherPassword(username){
   if(!data) return;
   const email = data.email;
   
-  if(!email || !email.includes('@')){
-    toast('Email guru belum diisi. Edit akun dulu, atau gunakan Firebase Console.', 'err');
+  if(email.endsWith('@jabalrahmah.local')){
+    toast('Email guru masih lokal, link tidak akan sampai. Isi email asli lewat Edit Akun dulu.', 'err');
     return;
   }
   

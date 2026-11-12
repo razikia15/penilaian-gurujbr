@@ -784,7 +784,7 @@
     <div class="field" style="margin:0">
       <label>Mata Pelajaran</label>
       <select id="addMapel"></select>
-      <div class="add-note">Mapel mengikuti jenjang dan penetapan Admin untuk akun Anda.</div>
+      <div class="add-note">⭐ = mapel utama dari Admin. Anda tetap bisa memilih mapel lain yang Anda ajar, di Madrasah maupun Pontren.</div>
     </div>
     <div class="field" style="margin:0">
       <label>Kelas (boleh pilih lebih dari satu)</label>
@@ -824,7 +824,10 @@
     </div>
   </div>
   <div class="card">
-    <div class="card-title">👨‍🎓 Data Siswa/Santri <span class="badge" id="badgeJumlahSiswa">0 siswa</span></div>
+    <div class="card-title">👨‍🎓 Data Siswa/Santri
+	  <button class="btn btn-outline btn-sm" id="btnSyncRoster" type="button" style="margin-left:auto">🔄 Muat dari Admin</button>
+	  <span class="badge" id="badgeJumlahSiswa" style="margin-left:0">0 siswa</span>
+	</div>
     <div class="tbl-wrap">
       <table id="tblSiswa">
         <thead><tr>
@@ -1315,14 +1318,13 @@ function kitabPontren(mapel, kelas){
   }
   return '';
 }
-// daftar mapel untuk satu jenjang. Dibatasi mapelGuru dari Admin; kalau hasilnya kosong → tampilkan semua jenjang itu
+// daftar mapel per jenjang: "utama" = mapel dari Admin untuk akun ini; "lain" = semua mapel lain di jenjang itu
 function mapelUntukJenjang(jenjang){
-  const base  = jenjang === 'pontren' ? Object.keys(MAPEL_PONTREN) : MASTER_MAPEL;
-  const other = jenjang === 'pontren' ? MASTER_MAPEL : Object.keys(MAPEL_PONTREN);
-  const guru = (Array.isArray(master.mapelGuru) && master.mapelGuru.length) ? master.mapelGuru : null;
-  if(!guru) return base;
-  const hasil = guru.filter(m => base.includes(m) || !other.includes(m));
-  return hasil.length ? hasil : base;
+  const semua = jenjang === 'pontren' ? Object.keys(MAPEL_PONTREN) : MASTER_MAPEL.slice();
+  const guru = Array.isArray(master.mapelGuru) ? master.mapelGuru : [];
+  const utama = guru.filter(m => semua.includes(m));
+  const lain = semua.filter(m => !utama.includes(m));
+  return { utama, lain };
 }
 
 const DEFAULT_MADRASAH_LIST = ['MAS Jabal Rahmah', 'MTs Jabal Rahmah'];
@@ -1973,10 +1975,9 @@ let csMapelPilih = null;   // mapel yang sedang dilihat di popup
 function updateClassSwitcherUI() {
   if (!state || !state.identitas) return;
   ensurePenugasan();
-
   const aktifKelas = master.currentClass;
   const aktifMapel = state.identitas.mapel;
-  if (!master.penugasan.some(p => p.kelas === aktifKelas && p.mapel === aktifMapel))
+  if (!master.penugasan.some(p => p.kelas === aktifKelas && p.mapel === aktifMapel) && state.siswa.length)
     master.penugasan.push({ kelas: aktifKelas, mapel: aktifMapel });
 
   // tombol kecil di nav
@@ -2735,32 +2736,148 @@ function resolveCloudConflict(choice){
 }
 
 /* ============================================================
-   SEED DARI ROSTER — auto-isi nama siswa untuk akun baru
+   SINKRON SISWA DARI ADMIN — roster = sumber utama data siswa
    ============================================================ */
-async function seedFromRoster(){
-  if(CLASSES.some(k => (master.classes[k]?.siswa || []).length)) return;
-  try{
-    const res = await authFetch('/instrumen/roster.json', { cache:'no-store' });
-    if(!res.ok) return;
-    const roster = await res.json();
-    if(!roster) return;
-    let n = 0;
-    CLASSES.forEach(k => {
-      const raw = roster[k];
-      const names = Array.isArray(raw) ? raw : Object.values(raw || {});
-      names.filter(Boolean).forEach(nama => {
-        master.classes[k].siswa.push({ id: uid(), nama: String(nama), absen: '', pengamatan: '' });
-        n++;
+const FIELD_IDENTITAS = ['nama','nis','nisn','jk','ttl'];
+const _nmSiswa = s => String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+
+// roster bisa berupa array objek (format admin baru) atau array nama (format lama)
+function rosterKeKelas(raw){
+  const arr = Array.isArray(raw) ? raw : Object.values(raw || {});
+  return arr.map(x => {
+    if(typeof x === 'string') return { nama: x.trim() };
+    if(x && typeof x === 'object' && x.nama) return Object.assign({}, x, { nama: String(x.nama).trim() });
+    return null;
+  }).filter(x => x && x.nama && x.nama !== '[object Object]');
+}
+
+// gabungkan roster ke satu daftar siswa; id milik guru TIDAK diganti (nilai terikat ke id)
+function gabungSiswa(daftar, rosterList){
+  let tambah = 0, ubah = 0;
+  rosterList.forEach(r => {
+    const s = (r.id && daftar.find(x => x.id === r.id)) || daftar.find(x => _nmSiswa(x.nama) === _nmSiswa(r.nama));
+    if(s){
+      let berubah = false;
+      FIELD_IDENTITAS.forEach(f => {
+        if(r[f] !== undefined && r[f] !== null && String(r[f]) !== '' && s[f] !== r[f]){ s[f] = r[f]; berubah = true; }
       });
-    });
-    if(n){
-      const firstFilled = CLASSES.find(k => (master.classes[k]?.siswa || []).length);
-      if(firstFilled) master.currentClass = firstFilled;
-      state = master.classes[master.currentClass] || defaultClassState('X');
-      saveState(); refreshAll();
-      toast('✓ ' + n + ' nama siswa dimuat, nilai masih kosong');
+      if(berubah) ubah++;
+    } else {
+      const baru = { id: r.id || uid(), nama: r.nama, absen: '', pengamatan: '' };
+      FIELD_IDENTITAS.slice(1).forEach(f => { if(r[f]) baru[f] = r[f]; });
+      daftar.push(baru);
+      tambah++;
     }
-  }catch(e){ console.warn('[seedFromRoster]', e); }
+  });
+  return { tambah, ubah };
+}
+
+// buang sisa bug lama: siswa bernama "[object Object]"
+function buangNamaRusak(daftar){
+  let n = 0;
+  for(let i = daftar.length - 1; i >= 0; i--){
+    if(String(daftar[i].nama) === '[object Object]'){ daftar.splice(i, 1); n++; }
+  }
+  return n;
+}
+
+/* ===== PENUGASAN = SUMBER KEBENARAN: hanya kelas & mapel pilihan guru ===== */
+function kelasPenugasan(){
+  return [...new Set((master.penugasan || []).map(p => String(p.kelas)))];
+}
+
+// true bila ada isian angka (nilai) di peta nilai manapun
+function adaIsiNilai(v){
+  if(v === null || v === undefined) return false;
+  if(typeof v === 'number') return true;
+  if(typeof v === 'string'){ const t = v.trim(); return t !== '' && !isNaN(Number(t.replace(',', '.'))); }
+  if(typeof v === 'object') return Object.values(v).some(adaIsiNilai);
+  return false;
+}
+function kelasPunyaNilai(c){
+  return !!c && ['sumatif','uh','uhManual','uts','uas','remedialUH'].some(f => adaIsiNilai(c[f]));
+}
+
+// kosongkan siswa di kelas yang BUKAN penugasan guru dan belum berisi nilai
+function bersihkanKelasNyasar(){
+  if(!Array.isArray(master.penugasan) || !master.penugasan.length) return 0;
+  const ok = new Set(kelasPenugasan());
+  let n = 0;
+  Object.keys(master.classes).forEach(k => {
+    if(ok.has(k) || k === master.currentClass) return;
+    const c = master.classes[k];
+    if(!c || !(c.siswa || []).length || kelasPunyaNilai(c)) return;
+    const st = Object.values((master.stash && master.stash[k]) || {});
+    if(st.some(kelasPunyaNilai)) return;
+    c.siswa = [];
+    if(master.stash && master.stash[k]) delete master.stash[k];
+    n++;
+  });
+  return n;
+}
+
+// inti sinkron (tanpa jaringan): hanya untuk kelas yang ada di daftar kelasList
+function terapkanRoster(roster, kelasList){
+  const valid = new Set((kelasList || []).map(String));
+  let tambah = 0, ubah = 0, bersih = 0;
+  Object.keys(roster || {}).forEach(k => {
+    if(!valid.has(k)) return;
+    const list = rosterKeKelas(roster[k]);
+    if(!list.length) return;
+    if(!master.classes[k]) master.classes[k] = defaultClassState(k);
+    normalizeClass(master.classes[k], k);
+    bersih += buangNamaRusak(master.classes[k].siswa);
+    const r = gabungSiswa(master.classes[k].siswa, list);
+    tambah += r.tambah; ubah += r.ubah;
+    // mapel lain di kelas yang sama (stash) ikut diperbarui
+    const st = (master.stash && master.stash[k]) || {};
+    Object.keys(st).forEach(key => {
+      normalizeClass(st[key], k);
+      buangNamaRusak(st[key].siswa);
+      gabungSiswa(st[key].siswa, list);
+    });
+  });
+  return { tambah, ubah, bersih };
+}
+
+let __rosterBusy = false;
+async function syncRosterFromAdmin(opt = {}){
+  if(__rosterBusy) return;
+  __rosterBusy = true;
+  const manual = !!opt.manual;
+  try{
+    const kelasList = kelasPenugasan();
+    if(!kelasList.length){
+      if(manual) toast('ℹ️ Tambahkan penugasan (kelas & mapel) dulu — siswa akan terisi otomatis', true);
+      return;
+    }
+    const res = await authFetch('/instrumen/roster.json', { cache: 'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const roster = (await res.json()) || {};
+
+    const { tambah, ubah, bersih } = terapkanRoster(roster, kelasList);
+    const nyasar = bersihkanKelasNyasar();
+    if(tambah || ubah || bersih || nyasar){
+      // kelas aktif kosong → pindah ke kelas penugasan pertama yang sudah berisi siswa
+      if(!(master.classes[master.currentClass]?.siswa || []).length){
+        const first = kelasList.find(k => (master.classes[k]?.siswa || []).length);
+        if(first) master.currentClass = first;
+      }
+      state = master.classes[master.currentClass];
+      state.identitas.kelas = master.currentClass;
+      saveState();
+      bindIdentitasValues();
+      refreshAll();
+      if(tambah || ubah) toast('✓ Data siswa dari Admin: +' + tambah + ' baru, ' + ubah + ' diperbarui');
+    } else if(manual){
+      toast('✓ Data siswa sudah sama dengan Admin');
+    }
+  }catch(e){
+    console.warn('[syncRoster]', e);
+    if(manual) toast('✗ Gagal memuat dari Admin: ' + e.message, true);
+  }finally{
+    __rosterBusy = false;
+  }
 }
 
 /* ============================================================
@@ -2784,7 +2901,7 @@ async function autoLoadFromFirebase(){
     const dataRaw = await res.json();
     const data = decodeFirebaseKeys(dataRaw);
 
-    if(!data || !data.classes){ await seedFromRoster(); return; }
+    if(!data || !data.classes){ return; }
     data.classes = data.classes || {};
     ALL_CLASSES.forEach(c=>{
       if(!data.classes[c]) data.classes[c] = defaultClassState(c);
@@ -3298,6 +3415,7 @@ function hapusPenugasan(kelas, mapel){
   } else if(master.stash && master.stash[kelas]){
     delete master.stash[kelas][slugMapel(mapel)];
   }
+  bersihkanKelasNyasar();
   saveState(); refreshAll();
   toast('✓ Penugasan dihapus');
 }
@@ -3323,7 +3441,7 @@ function renderPenugasan(){
   wrap.classList.add('assign-list');
   ensurePenugasan();
   const k = master.currentClass, m = state.identitas.mapel;
-  if(!master.penugasan.some(p => p.kelas === k && p.mapel === m)) master.penugasan.push({ kelas:k, mapel:m });
+  if(!master.penugasan.some(p => p.kelas === k && p.mapel === m) && state.siswa.length) master.penugasan.push({ kelas:k, mapel:m });
   const all = master.penugasan;
 
   // bar aktif + info
@@ -3435,16 +3553,20 @@ function kelasUntukJenjang(j){
 
 function isiMapelAdd(pilih){
   const sel = $('#addMapel');
-  const list = mapelUntukJenjang(addJenjang);
+  const { utama, lain } = mapelUntukJenjang(addJenjang);
+  const opt = m => `<option>${esc(m)}</option>`;
+  let html = '';
+  if(utama.length) html += `<optgroup label="⭐ Mapel utama Anda">${utama.map(opt).join('')}</optgroup>`;
   if(addJenjang === 'pontren'){
     const grup = {};
-    list.forEach(m => { const g = (MAPEL_PONTREN[m] || {}).grup || 'Lainnya'; (grup[g] = grup[g] || []).push(m); });
-    sel.innerHTML = Object.keys(grup).map(g =>
-      `<optgroup label="${esc(g)}">${grup[g].map(m => `<option>${esc(m)}</option>`).join('')}</optgroup>`).join('');
+    lain.forEach(m => { const g = (MAPEL_PONTREN[m] || {}).grup || 'Lainnya'; (grup[g] = grup[g] || []).push(m); });
+    html += Object.keys(grup).map(g => `<optgroup label="${esc(g)}">${grup[g].map(opt).join('')}</optgroup>`).join('');
   } else {
-    sel.innerHTML = list.map(m => `<option>${esc(m)}</option>`).join('');
+    html += `<optgroup label="${utama.length ? 'Mapel lainnya' : 'Semua mapel'}">${lain.map(opt).join('')}</optgroup>`;
   }
-  if(pilih && list.includes(pilih)) sel.value = pilih;
+  sel.innerHTML = html;
+  const semua = [...utama, ...lain];
+  sel.value = (pilih && semua.includes(pilih)) ? pilih : (utama[0] || semua[0]);
   renderKelasChecks();
 }
 
@@ -3478,6 +3600,7 @@ function updateKitabPreview(){
 }
 
 function initPenugasan(){
+  document.getElementById('btnSyncRoster')?.addEventListener('click', () => syncRosterFromAdmin({ manual:true }));
   $('#btnOpenAdd').addEventListener('click', ()=>{
     ensurePenugasan();
     addJenjang = isKelasPontren(master.currentClass) ? 'pontren' : 'madrasah';
@@ -3492,7 +3615,7 @@ function initPenugasan(){
   }));
   $('#addMapel').addEventListener('change', renderKelasChecks);
   $('#btnCancelAdd').addEventListener('click', ()=> $('#addPanel').classList.remove('open'));
-  $('#btnSaveAdd').addEventListener('click', ()=>{
+  $('#btnSaveAdd').addEventListener('click', async ()=>{
     const mapel = $('#addMapel').value;
     const picked = [...document.querySelectorAll('#addKelas input:checked')].map(i => i.value);
     if(!picked.length){ toast('⚠️ Pilih minimal satu kelas', true); return; }
@@ -3502,6 +3625,7 @@ function initPenugasan(){
     });
     saveState();
     $('#addPanel').classList.remove('open');
+	await syncRosterFromAdmin();
     switchPenugasan(picked[0], mapel);
     renderPenugasan();
     toast(`✓ ${picked.length} penugasan ditambahkan (${mapel})`);
@@ -5473,7 +5597,7 @@ async function changePassword() {
    RESET
    ============================================================ */
 function resetData(){
-  if(!confirm('Reset SEMUA data (semua kelas) ke pengaturan awal?\n\nData contoh TIDAK dimuat otomatis. Untuk memuat demo, gunakan tombol "Muat Data Demo".\n\nLanjutkan?')) return;
+  if(!confirm('Reset SEMUA data (semua kelas) ke pengaturan awal?\n\nData siswa akan dimuat ulang dari Admin saat login berikutnya.\n\nLanjutkan?')) return;
   localStorage.removeItem(LS_KEY);
   localStorage.removeItem(LS_KEPALA_NIP_MAP);
   localStorage.removeItem(LS_MADRASAH);
@@ -5656,12 +5780,14 @@ async function init(){
   refreshAll();
   isInitialized = true;
 
-  // Kalau ada perubahan lokal yang belum terkirim, PUSH dulu
-  if(window.__UNSAVED__){
-    firebaseSave(true);
-  } else {
-    autoLoadFromFirebase().catch(e => console.warn('Background sync failed:', e));
-  }
+  // urutan: kirim/tarik data guru dulu, BARU tarik siswa dari Admin
+  (async () => {
+    try{
+      if(window.__UNSAVED__) await firebaseSave(true);
+      else await autoLoadFromFirebase();
+    }catch(e){ console.warn('Background sync failed:', e); }
+    await syncRosterFromAdmin();
+  })();
 }
 
 /* ============================================================
