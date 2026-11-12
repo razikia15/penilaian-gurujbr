@@ -400,8 +400,8 @@
   .batch-print-container .rapor-sheet:last-child {
     page-break-after: auto !important; /* Mencegah halaman kosong di akhir */
   }
-  body.printing-rapor .rapor-header h1 { font-size:12px !important; margin:0 !important; }
-  body.printing-rapor .rapor-header h2 { font-size:14px !important; margin:2px 0 6px 0 !important; }
+  body.printing-rapor .rapor-header h1 { font-size:15px !important; margin:0 !important; font-weight: 900 !important; }
+  body.printing-rapor .rapor-header h2 { font-size:15px !important; margin:4px 0 6px 0 !important; font-weight: 900 !important; }
   body.printing-rapor .rapor-info-table td { padding:1px 2px !important; font-size:10px !important; }
   body.printing-rapor .rapor-tbl th { font-size:9px !important; padding:2px 3px !important; }
   body.printing-rapor .rapor-tbl td { font-size:9.5px !important; padding:2px 4px !important; line-height:1.2 !important; }
@@ -965,7 +965,9 @@
     </select>
     <div class="sep"></div>
     <label>NISN:</label>
-    <input id="rpNisn" placeholder="0123456789 / 12345" style="padding:6px 10px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:12px;width:170px;font-family:inherit">
+    <input id="rpNisn" placeholder="NISN" style="padding:6px 10px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:12px;width:130px;font-family:inherit">
+    <label>NIS:</label>
+    <input id="rpNis" placeholder="NIS" style="padding:6px 10px;border:1.5px solid var(--gray-200);border-radius:6px;font-size:12px;width:130px;font-family:inherit">
     <div class="sep"></div>
     <button class="btn btn-primary btn-sm" onclick="buildRaporPrint()">📄 Generate</button>
 	<button class="btn btn-primary btn-sm" onclick="buildRaporPrintAll()" id="btnPrintAll" style="background:#059669; border:none; margin-left: 5px;">📚 Cetak Semua (Batch)</button>
@@ -3395,19 +3397,50 @@ function initRaporPrint() {
 function populateRaporSiswa() {
   const kelas = $('#rpKelas').value;
   const selSiswa = $('#rpSiswa');
-  if (!kelas) { selSiswa.innerHTML = '<option value="">— Pilih Kelas Dulu —</option>'; return; }
-  const namaSet = new Set();
+  const nisnInput = $('#rpNisn');
+  const nisInput = $('#rpNis');
+  
+  if (!kelas) { 
+    selSiswa.innerHTML = '<option value="">— Pilih Kelas Dulu —</option>'; 
+    nisnInput.value = ''; 
+    nisInput.value = '';
+    return; 
+  }
+
+  const studentMap = new Map();
   for (const t of Object.values(ALL_TEACHERS)) {
     const cls = t.master?.classes?.[kelas];
     if (!cls || !Array.isArray(cls.siswa)) continue;
     cls.siswa.forEach(s => {
       const nm = String(s.nama || '').trim();
-      if (nm) namaSet.add(nm);
+      if (nm && !studentMap.has(nm)) {
+        studentMap.set(nm, s); 
+      }
     });
   }
-  const arr = [...namaSet].sort((a,b) => a.localeCompare(b, 'id'));
+
+  const arr = [...studentMap.keys()].sort((a,b) => a.localeCompare(b, 'id'));
   selSiswa.innerHTML = '<option value="">— Pilih Siswa —</option>' +
     arr.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+
+  selSiswa.onchange = function() {
+    const selectedName = this.value;
+    
+    if (!selectedName) {
+      nisnInput.value = '';
+      nisInput.value = '';
+      return;
+    }
+    
+    const studentData = studentMap.get(selectedName);
+    if (studentData) {
+      nisnInput.value = studentData.nisn || '';
+      nisInput.value = studentData.nis || '';
+    } else {
+      nisnInput.value = '';
+      nisInput.value = '';
+    }
+  };
 }
 
 function terbilang(n) {
@@ -3466,6 +3499,7 @@ function buildRaporPrint() {
   const nama = $('#rpSiswa').value;
   const jenis = $('#rpJenis').value;
   const nisnInput = ($('#rpNisn')?.value || '').trim();
+  const nisInput = ($('#rpNis')?.value || '').trim();
   if (!kelas || !nama) { toast('Pilih kelas dan siswa dulu', 'err'); return; }
 
   raporOverrides = {}; // Reset editan jika generate baru
@@ -3606,7 +3640,7 @@ function buildRaporPrint() {
 
     // Simpan data ke variabel global agar bisa diakses oleh renderRaporHTML
   window.raporData = {
-    nama, nisn: nisnInput || '0123456789 / 12345', kelas, jenis, subjectData,
+    nama, nisn: nisnInput, nis: nisInput, kelas, jenis, subjectData,
     myRank, totalStudentsInClass, totalNilai, count, rataRata, baseIdentitas, nasehatText: nasehatText
   };
 
@@ -3617,13 +3651,10 @@ async function buildRaporPrintAll() {
   const kelas = $('#rpKelas').value;
   const jenis = $('#rpJenis').value;
   if (!kelas) { toast('Pilih kelas dulu', 'err'); return; }
-
   const selSiswa = $('#rpSiswa');
   populateRaporSiswa(); // Pastikan dropdown siswa terisi
   const studentNames = Array.from(selSiswa.options).map(o => o.value).filter(Boolean);
-
   if (!studentNames.length) { toast('Tidak ada siswa di kelas ini', 'err'); return; }
-
   const btn = document.getElementById('btnPrintAll');
   const origText = btn.innerHTML;
   btn.innerHTML = '⏳ Memproses...';
@@ -3646,15 +3677,17 @@ async function buildRaporPrintAll() {
   
   const origSelected = selSiswa.value;
   const origNisn = $('#rpNisn').value;
+  const origNis = $('#rpNis').value;
 
   // Looping setiap siswa
   for (let i = 0; i < studentNames.length; i++) {
     const nama = studentNames[i];
     selSiswa.value = nama;
     
-    // Set NISN otomatis dari roster jika ada
+    // Set NISN & NIS otomatis dari roster jika ada
     const studentData = rosterData[nama];
-    $('#rpNisn').value = studentData ? (studentData.nisn || studentData.nis || '') : '';
+    $('#rpNisn').value = studentData ? (studentData.nisn || '') : '';
+    $('#rpNis').value = studentData ? (studentData.nis || '') : '';
 
     try {
       buildRaporPrint(); // Fungsi bawaan Anda
@@ -3679,6 +3712,7 @@ async function buildRaporPrintAll() {
   // Kembalikan nilai form ke asalnya
   selSiswa.value = origSelected;
   $('#rpNisn').value = origNisn;
+  $('#rpNis').value = origNis;
   btn.innerHTML = origText;
   btn.disabled = false;
 
@@ -3712,7 +3746,7 @@ function renderRaporHTML() {
   const data = window.raporData;
   if (!data) return;
 
-  const { nama, nisn, kelas, jenis, subjectData, myRank, totalStudentsInClass, totalNilai, count, rataRata, baseIdentitas } = data;
+    const { nama, nisn, nis, kelas, jenis, subjectData, myRank, totalStudentsInClass, totalNilai, count, rataRata, baseIdentitas } = data;
 
   const ident = baseIdentitas || {};
   const madrasah = ident.madrasah || 'MAS Jabal Rahmah Koto Baru';
@@ -3725,7 +3759,7 @@ function renderRaporHTML() {
   const judul = jenis === 'ats'
     ? `LAPORAN HASIL ASESMEN TENGAH SEMESTER (ATS) ${semester.toUpperCase()}`
     : `LAPORAN HASIL BELAJAR SEMESTER ${semester.toUpperCase()}`;
-  const fase = ['X','VII'].includes(kelas) ? 'E' : ['XI','VIII'].includes(kelas) ? 'F' : 'G';
+  const fase = ['VII','VIII','IX'].includes(kelas) ? 'D' : (kelas === 'X' ? 'E' : 'F');
   const today = new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
 
   const rows = [];
@@ -3797,24 +3831,31 @@ function renderRaporHTML() {
 
   const html = `
     <div class="rapor-sheet">
-      <div class="rapor-header">
-        <h1>${esc(judul)}</h1>
-        <h2>${institusi}</h2>
+      <div class="rapor-header" style="margin-bottom: 30px;">
+        <h1 style="font-size: 16px; font-weight: 900; letter-spacing: 0.5px; margin-bottom: 4px;">${esc(judul)}</h1>
+        <h2 style="font-size: 16px; font-weight: 900; letter-spacing: 0.5px; margin: 0;">${institusi}</h2>
       </div>
       
-      <div style="display: flex; justify-content: space-between; margin-top:10px; margin-bottom:10px; font-size:10.5px; width:100%;">
+      <!-- BAGIAN IDENTITAS SISWA (KIRI & KANAN) -->
+      <div style="display: flex; justify-content: space-between; margin-top:15px; margin-bottom:15px; font-size:10.5px; width:100%; padding: 0 15px; box-sizing: border-box;">
+        
+        <!-- SISI KIRI -->
         <div style="width: 48%;">
           <table style="width: 100%; border-collapse: collapse;">
-            <tr><td style="width: 35%; text-align:left; padding:2px 0;">Nama Peserta Didik</td><td style="width: 5%; text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(nama)}</td></tr>
-            <tr><td style="text-align:left; padding:2px 0;">NISN / NIS</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(nisn)}</td></tr>
+            <tr><td style="width: 35%; text-align:left; padding:2px 0;">Nama Peserta Didik</td><td style="width: 5%; text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px; font-weight:bold;">${esc(nama)}</td></tr>
+            <tr><td style="text-align:left; padding:2px 0;">NISN</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(nisn)}</td></tr>
+            <tr><td style="text-align:left; padding:2px 0;">NIS</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(nis)}</td></tr>
             <tr><td style="text-align:left; padding:2px 0;">Fase</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${fase}</td></tr>
           </table>
         </div>
-        <div style="width: 46%;">
-          <table style="width: 85%; margin-left: auto; border-collapse: collapse;">
-            <tr><td style="width: 40%; text-align:left; padding:2px 0;">Madrasah</td><td style="width: 5%; text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(madrasah)}</td></tr>
+
+        <!-- SISI KANAN -->
+        <div style="width: 48%; padding-left: 15%;"> <!-- Tambahkan padding-left di sini -->
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="width: 35%; text-align:left; padding:2px 0;">Madrasah</td><td style="width: 5%; text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(madrasah)}</td></tr>
             <tr><td style="text-align:left; padding:2px 0;">Kelas / Semester</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(kelas)} / ${esc(semester)}</td></tr>
             <tr><td style="text-align:left; padding:2px 0;">Tahun Ajaran</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(tahunAjaran)}</td></tr>
+            <tr><td style="text-align:left; padding:2px 0;">Wali Kelas</td><td style="text-align:center; padding:2px 0;">:</td><td style="text-align:left; padding:2px 5px;">${esc(waliKelas)}</td></tr>
           </table>
         </div>
       </div>
@@ -3891,6 +3932,26 @@ function renderRaporHTML() {
           <td class="td-tanpa" style="text-align:center">${esc(ketidakhadiranData.tanpa)} hari</td>
         </tr>
       </table>
+      <!-- ===== BAGIAN TANDA TANGAN (SEIMBANG & RATA KIRI) ===== -->
+      <table style="width: 100%; margin-top: 30px; page-break-inside: avoid; border: none; border-collapse: collapse;">
+        <tr>
+          <!-- Sebelah Kiri -->
+          <td style="width: 50%; text-align: left; vertical-align: top; border: none; padding: 0; padding-left: 10%;">
+              <div style="margin-bottom: 2px;">Mengetahui,</div>
+              <div style="margin-bottom: 65px;">Orang Tua/Wali Murid,</div>
+              <div>( ...................................................... )</div>
+          </td>
+          
+          <!-- Sebelah Kanan -->
+          <td style="width: 50%; text-align: left; vertical-align: top; border: none; padding: 0; padding-left: 15%;">
+            <div style="margin-bottom: 2px;">Koto Baru, ${today}</div>
+            <div style="margin-bottom: 65px;">Wali Kelas,</div>
+            <div style="font-weight: bold; text-decoration: underline;">${esc(waliKelas)}</div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <!-- ===== BATAS TANDA TANGAN ===== -->
     </div>
   `;
 
@@ -4304,8 +4365,8 @@ function renderAccounts(){
       <td><code style="font-size:11px;background:var(--gray-100);padding:2px 6px;border-radius:4px">${esc(data.uid || data.teacherId || '-')}</code></td>
       <td>${isAdmin ? '—' : statusData}</td>
             <td>
-        <button class="btn btn-blue btn-sm" onclick="editAccount('${esc(username)}')" style="padding:4px 8px;font-size:11px">✎ Edit</button>
-        ${!isAdmin ? `
+          <button class="btn btn-blue btn-sm" onclick="editAccount('${esc(username)}')" style="padding:4px 8px;font-size:11px">✎ Edit</button>
+          ${!isAdmin ? `
           <button class="btn btn-outline btn-sm" onclick="resetTeacherPassword('${esc(username)}')" 
                   style="padding:4px 8px;font-size:11px;margin-left:4px" title="Kirim link reset sandi ke email">
             🔑 Reset
@@ -4313,6 +4374,12 @@ function renderAccounts(){
           <button class="btn btn-danger btn-sm" onclick="deleteAccount('${esc(username)}')" 
                   style="padding:4px 8px;font-size:11px;margin-left:4px">✕</button>
         ` : ''}
+		${!isAdmin && (data.email || '').includes('@jabalrahmah.local') ? `
+		  <button class="btn btn-blue btn-sm" onclick="migrasiAkunGuru('${esc(username)}', '${esc(data.uid || data.teacherId)}')" 
+          style="padding:4px 8px;font-size:11px;margin-left:4px;background:#f59e0b;border:none;color:white" title="Pindahkan ke Email Asli">
+		  🚀 Migrasi
+		</button>
+		` : ''}
       </td>`;
     tb.appendChild(tr);
   });
@@ -4790,8 +4857,75 @@ function closeChangelog(){
   updateStatus();
 })();
 
-init();
+async function migrasiAkunGuru(username, oldUid) {
+  const newEmail = prompt(`Migrasi Akun: ${username}\n\nMasukkan Email Gmail asli guru:`);
+  if (!newEmail || !newEmail.includes('@')) {
+    if (newEmail !== null) alert('Format email tidak valid!');
+    return;
+  }
 
+  const newPass = prompt(`Masukkan Sandi Sementara untuk ${newEmail}\n(Minimal 6 karakter. Berikan sandi ini ke guru):`, "123456");
+  if (!newPass || newPass.length < 6) {
+    if (newPass !== null) alert('Sandi minimal 6 karakter!');
+    return;
+  }
+
+  if (!confirm(`Yakin ingin memigrasikan akun?\n\nEmail Lama: ${username}@jabalrahmah.local\nEmail Baru: ${newEmail}\n\nSemua data nilai akan dipindahkan.`)) return;
+
+  try {
+    // 1. Buat Akun Baru di Firebase Auth
+    const authRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FB_API_KEY}`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: newEmail, password: newPass, returnSecureToken: false })
+    });
+    const authData = await authRes.json();
+    if (!authRes.ok) throw new Error(authData.error?.message || 'Gagal membuat akun baru');
+    const newUid = authData.localId;
+
+    // 2. Ambil data lama dari Teachers
+    const oldDataRes = await authFetch('/instrumen/teachers/' + oldUid + '.json');
+    const oldData = oldDataRes.ok ? await oldDataRes.json() : {};
+
+    // 3. Siapkan Payload Pindahan
+    const payload = {};
+    
+    // Pindahkan data ke UID baru
+    if (oldData && oldData.master) {
+       payload[`teachers/${newUid}/master`] = oldData.master;
+       payload[`teachers/${newUid}/nama`] = oldData.nama || '';
+       payload[`teachers/${newUid}/nip`] = oldData.nip || '';
+       payload[`teachers/${newUid}/lastUpdate`] = { '.sv': 'timestamp' };
+    }
+
+    // Hapus data di UID lama
+    payload[`teachers/${oldUid}`] = null;
+
+    // 4. Update Tautan di tabel Users
+    payload[`users/${username}/uid`] = newUid;
+    payload[`users/${username}/teacherId`] = newUid;
+    payload[`users/${username}/email`] = newEmail;
+    payload[`users/${username}/emailPending`] = null; // Hapus status pending jika ada
+    payload[`users/${username}/updatedAt`] = Date.now();
+
+    // 5. Eksekusi Update Database
+    const res = await authFetch('/instrumen.json', {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Gagal memindahkan data di database');
+
+    alert(`✓ MIGRASI BERHASIL!\n\nBeritahu Guru untuk login dengan:\nEmail: ${newEmail}\nSandi: ${newPass}\n\n(Jika sandi salah, gunakan fitur Lupa Sandi)`);
+    await reloadAll(false);
+    reloadAccounts();
+  } catch (err) {
+    console.error(err);
+    alert('✗ Gagal migrasi: ' + err.message);
+  }
+}
+
+init();
 </script>
 
 <!-- MODAL KELOLA KELAS -->

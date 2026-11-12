@@ -5,10 +5,30 @@
    ============================================================ */
 
 window.APP_INFO = {
-  version: '1.3.3',
+  version: '1.3.4',
   buildDate: '2026-11-12',
 
   changelog: [
+    {
+      version: 'v1.3.4',
+      date: '2026-11-12',
+      highlights: [
+        '<b>Update v1.3.4 - 12 November 2026</b>',
+        '<b>👤 Akun &amp; Email</b>',
+        'Fitur Migrasi Akun untuk mengganti email lokal (@jabalrahmah.local) ke Gmail asli',
+        'Verifikasi email otomatis saat guru login agar fitur Lupa Sandi berfungsi',
+        'Notifikasi dan status email pending di halaman Admin Panel',
+        '<b>🖨️ Cetak Rapor</b>',
+        'Pemisahan kolom NISN dan NIS secara otomatis (tetap bisa diedit manual)',
+        'Penyesuaian Fase sesuai Kurikulum Merdeka: D (MTs), E (Kelas X), F (Kelas XI &amp; XII)',
+        'Penambahan nama Wali Kelas di bagian profil atas rapor',
+        'Perbaikan layout tanda tangan kiri dan kanan agar seimbang dan rapi',
+        'Judul rapor (Madrasah) dibuat lebih besar, tebal, dan diberi jarak yang pas',
+        '<b>⚙️ Sistem</b>',
+        'Peningkatan performa penyimpanan data ke Firebase',
+        'Perbaikan bug minor pada sinkronisasi data siswa'
+      ]
+    },
     {
       version: 'v1.3.3',
       date: '2026-11-12',
